@@ -56,7 +56,15 @@
 - 39 parser tests — passing
 - 27 extraction tests — passing
 - 27 taxonomy tests — passing
-- **Total: 104 tests passing**
+- 5 seed-script planner tests — passing
+- **Total: 109 tests passing**
+
+## Interim Tasks (between phases)
+
+- ✅ Seed script `backend/scripts/seed_skills.py` — idempotent upsert of the taxonomy JSON into the `skills` table
+  - INSERT new skills, UPDATE stale categories, leaves orphaned DB rows alone (may be referenced by FKs)
+  - `--dry-run` preview mode; planner is a pure function with unit tests
+  - Verified live against PostgreSQL: 118 skills seeded, re-run is a no-op, category drift corrected
 
 ## Known Issues
 

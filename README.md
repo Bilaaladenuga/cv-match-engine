@@ -71,6 +71,17 @@ uvicorn app.main:app --reload
 
 The API docs are at [http://localhost:8000/docs](http://localhost:8000/docs).
 
+#### Seeding the skill taxonomy
+
+The canonical skill vocabulary lives in `backend/app/nlp/skill_taxonomy.json`.
+Load it into the `skills` table (idempotent — safe to rerun):
+
+```bash
+cd backend
+python -m scripts.seed_skills          # apply
+python -m scripts.seed_skills --dry-run  # preview without writing
+```
+
 ### Frontend Setup
 
 ```bash
