@@ -1,0 +1,184 @@
+{
+  "schema_version": "1.0",
+  "categories": {
+    "programming": {
+      "label": "Programming",
+      "description": "Programming languages and core coding skills"
+    },
+    "frontend": {
+      "label": "Frontend",
+      "description": "Web, mobile and UI frameworks and libraries"
+    },
+    "backend": {
+      "label": "Backend",
+      "description": "Server-side frameworks and runtime technology"
+    },
+    "database": {
+      "label": "Database",
+      "description": "SQL and NoSQL databases, query languages"
+    },
+    "cloud": {
+      "label": "Cloud",
+      "description": "Cloud providers and platform services"
+    },
+    "devops": {
+      "label": "DevOps",
+      "description": "Deployment, infrastructure and delivery tooling"
+    },
+    "data_science": {
+      "label": "Data Science",
+      "description": "Data analysis, statistics and visualization"
+    },
+    "machine_learning": {
+      "label": "Machine Learning",
+      "description": "Machine learning, deep learning and AI frameworks"
+    },
+    "gis": {
+      "label": "GIS",
+      "description": "Geographic information systems and geospatial tooling"
+    },
+    "design": {
+      "label": "Design",
+      "description": "UI/UX design and design tooling"
+    },
+    "tools": {
+      "label": "Tools",
+      "description": "Productivity, collaboration and development tools"
+    },
+    "soft_skills": {
+      "label": "Soft Skills",
+      "description": "Interpersonal and workplace skills"
+    }
+  },
+  "skills": [
+    { "name": "Python", "category": "programming", "aliases": ["python", "python3", "python programming"] },
+    { "name": "JavaScript", "category": "programming", "aliases": ["javascript", "js", "ecmascript", "es6", "es2015", "java script"] },
+    { "name": "TypeScript", "category": "programming", "aliases": ["typescript", "ts"] },
+    { "name": "Java", "category": "programming", "aliases": ["java", "java se", "java ee", "core java"] },
+    { "name": "C++", "category": "programming", "aliases": ["c++", "cpp", "c plus plus"] },
+    { "name": "C#", "category": "programming", "aliases": ["c#", "csharp", "c sharp"] },
+    { "name": "Go", "category": "programming", "aliases": ["go", "golang"] },
+    { "name": "Rust", "category": "programming", "aliases": ["rust", "rustlang"] },
+    { "name": "Ruby", "category": "programming", "aliases": ["ruby"] },
+    { "name": "PHP", "category": "programming", "aliases": ["php"] },
+    { "name": "Swift", "category": "programming", "aliases": ["swift", "swiftui"] },
+    { "name": "Kotlin", "category": "programming", "aliases": ["kotlin"] },
+    { "name": "R", "category": "programming", "aliases": ["r", "r programming", "r language"] },
+    { "name": "Scala", "category": "programming", "aliases": ["scala"] },
+    { "name": "Perl", "category": "programming", "aliases": ["perl"] },
+    { "name": "Shell", "category": "programming", "aliases": ["shell", "bash", "zsh", "shell scripting"] },
+
+    { "name": "React", "category": "frontend", "aliases": ["react", "reactjs", "react.js"] },
+    { "name": "React Native", "category": "frontend", "aliases": ["react native", "reactnative"] },
+    { "name": "Next.js", "category": "frontend", "aliases": ["nextjs", "next.js", "next js"] },
+    { "name": "Vue.js", "category": "frontend", "aliases": ["vue", "vuejs", "vue.js"] },
+    { "name": "Angular", "category": "frontend", "aliases": ["angular", "angularjs"] },
+    { "name": "Svelte", "category": "frontend", "aliases": ["svelte", "sveltekit"] },
+    { "name": "Flutter", "category": "frontend", "aliases": ["flutter"] },
+    { "name": "HTML", "category": "frontend", "aliases": ["html", "html5"] },
+    { "name": "CSS", "category": "frontend", "aliases": ["css", "css3", "scss", "sass", "less", "tailwind", "tailwindcss"] },
+    { "name": "jQuery", "category": "frontend", "aliases": ["jquery"] },
+    { "name": "Redux", "category": "frontend", "aliases": ["redux"] },
+    { "name": "GraphQL", "category": "frontend", "aliases": ["graphql", "gql"] },
+
+    { "name": "Node.js", "category": "backend", "aliases": ["nodejs", "node.js", "node js", "node"] },
+    { "name": "Express", "category": "backend", "aliases": ["express", "expressjs", "express.js"] },
+    { "name": "FastAPI", "category": "backend", "aliases": ["fastapi", "fast api"] },
+    { "name": "Django", "category": "backend", "aliases": ["django"] },
+    { "name": "Flask", "category": "backend", "aliases": ["flask"] },
+    { "name": "Spring", "category": "backend", "aliases": ["spring", "spring boot", "springboot", "spring framework"] },
+    { "name": "ASP.NET", "category": "backend", "aliases": ["asp.net", "aspnet"] },
+    { "name": ".NET", "category": "backend", "aliases": [".net", "dotnet"] },
+    { "name": "Ruby on Rails", "category": "backend", "aliases": ["ruby on rails", "rails"] },
+    { "name": "Laravel", "category": "backend", "aliases": ["laravel"] },
+
+    { "name": "PostgreSQL", "category": "database", "aliases": ["postgresql", "postgres", "psql"] },
+    { "name": "MySQL", "category": "database", "aliases": ["mysql"] },
+    { "name": "SQL Server", "category": "database", "aliases": ["sql server", "mssql"] },
+    { "name": "SQL", "category": "database", "aliases": ["sql", "plsql", "relational database", "rdbms"] },
+    { "name": "MongoDB", "category": "database", "aliases": ["mongodb", "mongo"] },
+    { "name": "Redis", "category": "database", "aliases": ["redis"] },
+    { "name": "Elasticsearch", "category": "database", "aliases": ["elasticsearch", "elastic search"] },
+    { "name": "SQLite", "category": "database", "aliases": ["sqlite", "sqlite3"] },
+    { "name": "DynamoDB", "category": "database", "aliases": ["dynamodb", "dynamo db"] },
+    { "name": "Cassandra", "category": "database", "aliases": ["cassandra"] },
+
+    { "name": "AWS", "category": "cloud", "aliases": ["aws", "amazon web services", "ec2", "s3", "lambda", "cloudformation"] },
+    { "name": "Azure", "category": "cloud", "aliases": ["azure", "microsoft azure", "azure devops"] },
+    { "name": "GCP", "category": "cloud", "aliases": ["gcp", "google cloud", "google cloud platform"] },
+    { "name": "Heroku", "category": "cloud", "aliases": ["heroku"] },
+    { "name": "Vercel", "category": "cloud", "aliases": ["vercel"] },
+    { "name": "Netlify", "category": "cloud", "aliases": ["netlify"] },
+
+    { "name": "Docker", "category": "devops", "aliases": ["docker", "dockerfile", "docker-compose", "docker compose"] },
+    { "name": "Kubernetes", "category": "devops", "aliases": ["kubernetes", "k8s", "kubectl"] },
+    { "name": "CI/CD", "category": "devops", "aliases": ["ci/cd", "cicd", "continuous integration", "continuous deployment"] },
+    { "name": "Terraform", "category": "devops", "aliases": ["terraform"] },
+    { "name": "Ansible", "category": "devops", "aliases": ["ansible"] },
+    { "name": "Jenkins", "category": "devops", "aliases": ["jenkins"] },
+    { "name": "GitHub Actions", "category": "devops", "aliases": ["github actions"] },
+    { "name": "Nginx", "category": "devops", "aliases": ["nginx"] },
+    { "name": "Linux", "category": "devops", "aliases": ["linux", "ubuntu", "debian", "centos", "unix"] },
+    { "name": "Git", "category": "devops", "aliases": ["git", "github", "gitlab", "bitbucket"] },
+
+    { "name": "Pandas", "category": "data_science", "aliases": ["pandas"] },
+    { "name": "NumPy", "category": "data_science", "aliases": ["numpy"] },
+    { "name": "Data Analysis", "category": "data_science", "aliases": ["data analysis", "data analytics", "analytics"] },
+    { "name": "Statistics", "category": "data_science", "aliases": ["statistics", "statistical analysis"] },
+    { "name": "Data Visualization", "category": "data_science", "aliases": ["data visualization", "data viz"] },
+    { "name": "Jupyter", "category": "data_science", "aliases": ["jupyter", "jupyter notebook", "jupyterlab"] },
+    { "name": "Tableau", "category": "data_science", "aliases": ["tableau"] },
+    { "name": "Power BI", "category": "data_science", "aliases": ["power bi", "powerbi"] },
+
+    { "name": "Machine Learning", "category": "machine_learning", "aliases": ["machine learning", "ml"] },
+    { "name": "Deep Learning", "category": "machine_learning", "aliases": ["deep learning"] },
+    { "name": "TensorFlow", "category": "machine_learning", "aliases": ["tensorflow"] },
+    { "name": "PyTorch", "category": "machine_learning", "aliases": ["pytorch"] },
+    { "name": "Scikit-learn", "category": "machine_learning", "aliases": ["scikit-learn", "sklearn"] },
+    { "name": "Keras", "category": "machine_learning", "aliases": ["keras"] },
+    { "name": "XGBoost", "category": "machine_learning", "aliases": ["xgboost"] },
+    { "name": "Hugging Face", "category": "machine_learning", "aliases": ["hugging face", "huggingface"] },
+    { "name": "NLP", "category": "machine_learning", "aliases": ["nlp", "natural language processing"] },
+    { "name": "Computer Vision", "category": "machine_learning", "aliases": ["computer vision"] },
+    { "name": "OpenCV", "category": "machine_learning", "aliases": ["opencv"] },
+    { "name": "LLM", "category": "machine_learning", "aliases": ["llm", "large language model", "large language models"] },
+
+    { "name": "GIS", "category": "gis", "aliases": ["gis", "geographic information system"] },
+    { "name": "QGIS", "category": "gis", "aliases": ["qgis", "quantum gis"] },
+    { "name": "ArcGIS", "category": "gis", "aliases": ["arcgis", "arc gis"] },
+    { "name": "GeoPandas", "category": "gis", "aliases": ["geopandas"] },
+    { "name": "PostGIS", "category": "gis", "aliases": ["postgis"] },
+    { "name": "Leaflet", "category": "gis", "aliases": ["leaflet"] },
+    { "name": "Mapbox", "category": "gis", "aliases": ["mapbox"] },
+    { "name": "MapLibre", "category": "gis", "aliases": ["maplibre"] },
+    { "name": "Google Earth Engine", "category": "gis", "aliases": ["google earth engine"] },
+
+    { "name": "Figma", "category": "design", "aliases": ["figma"] },
+    { "name": "Adobe Photoshop", "category": "design", "aliases": ["photoshop", "adobe photoshop"] },
+    { "name": "Adobe Illustrator", "category": "design", "aliases": ["illustrator", "adobe illustrator"] },
+    { "name": "Sketch", "category": "design", "aliases": ["sketch"] },
+    { "name": "Canva", "category": "design", "aliases": ["canva"] },
+    { "name": "UI Design", "category": "design", "aliases": ["ui", "ui design", "user interface", "user interface design"] },
+    { "name": "UX Design", "category": "design", "aliases": ["ux", "ux design", "user experience", "user experience design"] },
+
+    { "name": "Jira", "category": "tools", "aliases": ["jira"] },
+    { "name": "Confluence", "category": "tools", "aliases": ["confluence"] },
+    { "name": "Slack", "category": "tools", "aliases": ["slack"] },
+    { "name": "Notion", "category": "tools", "aliases": ["notion"] },
+    { "name": "VS Code", "category": "tools", "aliases": ["vs code", "visual studio code"] },
+
+    { "name": "Leadership", "category": "soft_skills", "aliases": ["leadership", "leading teams"] },
+    { "name": "Communication", "category": "soft_skills", "aliases": ["communication", "communications", "written communication", "verbal communication"] },
+    { "name": "Teamwork", "category": "soft_skills", "aliases": ["teamwork", "team collaboration"] },
+    { "name": "Collaboration", "category": "soft_skills", "aliases": ["collaboration", "cross-functional collaboration"] },
+    { "name": "Problem Solving", "category": "soft_skills", "aliases": ["problem solving", "problem-solving"] },
+    { "name": "Agile", "category": "soft_skills", "aliases": ["agile", "agile methodology", "agile methodologies"] },
+    { "name": "Scrum", "category": "soft_skills", "aliases": ["scrum"] },
+    { "name": "Kanban", "category": "soft_skills", "aliases": ["kanban"] },
+    { "name": "Project Management", "category": "soft_skills", "aliases": ["project management"] },
+    { "name": "Time Management", "category": "soft_skills", "aliases": ["time management"] },
+    { "name": "Mentoring", "category": "soft_skills", "aliases": ["mentoring", "mentorship", "mentor"] },
+    { "name": "Critical Thinking", "category": "soft_skills", "aliases": ["critical thinking"] },
+    { "name": "Adaptability", "category": "soft_skills", "aliases": ["adaptability", "adaptive"] }
+  ]
+}

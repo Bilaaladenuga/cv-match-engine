@@ -6,7 +6,7 @@
 - [x] Phase 2 — Database Architecture (models + Alembic + PostgreSQL running)
 - [x] Phase 3 — CV Document Parser
 - [x] Phase 4 — CV Information Extraction
-- [ ] Phase 5 — Skill Taxonomy
+- [x] Phase 5 — Skill Taxonomy
 - [ ] Phase 6 — Job Description Parser
 - [ ] Phase 7 — Embedding Engine
 - [ ] Phase 8 — Skill Matching Engine
@@ -33,27 +33,30 @@
 
 ## Current Phase
 
-**Phase 5 — Skill Taxonomy**
+**Phase 6 — Job Description Parser**
 
-## Phase 4 — Completed Tasks
+## Phase 5 — Completed Tasks
 
-1. ✅ Skill extraction — dictionary-driven alias matching with word-boundary safety (Python, React, PostgreSQL, Docker, AWS + aliases like `js` → JavaScript)
-2. ✅ Work experience extraction — company, role, start/end dates, duration in months from patterns like `Role | Company | Jan 2020 - Dec 2022`
-3. ✅ Date handling — month-precision end dates are inclusive (Jan 2020 – Dec 2022 = 36 mo), year-only ranges exclusive (2019–2021 = 24 mo); `Present` supported
-4. ✅ Education extraction — degree type, field of study, institution, year
-5. ✅ Certification extraction — certification name, issuer, year (AWS, PMI/PMP, Kubernetes, etc.)
-6. ✅ Job title extraction — title + seniority from experience text
-7. ✅ Total years of experience calculation from parsed entries
-8. ✅ `CandidateProfileBuilder` — assembles name/email/phone/summary/skills/experience/education/certs/titles into one structured profile with `to_dict()`
-9. ✅ End-to-end pipeline verified on sample CV: name, email, 8.7 yrs, 19 skills, 3 job entries, education
-10. ✅ 27 extraction tests (77 total passing), Ruff clean
+1. ✅ Taxonomy extracted from code into a data file: `backend/app/nlp/skill_taxonomy.json` (118 skills, schema_version field)
+2. ✅ 12 categories with labels/descriptions: programming, frontend, backend, database, cloud, devops, data_science, machine_learning, gis, design, tools, soft_skills
+3. ✅ `SkillTaxonomy` loader (`app/nlp/taxonomy.py`) — canonical alias resolution, `canonicalize()`, category lookups, `lookup_items()`
+4. ✅ Data integrity enforced at insert time: duplicate canonicals, unknown categories, and ambiguous aliases raise `SkillTaxonomyError`
+5. ✅ Runtime extension API: `register_skill()` (merges into existing skills, auto-creates categories, rejects stolen aliases)
+6. ✅ Extensible loading: `load_taxonomy(path)`, env override `SKILL_TAXONOMY_PATH`, cached default instance
+7. ✅ Taxonomy cleanup — fixed conflicting mappings: SQL → database (MySQL stays distinct), "ruby on rails" → Ruby on Rails (not Ruby), removed ".net" from C# aliases (now its own skill), dropped opencv from Computer Vision
+8. ✅ Spec examples verified: `JS`/`Javascript`/`Java Script` → JavaScript, `Postgres`/`PostgreSQL database` → PostgreSQL
+9. ✅ New-category coverage: machine learning (TensorFlow, PyTorch, sklearn, Keras, XGBoost, LLM, NLP…), GIS (QGIS, ArcGIS, GeoPandas, PostGIS, Leaflet, Mapbox…), design (Figma, Photoshop, Canva, UI/UX), soft skills (Communication, Leadership, Agile…)
+10. ✅ Word-boundary safety: single-letter alias "r" requires whitespace edges (R&D is not matched); short aliases ("ml", "go") never match inside larger words
+11. ✅ Extractor rewritten on top of the taxonomy — public API unchanged, no test breakage
+12. ✅ 27 taxonomy tests (104 total passing), Ruff clean
 
 ## Test Summary
 
 - 11 model tests — passing
 - 39 parser tests — passing
 - 27 extraction tests — passing
-- **Total: 77 tests passing**
+- 27 taxonomy tests — passing
+- **Total: 104 tests passing**
 
 ## Known Issues
 
@@ -66,8 +69,11 @@
 - **Section detection**: Regex + heuristic approach (deterministic, no ML needed)
 - **Encoding handling**: Try multiple encodings for TXT files
 - **SQLite vs PostgreSQL**: Using `sqlalchemy.types.JSON` for cross-dialect compatibility
-- **Extraction approach**: Deterministic NLP (regex + curated dictionaries) first; ML/NLP models to be layered in where rules prove unreliable (per Phase 4 spec)
+- **Extraction approach**: Deterministic NLP (regex + curated dictionaries) first; ML/NLP models layered in where rules prove unreliable
 - **Date-range convention**: Month-precision end dates treated as inclusive (person worked through that month); year-only ranges exclusive
+- **Skill taxonomy as data, not code**: Taxonomy lives in JSON so it can be extended/versioned without touching Python; validation at insert time keeps alias lookup unambiguous
+- **Canonical names are resolvable aliases**: A canonical skill name always resolves to itself, so list items like "MySQL" match exactly
+- **Extraction layers**: Exact/canonical match first (confidence 0.95), then whole-text alias scan (0.9); taxonomy and matching share one source of truth
 
 ## Infrastructure
 

@@ -1,153 +1,63 @@
 """
-Skill Extractor — identifies skill mentions in CV text.
+Skill Extractor — identifies skill mentions in CV and job text.
 
-Uses a combination of:
-1. Known skill dictionary matching
-2. Pattern-based detection
-3. Category classification
+Consumes the canonical skill taxonomy (`skill_taxonomy.json` via
+`app.nlp.taxonomy.SkillTaxonomy`) and finds every alias that appears in the
+text. Matching is case-insensitive and word-boundary safe so short aliases
+like "go", "ml" or "r" never match inside unrelated words.
+
+The extractor exposes the same API it always did (`extract_skills`,
+`extract_skills_from_list`, `ExtractedSkill`); extending the vocabulary is
+done by extending the taxonomy, not this module.
 """
 
 import re
 from dataclasses import dataclass
 
+from app.nlp.taxonomy import TAXONOMY
+
 
 @dataclass
 class ExtractedSkill:
-    """A skill extracted from CV text."""
-    name: str  # Normalized skill name
-    raw_text: str  # Original text where skill was found
-    category: str  # programming, frontend, backend, database, cloud, etc.
+    """A skill extracted from text."""
+
+    name: str  # Canonical skill name from the taxonomy
+    raw_text: str  # Original alias text where the skill was found
+    category: str  # Category id from the taxonomy
     confidence: float  # 0.0–1.0
 
 
-# Known skills organized by category.
-# Keys are canonical names; values are lists of aliases/variants.
-KNOWN_SKILLS: dict[str, dict[str, list[str]]] = {
-    "programming": {
-        "Python": ["python", "python3", "python programming"],
-        "JavaScript": ["javascript", "js", "ecmascript", "es6", "es2015"],
-        "TypeScript": ["typescript", "ts"],
-        "Java": ["java", "java se", "java ee"],
-        "C++": ["c++", "cpp", "c plus plus"],
-        "C#": ["c#", "csharp", "c sharp", ".net"],
-        "Go": ["go", "golang"],
-        "Rust": ["rust", "rustlang"],
-        "Ruby": ["ruby", "ruby on rails"],
-        "PHP": ["php"],
-        "Swift": ["swift", "swiftui"],
-        "Kotlin": ["kotlin"],
-        "R": ["r programming", "r language", " r "],
-        "Scala": ["scala"],
-        "Perl": ["perl"],
-        "Shell": ["shell", "bash", "zsh", "shell scripting"],
-        "SQL": ["sql", "mysql", "postgresql", "plsql"],
-    },
-    "frontend": {
-        "React": ["react", "reactjs", "react.js"],
-        "Next.js": ["nextjs", "next.js", "next js"],
-        "Vue.js": ["vue", "vuejs", "vue.js"],
-        "Angular": ["angular", "angularjs"],
-        "Svelte": ["svelte", "sveltekit"],
-        "HTML": ["html", "html5"],
-        "CSS": ["css", "css3", "scss", "sass", "less", "tailwind", "tailwindcss"],
-        "jQuery": ["jquery"],
-        "Redux": ["redux"],
-        "GraphQL": ["graphql", "gql"],
-    },
-    "backend": {
-        "Node.js": ["nodejs", "node.js", "node js", "node"],
-        "Express": ["express", "expressjs", "express.js"],
-        "FastAPI": ["fastapi", "fast api"],
-        "Django": ["django"],
-        "Flask": ["flask"],
-        "Spring": ["spring", "spring boot", "springboot"],
-        "ASP.NET": ["asp.net", "aspnet"],
-        "Ruby on Rails": ["ruby on rails", "rails"],
-        "Laravel": ["laravel"],
-    },
-    "database": {
-        "PostgreSQL": ["postgresql", "postgres", "psql"],
-        "MySQL": ["mysql"],
-        "MongoDB": ["mongodb", "mongo"],
-        "Redis": ["redis"],
-        "Elasticsearch": ["elasticsearch", "elastic search"],
-        "SQLite": ["sqlite", "sqlite3"],
-        "DynamoDB": ["dynamodb", "dynamo db"],
-        "Cassandra": ["cassandra"],
-        "SQL": ["sql", "relational database", "rdbms"],
-    },
-    "cloud": {
-        "AWS": ["aws", "amazon web services", "ec2", "s3", "lambda", "cloudformation"],
-        "Azure": ["azure", "microsoft azure", "azure devops"],
-        "GCP": ["gcp", "google cloud", "google cloud platform"],
-        "Heroku": ["heroku"],
-        "Vercel": ["vercel"],
-        "Netlify": ["netlify"],
-    },
-    "devops": {
-        "Docker": ["docker", "dockerfile", "docker-compose"],
-        "Kubernetes": ["kubernetes", "k8s", "kubectl"],
-        "CI/CD": ["ci/cd", "cicd", "continuous integration", "continuous deployment"],
-        "Terraform": ["terraform"],
-        "Ansible": ["ansible"],
-        "Jenkins": ["jenkins"],
-        "GitHub Actions": ["github actions"],
-        "Nginx": ["nginx"],
-        "Linux": ["linux", "ubuntu", "debian", "centos"],
-        "Git": ["git", "github", "gitlab", "bitbucket"],
-    },
-    "data_science": {
-        "Machine Learning": ["machine learning", "ml", "deep learning"],
-        "TensorFlow": ["tensorflow"],
-        "PyTorch": ["pytorch"],
-        "Pandas": ["pandas"],
-        "NumPy": ["numpy", "numpy array"],
-        "Scikit-learn": ["scikit-learn", "sklearn"],
-        "Data Analysis": ["data analysis", "data analytics", "analytics"],
-        "NLP": ["nlp", "natural language processing"],
-        "Computer Vision": ["computer vision", "opencv"],
-    },
-    "tools": {
-        "Jira": ["jira"],
-        "Confluence": ["confluence"],
-        "Figma": ["figma"],
-        "Slack": ["slack"],
-        "Notion": ["notion"],
-        "VS Code": ["vs code", "visual studio code"],
-    },
-}
+def _alias_pattern(alias: str) -> str:
+    """
+    Build a safe regex for one alias.
+
+    Multi-character aliases use word boundaries (`(?<!\\w)...(?!\\w)`) so e.g.
+    "go" does not match inside "golang" or "Google". Single-character aliases
+    (only "r" in the taxonomy today) additionally require whitespace or line
+    edges on both sides, so "R&D" is not read as the R language.
+    """
+    if len(alias) == 1:
+        return rf"(?<!\S){re.escape(alias)}(?!\S)"
+    return rf"(?<!\w){re.escape(alias)}(?!\w)"
 
 
-def _build_alias_lookup() -> dict[str, tuple[str, str]]:
-    """Build a flat lookup: alias_lower → (canonical_name, category)."""
-    lookup: dict[str, tuple[str, str]] = {}
-    for category, skills in KNOWN_SKILLS.items():
-        for canonical, aliases in skills.items():
-            for alias in aliases:
-                lookup[alias.lower().strip()] = (canonical, category)
-    return lookup
-
-
-# Module-level cached lookup
-_ALIAS_LOOKUP = _build_alias_lookup()
+# Flat alias -> (canonical name, category), built once at import time
+_LOOKUP: dict[str, tuple[str, str]] = TAXONOMY.lookup_items()
 
 
 def extract_skills(text: str) -> list[ExtractedSkill]:
     """
     Extract skill mentions from text.
 
-    Scans the text for known skill aliases and returns
-    deduplicated results with category and confidence.
+    Scans the text for every taxonomy alias and returns deduplicated results
+    (one entry per canonical skill) with category and confidence.
     """
     text_lower = text.lower()
     seen: dict[str, ExtractedSkill] = {}
 
-    for alias, (canonical, category) in _ALIAS_LOOKUP.items():
-        # Require surrounding word boundaries so short aliases like "go" or
-        # "r" never match inside unrelated words
-        pattern = r"(?<!\w)" + re.escape(alias) + r"(?!\w)"
-
-        if re.search(pattern, text_lower, re.IGNORECASE) and canonical not in seen:
+    for alias, (canonical, category) in _LOOKUP.items():
+        pattern = _alias_pattern(alias)
+        if re.search(pattern, text_lower) and canonical not in seen:
             seen[canonical] = ExtractedSkill(
                 name=canonical,
                 raw_text=alias,
@@ -173,27 +83,22 @@ def extract_skills_from_list(text: str) -> list[ExtractedSkill]:
         item = item.strip().strip('"').strip("'")
         if not item:
             continue
-        # Check if this item matches a known skill
-        item_lower = item.lower().strip()
-        if item_lower in _ALIAS_LOOKUP:
-            canonical, category = _ALIAS_LOOKUP[item_lower]
+        # Exact alias/canonical match first
+        entry = TAXONOMY.resolve(item)
+        if entry is not None:
             results.append(ExtractedSkill(
-                name=canonical,
+                name=entry.name,
                 raw_text=item,
-                category=category,
+                category=entry.category,
                 confidence=0.95,
             ))
         else:
-            # Try partial matching
-            skills = extract_skills(item)
-            results.extend(skills)
+            # The item may combine several skills ("AWS Lambda", "React/Redux")
+            results.extend(extract_skills(item))
 
-    # Deduplicate
-    seen = set()
-    deduped = []
+    # Deduplicate by canonical name
+    seen: dict[str, ExtractedSkill] = {}
     for skill in results:
         if skill.name not in seen:
-            seen.add(skill.name)
-            deduped.append(skill)
-
-    return deduped
+            seen[skill.name] = skill
+    return list(seen.values())
