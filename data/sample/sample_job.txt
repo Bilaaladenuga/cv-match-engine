@@ -1,0 +1,53 @@
+Company: Cloudly Systems
+Location: London, UK
+Work type: Hybrid (Remote-friendly)
+
+Senior Frontend Engineer
+
+We are looking for a Senior Frontend Engineer to join our platform team.
+You will build and maintain our design system used by 40+ product teams.
+
+About the role
+
+Cloudly Systems builds the developer platform behind 2M+ daily users. Our
+stack is modern, typed and test-driven. We care about accessibility and
+performance budgets.
+
+Responsibilities
+
+- Design, build and ship React components used across the product
+- Optimize web performance and Core Web Vitals
+- Collaborate with designers and backend engineers on GraphQL APIs
+- Mentor junior engineers and lead code reviews
+- Write and maintain tests with Jest and Playwright
+
+Required Qualifications
+
+- 4+ years of professional experience in frontend development
+- Strong experience with React, TypeScript and Next.js
+- Solid knowledge of CSS, HTML and modern JavaScript (ES2022+)
+- Experience with scikit-learn is a plus for our data team collabs
+
+Preferred Skills
+
+- AWS or Docker experience
+- GraphQL and REST API design
+- Familiarity with PostgreSQL
+
+Nice to have: Figma workflows and UI Design fundamentals.
+
+Education
+
+Bachelor's degree in Computer Science or related field required.
+
+Certifications
+
+AWS Certified Solutions Architect preferred.
+
+What you'll get
+
+- Competitive salary and equity package
+- Remote-friendly, flexible working hours
+- Annual learning budget
+
+Apply today — we're hiring a frontend engineer who loves clean interfaces!

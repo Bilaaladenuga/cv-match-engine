@@ -31,14 +31,16 @@ def _alias_pattern(alias: str) -> str:
     """
     Build a safe regex for one alias.
 
-    Multi-character aliases use word boundaries (`(?<!\\w)...(?!\\w)`) so e.g.
-    "go" does not match inside "golang" or "Google". Single-character aliases
-    (only "r" in the taxonomy today) additionally require whitespace or line
-    edges on both sides, so "R&D" is not read as the R language.
+    Multi-character aliases use word boundaries so e.g. "go" does not match
+    inside "golang". A preceding dot also blocks a match: "js" must not match
+    inside "next.js"/"node.js" (`.` is not a word char, so a plain word
+    boundary would let it through). Single-character aliases (only "r" in the
+    taxonomy today) additionally require whitespace or line edges on both
+    sides, so "R&D" is not read as the R language.
     """
     if len(alias) == 1:
         return rf"(?<!\S){re.escape(alias)}(?!\S)"
-    return rf"(?<!\w){re.escape(alias)}(?!\w)"
+    return rf"(?<![\w.]){re.escape(alias)}(?!\w)"
 
 
 # Flat alias -> (canonical name, category), built once at import time
