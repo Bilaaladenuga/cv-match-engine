@@ -6,10 +6,13 @@ extension, and extraction of skills from the new categories (ML, GIS,
 design, soft skills).
 """
 
+import json
+
 import pytest
 
 from app.nlp.skill_extractor import extract_skills, extract_skills_from_list
 from app.nlp.taxonomy import (
+    DEFAULT_TAXONOMY_PATH,
     SkillTaxonomy,
     SkillTaxonomyError,
     load_taxonomy,
@@ -54,18 +57,31 @@ class TestTaxonomyLoading:
                 f"{skill.name} references unknown category {skill.category}"
             )
 
-    def test_no_ambiguous_aliases(self):
-        # _validate() raises on load if an alias maps to two canonicals;
-        # re-verify explicitly against every pair.
-        tax = load_taxonomy()
-        aliases = {}
-        for skill in tax.skills:
-            for alias in [skill.name] + list(skill.aliases):
-                key = alias.strip().lower()
-                assert aliases.get(key, skill.name) == skill.name, (
-                    f"alias '{key}' claimed by both '{aliases.get(key)}' and '{skill.name}'"
-                )
-                aliases[key] = skill.name
+    def test_ci_alias_collision_gate(self):
+        """
+        Gate that fails CI whenever the taxonomy file is ambiguous.
+
+        Reads the raw JSON directly (not the loader) so *all* conflicting
+        aliases are reported in one message instead of failing on the first.
+        """
+        with open(DEFAULT_TAXONOMY_PATH, encoding="utf-8") as f:
+            data = json.load(f)
+
+        claimed: dict[str, str] = {}
+        collisions: list[str] = []
+        for skill in data["skills"]:
+            for key in [skill["name"]] + skill.get("aliases", []):
+                norm = key.strip().lower()
+                if norm in claimed and claimed[norm] != skill["name"]:
+                    collisions.append(f"'{key}' -> both '{claimed[norm]}' and '{skill['name']}'")
+                else:
+                    claimed[norm] = skill["name"]
+
+        assert not collisions, (
+            "Ambiguous aliases in skill_taxonomy.json "
+            "(each alias must map to exactly one canonical):\n  "
+            + "\n  ".join(sorted(set(collisions)))
+        )
 
     def test_round_trip(self):
         tax = load_taxonomy()
@@ -128,6 +144,23 @@ class TestAliasResolution:
         assert tax.canonicalize("SQL") == "SQL"
         assert tax.resolve("SQL").category == "database"
         assert tax.canonicalize("mysql") == "MySQL"
+
+    def test_worked_example_skills_resolve(self, tax):
+        # Regression coverage for the niche skills added as a worked example
+        assert tax.canonicalize("celery") == "Celery"
+        assert tax.canonicalize("rabbit mq") == "RabbitMQ"
+        assert tax.canonicalize("rest apis") == "REST API"
+        assert tax.resolve("REST API").category == "backend"
+        assert tax.canonicalize("websockets") == "WebSocket"
+        assert tax.canonicalize("jest") == "Jest"
+        assert tax.canonicalize("py.test") == "pytest"
+        assert tax.resolve("playwright").category == "tools"
+        assert tax.resolve("cypress").category == "tools"
+        assert (
+            tax.resolve("aws certified solutions architect").name
+            == "AWS Certified Solutions Architect"
+        )
+        assert tax.resolve("google cloud certified").category == "cloud"
 
     def test_ruby_on_rails_maps_to_framework(self, tax):
         assert tax.canonicalize("rails") == "Ruby on Rails"
@@ -229,3 +262,17 @@ class TestExtractionFromTaxonomy:
         assert "Docker" in names
         assert "AWS" in names
         assert "Git" in names
+
+    def test_sample_cv_extracts_new_backend_skills(self):
+        # The sample CV lists "REST APIs" in skills and Celery in experience;
+        # both should now be recognized via the taxonomy
+        from pathlib import Path
+
+        sample = (
+            Path(__file__).resolve().parent.parent.parent / "data" / "sample" / "sample_cv.txt"
+        )
+        with open(sample, encoding="utf-8") as f:
+            text = f.read()
+        names = [s.name for s in extract_skills(text)]
+        assert "REST API" in names
+        assert "Celery" in names

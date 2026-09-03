@@ -91,6 +91,10 @@
     { "name": ".NET", "category": "backend", "aliases": [".net", "dotnet"] },
     { "name": "Ruby on Rails", "category": "backend", "aliases": ["ruby on rails", "rails"] },
     { "name": "Laravel", "category": "backend", "aliases": ["laravel"] },
+    { "name": "Celery", "category": "backend", "aliases": ["celery"] },
+    { "name": "RabbitMQ", "category": "backend", "aliases": ["rabbitmq", "rabbit mq"] },
+    { "name": "REST API", "category": "backend", "aliases": ["rest api", "rest apis", "restful api", "restful apis"] },
+    { "name": "WebSocket", "category": "backend", "aliases": ["websocket", "websockets", "web socket", "web sockets"] },
 
     { "name": "PostgreSQL", "category": "database", "aliases": ["postgresql", "postgres", "psql"] },
     { "name": "MySQL", "category": "database", "aliases": ["mysql"] },
@@ -109,6 +113,9 @@
     { "name": "Heroku", "category": "cloud", "aliases": ["heroku"] },
     { "name": "Vercel", "category": "cloud", "aliases": ["vercel"] },
     { "name": "Netlify", "category": "cloud", "aliases": ["netlify"] },
+    { "name": "AWS Certified Solutions Architect", "category": "cloud", "aliases": ["aws certified solutions architect", "aws solutions architect"] },
+    { "name": "AWS Certified Developer", "category": "cloud", "aliases": ["aws certified developer", "aws developer associate"] },
+    { "name": "Google Cloud Certified", "category": "cloud", "aliases": ["google cloud certified", "google professional cloud"] },
 
     { "name": "Docker", "category": "devops", "aliases": ["docker", "dockerfile", "docker-compose", "docker compose"] },
     { "name": "Kubernetes", "category": "devops", "aliases": ["kubernetes", "k8s", "kubectl"] },
@@ -166,6 +173,10 @@
     { "name": "Slack", "category": "tools", "aliases": ["slack"] },
     { "name": "Notion", "category": "tools", "aliases": ["notion"] },
     { "name": "VS Code", "category": "tools", "aliases": ["vs code", "visual studio code"] },
+    { "name": "pytest", "category": "tools", "aliases": ["pytest", "py.test"] },
+    { "name": "Jest", "category": "tools", "aliases": ["jest"] },
+    { "name": "Playwright", "category": "tools", "aliases": ["playwright"] },
+    { "name": "Cypress", "category": "tools", "aliases": ["cypress"] },
 
     { "name": "Leadership", "category": "soft_skills", "aliases": ["leadership", "leading teams"] },
     { "name": "Communication", "category": "soft_skills", "aliases": ["communication", "communications", "written communication", "verbal communication"] },
