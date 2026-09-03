@@ -73,6 +73,16 @@ class TestTaxonomyLoading:
         assert {s.name for s in reloaded.skills} == {s.name for s in tax.skills}
         assert reloaded.schema_version == tax.schema_version
 
+    def test_unknown_category_in_json_fails_fast(self):
+        # A typo like "dev-ops" must raise instead of silently creating a category
+        tax = load_taxonomy()
+        bad = tax.to_dict()
+        bad["skills"].append(
+            {"name": "Meson", "category": "dev-ops", "aliases": ["meson build"]}
+        )
+        with pytest.raises(SkillTaxonomyError, match="unknown category 'dev-ops'"):
+            SkillTaxonomy(bad)
+
 
 class TestAliasResolution:
     @pytest.fixture

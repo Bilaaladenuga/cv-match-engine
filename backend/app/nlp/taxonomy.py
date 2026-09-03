@@ -14,10 +14,12 @@ Extending the taxonomy:
    a job advertises a niche skill not yet in the taxonomy.
 3. Custom files: load a different/merged taxonomy via `load_taxonomy(path)`.
 
-The taxonomy enforces integrity as entries are added (at load and at runtime
-registration): duplicate canonical names, unknown categories, and aliases that
-map to more than one canonical skill raise `SkillTaxonomyError`, so the alias
-lookup stays unambiguous.
+The taxonomy enforces integrity as entries are added: duplicate canonical
+names and aliases that map to more than one canonical skill raise
+`SkillTaxonomyError`, so the alias lookup stays unambiguous. A skill in a
+JSON file must reference one of the declared categories (unknown categories
+fail fast — this also catches typos); runtime `register_skill` calls may
+introduce new categories deliberately.
 """
 
 from __future__ import annotations
@@ -98,6 +100,7 @@ class SkillTaxonomy:
                 name=entry.get("name"),
                 category=entry.get("category"),
                 aliases=entry.get("aliases", []),
+                allow_new_category=False,
             )
 
     # ------------------------------------------------------------------
@@ -192,7 +195,9 @@ class SkillTaxonomy:
     # Internals
     # ------------------------------------------------------------------
 
-    def _add_skill(self, name: str, category: str, aliases: list[str]) -> SkillDef:
+    def _add_skill(
+        self, name: str, category: str, aliases: list[str], allow_new_category: bool = True
+    ) -> SkillDef:
         if not name or not str(name).strip():
             raise SkillTaxonomyError("Skill entry missing a 'name'")
         if not category or not str(category).strip():
@@ -202,9 +207,16 @@ class SkillTaxonomy:
         category = str(category).strip()
         name_key = _normalize_key(name)
 
-        # Unknown category: auto-create it (also covers runtime extension)
+        # Unknown category: only allowed via runtime registration, so a typo in
+        # the taxonomy JSON fails fast instead of creating a bogus category
         if category not in self._categories:
-            self._categories[category] = CategoryDef(id=category, label=category.replace("_", " ").title())
+            if not allow_new_category:
+                raise SkillTaxonomyError(
+                    f"Skill '{name}' references unknown category '{category}'"
+                )
+            self._categories[category] = CategoryDef(
+                id=category, label=category.replace("_", " ").title()
+            )
 
         existing = self._by_name.get(name_key)
         if existing is not None:

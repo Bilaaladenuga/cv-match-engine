@@ -82,6 +82,8 @@ python -m scripts.seed_skills          # apply
 python -m scripts.seed_skills --dry-run  # preview without writing
 ```
 
+To add or change skills safely, read [`docs/skill-taxonomy.md`](docs/skill-taxonomy.md) first.
+
 ### Frontend Setup
 
 ```bash

@@ -57,7 +57,7 @@
 - 27 extraction tests — passing
 - 27 taxonomy tests — passing
 - 5 seed-script planner tests — passing
-- **Total: 109 tests passing**
+- **Total: 110 tests passing**
 
 ## Interim Tasks (between phases)
 
@@ -65,6 +65,8 @@
   - INSERT new skills, UPDATE stale categories, leaves orphaned DB rows alone (may be referenced by FKs)
   - `--dry-run` preview mode; planner is a pure function with unit tests
   - Verified live against PostgreSQL: 118 skills seeded, re-run is a no-op, category drift corrected
+- ✅ Taxonomy docs `docs/skill-taxonomy.md` — file format, category ids, safe add/remove/rename checklist, verification steps, runtime/custom-file extension
+- ✅ Safety hardening: a skill in the taxonomy JSON now fails fast on an unknown category id (typo protection); runtime `register_skill` still auto-creates categories
 
 ## Known Issues
 
