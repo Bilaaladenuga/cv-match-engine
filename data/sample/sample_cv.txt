@@ -1,0 +1,36 @@
+Sarah Johnson
+sarah.johnson@email.com | +1-555-123-4567 | linkedin.com/in/sarahjohnson | github.com/sarahj
+
+SUMMARY
+Senior software engineer with 6+ years of experience in full-stack development.
+Specialized in Python, React, and cloud infrastructure. Passionate about building
+scalable, reliable systems.
+
+SKILLS
+Python, JavaScript, TypeScript, React, Next.js, Node.js, PostgreSQL, Redis
+Docker, AWS, Terraform, Git, CI/CD, REST APIs, GraphQL
+
+EXPERIENCE
+Senior Software Engineer | TechCorp Inc. | 2021 - Present
+- Led development of microservices architecture serving 2M+ users
+- Reduced API response times by 40% through caching and query optimization
+- Mentored junior developers and conducted code reviews
+- Technologies: Python, FastAPI, React, PostgreSQL, AWS, Docker
+
+Software Developer | StartupXYZ | 2019 - 2021
+- Built and maintained web applications for B2B SaaS platform
+- Implemented real-time data processing pipeline with Redis and Celery
+- Improved test coverage from 45% to 85%
+- Technologies: Python, Django, React, PostgreSQL, Redis
+
+Junior Developer | WebAgency | 2018 - 2019
+- Developed responsive web applications for clients
+- Created REST APIs and integrated third-party services
+- Technologies: Python, Flask, JavaScript, HTML/CSS
+
+EDUCATION
+Bachelor of Science in Computer Science
+University of California, Berkeley | 2018
+
+CERTIFICATIONS
+AWS Certified Solutions Architect - Associate (2022)
