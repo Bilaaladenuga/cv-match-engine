@@ -55,8 +55,8 @@ def detect_file_type(file_path: str) -> str:
 
 def get_parser(file_path: str) -> BaseParser:
     """Factory: return the appropriate parser for a file type."""
-    from app.parsers.pdf_parser import PDFParser
     from app.parsers.docx_parser import DOCXParser
+    from app.parsers.pdf_parser import PDFParser
     from app.parsers.txt_parser import TXTParser
 
     file_type = detect_file_type(file_path)

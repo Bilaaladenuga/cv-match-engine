@@ -4,7 +4,7 @@ Unit tests for database ORM models.
 
 import pytest
 from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import Session
 
 from app.core.database import Base
 from app.models import (

@@ -16,7 +16,6 @@ Uses a combination of regex patterns and keyword matching to detect:
 import re
 from dataclasses import dataclass, field
 
-
 # Common section headings (case-insensitive matching)
 SECTION_PATTERNS: dict[str, list[str]] = {
     "summary": [
@@ -106,9 +105,7 @@ def _is_heading_line(line: str) -> bool:
     if stripped.isupper() and len(stripped.split()) <= 5:
         return True
     # Title Case or single word
-    if stripped.istitle() and len(stripped.split()) <= 5:
-        return True
-    return False
+    return stripped.istitle() and len(stripped.split()) <= 5
 
 
 def _classify_heading(heading: str) -> str | None:

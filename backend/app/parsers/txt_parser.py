@@ -14,7 +14,7 @@ class TXTParser(BaseParser):
     def extract_text(self, file_path: str) -> str:
         for encoding in self.ENCODINGS:
             try:
-                with open(file_path, "r", encoding=encoding) as f:
+                with open(file_path, encoding=encoding) as f:
                     return f.read()
             except (UnicodeDecodeError, UnicodeError):
                 continue

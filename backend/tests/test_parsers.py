@@ -9,14 +9,11 @@ from pathlib import Path
 import pytest
 
 from app.parsers.base import (
-    BaseParser,
     detect_file_type,
     get_parser,
-    parse_document,
 )
 from app.parsers.section_detector import (
     ContactInfo,
-    DetectedSections,
     _classify_heading,
     _extract_contact_info,
     _extract_name,
@@ -205,7 +202,7 @@ class TestSectionDetection:
         sample_path = str(SAMPLE_DATA_DIR / "sample_cv.txt")
         if not os.path.exists(sample_path):
             pytest.skip("Sample CV not found")
-        with open(sample_path, "r") as f:
+        with open(sample_path) as f:
             return f.read()
 
     def test_detects_name(self, sample_cv):

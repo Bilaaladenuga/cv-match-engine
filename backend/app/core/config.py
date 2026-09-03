@@ -4,7 +4,6 @@ Loads from environment variables and .env file.
 """
 
 from functools import lru_cache
-from typing import Optional
 
 from pydantic_settings import BaseSettings
 

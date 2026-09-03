@@ -5,8 +5,8 @@ CandidateProfile model — structured data extracted from a CV.
 from datetime import datetime
 
 from sqlalchemy import DateTime, ForeignKey, Integer, String, Text, func
-from sqlalchemy.types import JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.types import JSON
 
 from app.core.database import Base
 
