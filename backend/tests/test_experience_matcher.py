@@ -179,7 +179,8 @@ class TestPerSkillExperience:
         assert python_match.candidate > 0
         assert python_match.match_type in ("strong_match", "meets", "near_match")
 
-    def test_no_skill_mention(self):
+    def test_no_skill_mention_inferred_from_cv(self):
+        """Skill listed on CV but not in role titles → inferred from total career."""
         exps = [_exp(role="Backend Engineer", months=24)]
         skills = [_skill("Python")]
         result = match_experience(
@@ -188,7 +189,9 @@ class TestPerSkillExperience:
             required_skills=["Python"],
         )
         python_match = next(m for m in result.matches if m.dimension == "skill:Python")
-        assert python_match.match_type == "unknown"
+        # Should now be inferred, not unknown
+        assert python_match.candidate == 2.0  # 24 months = 2 years
+        assert python_match.match_type in ("near_match", "below", "meets")
 
     def test_multiple_roles_accumulate(self):
         exps = [
@@ -219,6 +222,40 @@ class TestPerSkillExperience:
         # 3 roles → confidence 0.95
         python_match = next(m for m in result.matches if m.dimension == "skill:Python")
         assert python_match.evidence.count("role(s)") == 1
+
+    def test_inferred_skill_uses_total_duration(self):
+        """Skill on CV but not in any role title gets total career duration."""
+        exps = [
+            _exp(role="Backend Dev", company="Acme", months=24),
+            _exp(role="Backend Dev", company="Beta", months=12),
+        ]
+        skills = [_skill("Python")]
+        result = match_experience(
+            experiences=exps,
+            skills=skills,
+            required_skills=["Python"],
+        )
+        python_match = next(m for m in result.matches if m.dimension == "skill:Python")
+        # 36 total months = 3 years (inferred from CV skills list)
+        assert python_match.candidate == 3.0
+        assert python_match.match_type in ("meets", "near_match")
+
+    def test_partial_role_match_bumps_to_total(self):
+        """Skill found in 1 of 3 roles gets bumped to total duration."""
+        exps = [
+            _exp(role="Python Developer", company="Acme", months=24),
+            _exp(role="Backend Dev", company="Beta", months=12),
+            _exp(role="Backend Dev", company="Gamma", months=12),
+        ]
+        skills = [_skill("Python")]
+        result = match_experience(
+            experiences=exps,
+            skills=skills,
+            required_skills=["Python"],
+        )
+        python_match = next(m for m in result.matches if m.dimension == "skill:Python")
+        # Found in 1 role (24mo) but bumped to total (48mo)
+        assert python_match.candidate == 4.0
 
 
 # ---------------------------------------------------------------------------

@@ -118,7 +118,10 @@ def estimate_skill_experience(
     - For each role, scan the role title and company for skill mentions.
     - Attribute the role's duration to any skill found in that context.
     - A skill mentioned in multiple roles accumulates total months.
-    - Confidence is based on how many distinct roles mention the skill.
+    - For skills listed on the CV but not found in any role title,
+      infer experience from total career duration (lower confidence).
+    - Confidence is based on how many distinct roles mention the skill
+      and whether the inference came from role titles or career duration.
 
     Args:
         experiences: List of WorkExperience from the CV.
@@ -128,7 +131,12 @@ def estimate_skill_experience(
         List of SkillExperience, one per skill found.
     """
     skill_map: dict[str, SkillExperience] = {}
+    total_months = sum(
+        e.duration_months for e in experiences
+        if e.duration_months is not None and e.duration_months > 0
+    )
 
+    # --- Pass 1: attribute skills from role titles / company context ---
     for exp in experiences:
         if exp.duration_months is None or exp.duration_months <= 0:
             continue
@@ -139,9 +147,6 @@ def estimate_skill_experience(
         ).lower()
 
         for skill in skills:
-            # Check if the skill name or any of its common forms appear
-            # in the role context.  We use simple substring matching here
-            # because the skill names are already canonical.
             if _skill_mentioned_in(skill.name, context):
                 if skill.name not in skill_map:
                     skill_map[skill.name] = SkillExperience(
@@ -150,22 +155,54 @@ def estimate_skill_experience(
                         confidence=0.0,
                         sources=[],
                     )
-                    skill_map[skill.name].sources = []
                 entry = skill_map[skill.name]
                 entry.estimated_months += exp.duration_months
-                source_label = f"{exp.role or 'Unknown'} at {exp.company or 'Unknown'}"
+                source_label = (
+                    f"{exp.role or 'Unknown'} at {exp.company or 'Unknown'}"
+                )
                 if source_label not in entry.sources:
                     entry.sources.append(source_label)
+
+    # --- Pass 2: for CV-listed skills not found in any role title,
+    #     infer from total career duration.  A skill on the CV means
+    #     the candidate has used it, but without role context we can't
+    #     pinpoint when — so we spread it across the full career span
+    #     with lower confidence.
+    # ---
+    if total_months > 0:
+        for skill in skills:
+            if skill.name not in skill_map:
+                skill_map[skill.name] = SkillExperience(
+                    skill=skill.name,
+                    estimated_months=total_months,
+                    confidence=0.50,  # Inferred, not confirmed from roles
+                    sources=["CV skills section (inferred)"],
+                )
+            elif skill_map[skill.name].estimated_months < total_months:
+                # Skill was found in some roles but not all — bump up to
+                # total career duration with adjusted confidence.
+                entry = skill_map[skill.name]
+                entry.estimated_months = total_months
+                entry.confidence = min(entry.confidence + 0.10, 0.90)
+                note = "CV skills section (inferred)"
+                if note not in entry.sources:
+                    entry.sources.append(note)
 
     # Compute confidence: based on number of roles mentioning the skill
     for entry in skill_map.values():
         n_roles = len(entry.sources)
-        if n_roles >= 3:
+        # Only count actual role entries, not the inferred note
+        actual_roles = [
+            s for s in entry.sources
+            if s != "CV skills section (inferred)"
+        ]
+        if len(actual_roles) >= 3:
             entry.confidence = 0.95
-        elif n_roles == 2:
+        elif len(actual_roles) == 2:
             entry.confidence = 0.85
-        elif n_roles == 1:
+        elif len(actual_roles) == 1:
             entry.confidence = 0.70
+        # else: keep the inferred confidence (0.50)
 
     return sorted(skill_map.values(), key=lambda s: s.estimated_months, reverse=True)
 
