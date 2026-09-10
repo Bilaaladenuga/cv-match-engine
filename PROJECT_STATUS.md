@@ -43,7 +43,7 @@
 
 ## Test Summary
 ```
-Total: 321 tests passing
+Total: 330 tests passing (9 API tests NEW)
 - 11 model tests
 - 39 parser tests
 - 27 extraction tests
@@ -68,6 +68,19 @@ transformers==4.44.2
 scikit-learn==1.9.0
 numpy==1.26.4
 ```
+
+### Post-Phase 11 Additions ✅
+- `docs/ml-methodology.md` — full methodology: pipeline architecture,
+  per-component scoring design, weight rationale, feature engineering plan,
+  dataset plan, evaluation metrics, versioning, ethics
+- `POST /api/matches` endpoint (Phase 19 slice):
+  - `app/schemas/match.py` — MatchRequest/MatchResponse Pydantic models
+  - `app/services/matching_service.py` — pipeline orchestration + Match/
+    MatchExplanation persistence (entity mode: stored resume+job; text mode:
+    raw texts persisted under a demo user until Phase 20 auth)
+  - `app/api/matches.py` — route with 400/404/422 error mapping
+  - 9 API tests on SQLite in-memory (no live PostgreSQL needed)
+  - custom weights accepted and validated via request body
 
 ## Next Up
 **Phase 12 — Train a Real ML Model** (dataset acquisition, feature engineering,

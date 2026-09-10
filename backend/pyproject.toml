@@ -4,7 +4,7 @@ line-length = 100
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "UP", "B", "SIM"]
-ignore = ["E501"]
+ignore = ["E501", "B008"]  # B008: FastAPI Depends() in defaults is idiomatic
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

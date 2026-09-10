@@ -190,7 +190,6 @@ def estimate_skill_experience(
 
     # Compute confidence: based on number of roles mentioning the skill
     for entry in skill_map.values():
-        n_roles = len(entry.sources)
         # Only count actual role entries, not the inferred note
         actual_roles = [
             s for s in entry.sources
