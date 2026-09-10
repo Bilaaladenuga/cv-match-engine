@@ -1,7 +1,7 @@
 # PROJECT STATUS
 
 ## Current Phase
-**Phase 10 — Semantic Matching** ✅ COMPLETE
+**Phase 11 — Matching Model** ✅ COMPLETE
 
 ## Completed Phases
 
@@ -24,11 +24,26 @@
 - Human-readable labels: Strong/Good/Moderate/Fair/Weak
 - One-paragraph explanation with strongest/weakest signal and disclaimer
 - Direct skill-to-skill similarity comparison
-- 22 semantic matcher tests passing
+
+### Phase 11 — Matching Model ✅
+- `app/scoring/weights.py` — validated, configurable MATCHING_WEIGHTS
+  (skills 0.40 / semantic 0.25 / experience 0.20 / education 0.10 / certs 0.05)
+  with documented rationale; normalization + JSON persistence helpers
+- `app/scoring/education_matcher.py` — deterministic degree-level hierarchy
+  (HS < Associate < Bachelor < Master < PhD; higher satisfies lower) + field
+  relevance (exact 1.0 / related 0.8 / tech-family 0.6 / unrelated 0.3),
+  blended 60/40; neutral 0.85 when no requirement
+- `app/scoring/certification_matcher.py` — exact/alias (local alias map),
+  semantic fallback at >= 0.80 threshold, no partial credit for credentials;
+  neutral 0.85 when no certs required
+- `app/scoring/matching_model.py` — hybrid score with clamped components,
+  weighted-impact-ranked positive/negative factors, grounded recommendations,
+  ethics disclaimer, model_version stamping (match-model-v0.1)
+- End-to-end verified: sample CV vs sample JD = 87/100 (Excellent match)
 
 ## Test Summary
 ```
-Total: 265 tests passing
+Total: 321 tests passing
 - 11 model tests
 - 39 parser tests
 - 27 extraction tests
@@ -38,7 +53,10 @@ Total: 265 tests passing
 - 36 embedding tests
 - 35 skill matcher tests
 - 26 experience matcher tests
-- 22 semantic matcher tests (NEW)
+- 22 semantic matcher tests
+- 11 weights tests (NEW)
+- 22 education/cert matcher tests (NEW)
+- 23 matching model tests (NEW)
 - 3 misc
 ```
 
@@ -52,4 +70,5 @@ numpy==1.26.4
 ```
 
 ## Next Up
-**Phase 11 — Matching Model** (hybrid scoring architecture with configurable weights)
+**Phase 12 — Train a Real ML Model** (dataset acquisition, feature engineering,
+baseline models: Logistic Regression / Random Forest / Gradient Boosting)
