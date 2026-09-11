@@ -11,6 +11,8 @@ from app.nlp.experience_extractor import (
     WorkExperience,
     calculate_total_years_experience,
     extract_experience,
+    extract_experience_from_text,
+    extract_total_years_claim,
 )
 from app.nlp.skill_extractor import ExtractedSkill, extract_skills, extract_skills_from_list
 from app.nlp.title_extractor import extract_titles
@@ -128,8 +130,17 @@ def build_candidate_profile(cv_text: str) -> CandidateProfile:
     work_experience: list[WorkExperience] = []
     if exp_section:
         work_experience = extract_experience(exp_section)
+    if not work_experience:
+        # Fallback: prose-style CVs without a detectable experience section
+        # still carry dated employment lines; scan the full text for them
+        # (education lines are excluded — their dates are graduation years).
+        work_experience = extract_experience_from_text(cv_text)
 
     total_years = calculate_total_years_experience(work_experience)
+    if total_years is None:
+        # Last resort: a stated claim, e.g. "thirteen years of experience".
+        # Self-reported, not verified — but strictly better than nothing.
+        total_years = extract_total_years_claim(cv_text)
 
     # Step 4: Extract education
     edu_section = sections.get_section_text("education")

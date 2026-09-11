@@ -228,3 +228,85 @@ def calculate_total_years_experience(experiences: list[WorkExperience]) -> float
     if not has_data:
         return None
     return round(total_months / 12, 1)
+
+
+# ---------------------------------------------------------------------------
+# Full-text fallback (CVs without a detectable experience section)
+# ---------------------------------------------------------------------------
+
+# Lines that look like education entries, not jobs — scanning full text, a
+# date range next to "B.S." or "University" is a graduation date, not tenure.
+_EDU_LINE_HINTS = re.compile(
+    r"\b(b\.?s\.?c?\.?|b\.?a\.?|m\.?s\.?c?\.?|m\.?a\.?|m\.?b\.?a|ph\.?d\.?|"
+    r"bachelor|master|associate degree|diploma|graduat(?:e|ed|ing)|degree|"
+    r"university|college|institute|school of|education)\b",
+    re.IGNORECASE,
+)
+
+
+def extract_experience_from_text(text: str) -> list[WorkExperience]:
+    """
+    Fallback for prose-style CVs with no detectable experience section.
+
+    Scans every line for a date range accompanied by role/company text,
+    skipping education-looking lines (their dates are graduation years).
+    Reuses the per-line parsing of `extract_experience`.
+    """
+    experiences: list[WorkExperience] = []
+    seen: set[tuple] = set()
+    for line in text.strip().split("\n"):
+        stripped = line.strip()
+        if not stripped or len(stripped) < 5:
+            continue
+        if _EDU_LINE_HINTS.search(stripped):
+            continue
+        if not DATE_RANGE_PATTERN.search(stripped):
+            continue
+        # Require at least one alphabetic word besides the dates (a bare
+        # "2019 - 2021" line carries no role/company evidence).
+        if not re.search(r"[A-Za-z]{3,}", DATE_RANGE_PATTERN.sub(" ", stripped)):
+            continue
+        for exp in extract_experience(stripped):
+            key = (exp.role, exp.company, exp.start_date, exp.end_date)
+            if key not in seen:
+                seen.add(key)
+                experiences.append(exp)
+    return experiences
+
+
+# ---------------------------------------------------------------------------
+# Prose years-of-experience claims ("thirteen years of experience")
+# ---------------------------------------------------------------------------
+
+_WORD_YEARS = {
+    "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
+    "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10,
+    "eleven": 11, "twelve": 12, "thirteen": 13, "fourteen": 14,
+    "fifteen": 15, "sixteen": 16, "seventeen": 17, "eighteen": 18,
+    "nineteen": 19, "twenty": 20,
+}
+
+YEARS_CLAIM_PATTERN = re.compile(
+    r"\b(\d{1,2}|" + "|".join(_WORD_YEARS) + r")\s*\+?\s*"
+    r"years?'?(?:\s+of)?\s+(?:professional\s+|relevant\s+|hands-on\s+|"
+    r"proven\s+|extensive\s+|valuable\s+|direct\s+|industry\s+)?experience\b",
+    re.IGNORECASE,
+)
+
+
+def extract_total_years_claim(text: str) -> float | None:
+    """
+    Extract a stated total years-of-experience claim from prose.
+
+    Handles "13 years of experience", "five+ years experience",
+    "3 years' professional experience". Returns the maximum claim found
+    (a CV may restate its tenure in several places), or None when no claim
+    is present. This is the candidate's own statement, not verified history.
+    """
+    best: float | None = None
+    for match in YEARS_CLAIM_PATTERN.finditer(text):
+        token = match.group(1).lower()
+        years = float(_WORD_YEARS.get(token, token))
+        if best is None or years > best:
+            best = years
+    return best

@@ -8,6 +8,7 @@ import pytest
 
 from app.nlp.job_parser import (
     JobProfile,
+    _trim_education_field,
     extract_education_requirement,
     extract_experience_requirement,
     extract_job_title,
@@ -257,3 +258,37 @@ class TestEdgeCases:
         )
         assert {"React", "Node.js", "MongoDB"} <= names(profile, "required_skills")
         assert names(profile, "preferred_skills") == {"Go"}
+
+
+class TestEducationFieldTrimRegressions:
+    """Regression: _trim_education_field looped forever on single trailer words.
+
+    Found via the Phase 12 dataset — a JD containing '...in in...' produced a
+    field capture of one trailer word, and rsplit on a single word returned the
+    same string, so the trim never terminated (the API would hang).
+    """
+
+    def test_trim_single_trailer_words(self):
+        for word in ("in", "or", "required", "a", "and"):
+            assert _trim_education_field(word) == ""
+
+    def test_trim_still_strips_trailing_qualifiers(self):
+        assert _trim_education_field("Computer Science or related field required") == "Computer Science"
+        assert _trim_education_field("Mechanical Engineering") == "Mechanical Engineering"
+
+    def test_education_requirement_lone_preposition_returns_fast(self):
+        # "degree in in ..." -> field capture starts at "in required"; before the
+        # fix the trim loop never terminated on it.
+        req = extract_education_requirement("Bachelor s degree in in required")
+        assert req is not None
+        assert req["field"] in (None, "")
+
+    def test_full_parse_with_repeated_preposition(self):
+        profile = parse_job_description(
+            "We need a Masters degree in in Computer Science or equivalent. "
+            "The role is a software engineer building backend systems."
+        )
+        assert profile.education is not None
+        # "in in Computer Science" -> first "in" collapses to "" but the real
+        # field must survive the trim.
+        assert profile.education["field"] == "Computer Science"

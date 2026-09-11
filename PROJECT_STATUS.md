@@ -1,7 +1,7 @@
 # PROJECT STATUS
 
 ## Current Phase
-**Phase 11 — Matching Model** ✅ COMPLETE
+**Phase 12 — Dataset & Feature Engineering** ✅ COMPLETE (model training next)
 
 ## Completed Phases
 
@@ -41,25 +41,6 @@
   ethics disclaimer, model_version stamping (match-model-v0.1)
 - End-to-end verified: sample CV vs sample JD = 87/100 (Excellent match)
 
-## Test Summary
-```
-Total: 330 tests passing (9 API tests NEW)
-- 11 model tests
-- 39 parser tests
-- 27 extraction tests
-- 27 taxonomy tests
-- 5 seed skills tests
-- 34 job parser tests
-- 36 embedding tests
-- 35 skill matcher tests
-- 26 experience matcher tests
-- 22 semantic matcher tests
-- 11 weights tests (NEW)
-- 22 education/cert matcher tests (NEW)
-- 23 matching model tests (NEW)
-- 3 misc
-```
-
 ## Key Dependencies
 ```
 torch==2.4.1+cpu
@@ -82,6 +63,44 @@ numpy==1.26.4
   - 9 API tests on SQLite in-memory (no live PostgreSQL needed)
   - custom weights accepted and validated via request body
 
+### Phase 12 — Dataset & Feature Engineering ✅
+- Dataset: `cnamuangtoun/resume-job-description-fit` (HF) — 6,241 train /
+  1,759 test CV-JD pairs, labels No/Potential/Good Fit; stored under
+  `data/raw/` (gitignored), cleaned + profiled in `data/processed/`
+  (30 dupes removed; ~50/25/25 label split)
+- `ml/preprocessing/build_dataset.py` — download/clean/profile
+- Canonical feature builder: `backend/app/ml/feature_extraction.py`
+  (train/serve consistency — same engines as inference), 16 features:
+  skill overlap/coverage, semantic similarity, experience gap +
+  **experience_data_available missingness gate**, seniority, education,
+  certifications, title similarity, skill-count metadata
+- `ml/features/extract_features.py` — batch extractor with checkpoint/resume
+  (600 train + 300 test rows extracted, 0 failures, ~0.7 rows/s CPU)
+- **Bugs found & fixed via dataset validation:**
+  - `_trim_education_field` infinite loop on single-word trailer captures
+    ("...in in...") — would hang the live API; regression tests added
+  - Experience extraction caught 0/40 dataset resumes (over-fit to
+    sectioned CV formats): added full-text fallback scan
+    (`extract_experience_from_text`, education lines excluded) + prose
+    years-claim parser (`extract_total_years_claim`, digits + words,
+    "thirteen years of experience")
+  - Unknown candidate years no longer encoded as a negative gap (missing ≠ bad)
+- Separation verified: top discriminators are skill counts, experience gap,
+  required coverage, semantic similarity (Good vs No Fit)
+
+## Test Summary
+```
+Total: 355 tests passing
+- 11 model / 39 parser / 27 extraction / 27 taxonomy / 5 seed skills
+- 38 job parser tests (+4 infinite-loop regressions)
+- 36 embedding / 35 skill matcher / 26 experience matcher / 22 semantic
+- 11 weights / 22 education+cert / 23 matching model / 9 API (SQLite)
+- 10 experience-extractor fallback tests (NEW)
+- 11 feature extraction tests (NEW)
+- 3 misc
+```
+
 ## Next Up
-**Phase 12 — Train a Real ML Model** (dataset acquisition, feature engineering,
-baseline models: Logistic Regression / Random Forest / Gradient Boosting)
+**Phase 12 (continued) — Train baseline models** on the extracted feature
+tables: Logistic Regression / Random Forest / Gradient Boosting, then
+Phase 13 evaluation (accuracy, per-class F1, confusion matrix, Precision@K).

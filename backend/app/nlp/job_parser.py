@@ -343,12 +343,19 @@ def _trim_education_field(field: str) -> str:
     """
     cleaned = field.strip().rstrip(".,;:")
     changed = True
-    while changed:
+    while changed and cleaned:
         changed = False
-        last = cleaned.rsplit(maxsplit=1)[-1].lower() if cleaned else ""
-        if last in _FIELD_TRAILER_WORDS:
-            cleaned = cleaned.rsplit(maxsplit=1)[0]
+        parts = cleaned.rsplit(maxsplit=1)
+        if parts[-1].lower() in _FIELD_TRAILER_WORDS:
+            # len(parts) == 1 means the whole string is a trailer word;
+            # emptying it ends the loop (rsplit would otherwise return the
+            # same single word forever).
+            cleaned = parts[0] if len(parts) > 1 else ""
             changed = True
+    # Doubled preposition artifact ("degree in in X"): the regex consumes the
+    # first "in" and the field capture starts at the second one.
+    if cleaned[:3].lower() == "in " and len(cleaned) > 3:
+        cleaned = cleaned[3:].strip()
     return cleaned
 
 
