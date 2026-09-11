@@ -15,7 +15,14 @@ Design decisions
     - Weights live in app/scoring/weights.py and are validated, never
       hard-coded at call sites (Phase 12+ will learn them from data).
     - Every result carries a model_version so historical reports stay
-      reproducible (Phase 23).
+      reproducible (Phase 23). When the Phase 12 trained classifier is
+      available it joins as a sixth component and the version becomes
+      "match-model-v0.1+<trained version>"; without it the engine is the
+      pure deterministic hybrid.
+    - ML component weight: the five engine weights are scaled by 0.75 and
+      the trained model takes 0.25. The model stays a supplementary signal
+      (baseline accuracy ~0.44 on 3 classes) while the explainable engine
+      remains primary; ratios between engine components are unchanged.
     - The model NEVER claims hiring probability: the score is "model-
       estimated compatibility" and the output text says so explicitly
       (ethics requirement, Phase 27).
@@ -36,6 +43,10 @@ from app.scoring.weights import DEFAULT_MATCHING_WEIGHTS, validate_weights
 # Bump when scoring behaviour changes in a way that alters results.
 # Format: match-model-v<MAJOR>.<MINOR>  (minor = tuning, major = redesign)
 MODEL_VERSION = "match-model-v0.1"
+
+# Share of the total weight given to the trained model when it is available;
+# the engine weights keep their relative ratios and share the remainder.
+ML_WEIGHT_SHARE = 0.25
 
 # Score → human-readable band (0–100 scale)
 _BANDS: list[tuple[float, str]] = [
@@ -100,6 +111,7 @@ class MatchResult:
     negative_factors: list[str] = field(default_factory=list)
     recommendations: list[str] = field(default_factory=list)
     disclaimer: str = _ETHICS_DISCLAIMER
+    ml_details: dict | None = None  # per-class probabilities when ML joined
 
     def to_dict(self) -> dict:
         return {
@@ -113,6 +125,7 @@ class MatchResult:
             "negative_factors": self.negative_factors,
             "recommendations": self.recommendations,
             "disclaimer": self.disclaimer,
+            "ml_details": self.ml_details,
         }
 
 
@@ -144,6 +157,11 @@ class MatcherInputs:
     # Phase 11 deterministic matchers
     education_match: object                 # EducationMatch (exposes score)
     certification_match: object             # CertificationMatchResult
+
+    # Phase 12 trained classifier result (MLScorerResult or None). Anything
+    # exposing fit_score / label / model_version works — duck-typed so the
+    # model stays unit-testable without the artifact.
+    ml_result: object | None = None
 
     # Free-text context used to build recommendations
     job_title: str | None = None
@@ -184,6 +202,12 @@ def _raw(component: str, inputs: MatcherInputs) -> tuple[float, str]:
     if component == "education":
         r = inputs.education_match
         return float(getattr(r, "score", 0.85)), getattr(r, "evidence", "")
+
+    if component == "ml_model":
+        r = inputs.ml_result
+        label = getattr(r, "label", "")
+        evidence = f"Trained fit model says: {label or 'unknown'} ({float(getattr(r, 'fit_score', 0.0)):.2f})"
+        return float(getattr(r, "fit_score", 0.0)), evidence
 
     if component == "certifications":
         r = inputs.certification_match
@@ -228,6 +252,14 @@ def _recommendations(inputs: MatcherInputs) -> list[str]:
     return recs
 
 
+def _display_name(component: str) -> str:
+    """Human-readable component name for explanations."""
+    return {
+        "ml_model": "ML model",
+        "certifications": "Certifications",
+    }.get(component, component.capitalize())
+
+
 def compute_match_score(
     inputs: MatcherInputs,
     weights: dict[str, float] | None = None,
@@ -236,19 +268,46 @@ def compute_match_score(
     Compute the hybrid compatibility score.
 
     Args:
-        inputs: outputs of the phase 8-11 engines.
-        weights: optional override; validated against the canonical keys.
+        inputs: outputs of the phase 8-11 engines, plus optionally the
+            Phase 12 trained-model result (inputs.ml_result).
+        weights: optional override for the ENGINE weights; validated against
+            the canonical keys. When the trained model is available the
+            engine weights are scaled to share 1 - ML_WEIGHT_SHARE of the
+            total, keeping their relative ratios.
     """
     w = validate_weights(weights or DEFAULT_MATCHING_WEIGHTS)
 
+    ml = inputs.ml_result
+    if ml is not None:
+        scale = 1.0 - ML_WEIGHT_SHARE
+        engine_weights = {name: w[name] * scale for name in w}
+        ml_weight = ML_WEIGHT_SHARE
+    else:
+        engine_weights = dict(w)
+        ml_weight = 0.0
+
+    component_names = (
+        "skills", "semantic", "experience", "education", "certifications"
+    )
     components: list[ComponentScore] = []
-    for name in ("skills", "semantic", "experience", "education", "certifications"):
+    for name in component_names:
         raw, evidence = _raw(name, inputs)
         components.append(
             ComponentScore(
                 name=name,
                 raw_score=max(0.0, min(1.0, raw)),
-                weight=w[name],
+                weight=engine_weights[name],
+                weighted=0.0,
+                evidence=evidence,
+            )
+        )
+    if ml is not None:
+        raw, evidence = _raw("ml_model", inputs)
+        components.append(
+            ComponentScore(
+                name="ml_model",
+                raw_score=max(0.0, min(1.0, raw)),
+                weight=ml_weight,
                 weighted=0.0,
                 evidence=evidence,
             )
@@ -264,25 +323,48 @@ def compute_match_score(
     # --- Explainability: rank by weighted impact ---------------------------
     ranked = sorted(components, key=lambda c: c.weighted, reverse=True)
     positive = [
-        f"{c.name.capitalize()}: {c.evidence} (+{c.weighted * 100:.0f} pts)"
+        f"{_display_name(c.name)}: {c.evidence} (+{c.weighted * 100:.0f} pts)"
         for c in ranked
         if c.raw_score >= 0.75 and c.weighted > 0
     ]
     negative = [
-        f"{c.name.capitalize()}: {c.evidence} (+{c.weighted * 100:.0f} of "
+        f"{_display_name(c.name)}: {c.evidence} (+{c.weighted * 100:.0f} of "
         f"{c.weight * 100:.0f} possible pts)"
         for c in sorted(components, key=lambda c: c.weighted)
         if c.raw_score < 0.75
     ]
+
+    # --- Version stamp: hybrid + trained model -----------------------------
+    version = MODEL_VERSION
+    ml_details = None
+    if ml is not None:
+        trained_version = getattr(ml, "model_version", "") or ""
+        suffix = trained_version.replace("match-model-", "")
+        version = f"{MODEL_VERSION}+{suffix}" if suffix else MODEL_VERSION
+        probabilities = getattr(ml, "probabilities", None)
+        ml_details = {
+            "fit_score": round(float(getattr(ml, "fit_score", 0.0)), 4),
+            "label": getattr(ml, "label", None),
+            "probabilities": {
+                k: round(float(v), 4) for k, v in (probabilities or {}).items()
+            },
+            "weight_share": ML_WEIGHT_SHARE,
+            "trained_model_version": trained_version,
+        }
+
+    out_weights = dict(engine_weights)
+    if ml is not None:
+        out_weights["ml_model"] = ml_weight
 
     return MatchResult(
         overall_score=overall,
         overall_percent=percent,
         band=score_band(percent),
         components=components,
-        weights=w,
-        model_version=MODEL_VERSION,
+        weights=out_weights,
+        model_version=version,
         positive_factors=positive,
         negative_factors=negative,
         recommendations=_recommendations(inputs),
+        ml_details=ml_details,
     )

@@ -103,14 +103,42 @@ numpy==1.26.4
   annotator judgment); more rows + richer features are the levers,
   documented in docs/ml-methodology.md
 
+### Trained Model Wired Into the Matching Engine ✅
+- `app/ml/model_scorer.py` — lazy, cached artifact loading (gitignored;
+  returns None on fresh clones so the engine degrades to pure hybrid);
+  expected-value mapping P(Good) + 0.5·P(Potential) -> 0..1;
+  feature-schema contract enforced against the artifact's feature_names_in_
+- `app/ml/feature_extraction.py` refactored: `build_feature_vector`
+  assembles features from engine outputs the service already computed —
+  the API and the batch trainer land on the same code path (train/serve
+  consistency by construction)
+- `matching_model.py`: optional sixth `ml_model` component; engine weights
+  scaled by 0.75 (ratios preserved), ML takes 0.25 (ML_WEIGHT_SHARE);
+  version stamp combines as `match-model-v0.1+v0.2-baseline`; ml_details
+  (per-class probabilities) exposed in API responses and persisted in
+  Match.feature_values
+- Live check: sample CV×JD = 85/100 Excellent (hybrid alone was 87; the
+  model's 0.857 fit score agrees)
+- API tests made artifact-agnostic (pass with or without the model file)
+- Bug caught by tests: integer-encoded classes_ (0/1/2) now mapped onto
+  canonical label names before probability lookup
+
 ## Test Summary
 ```
-Total: 355 tests passing
+Total: 366 tests passing
+- 11 model scorer / hybrid-ML integration tests (NEW)
 - 11 model / 39 parser / 27 extraction / 27 taxonomy / 5 seed skills
 - 38 job parser tests (+4 infinite-loop regressions)
 - 36 embedding / 35 skill matcher / 26 experience matcher / 22 semantic
-- 11 weights / 22 education+cert / 23 matching model / 9 API (SQLite)
-- 10 experience-extractor fallback tests (NEW)
-- 11 feature extraction tests (NEW)
+- 11 weights / 22 education+cert / 23 matching model / 12 API (SQLite)
+- 10 experience-extractor fallback tests
+- 11 feature extraction tests
 - 3 misc
 ```
+
+## Next Up
+- Finish expanding the training set to 2,100 train / 600 test rows
+  (part files extracted; merge + retrain, compare metrics vs 600 rows)
+- Phase 13 — full evaluation report (per-class metrics, Precision@K/NDCG
+  for ranking, error analysis)
+- Phase 14 — explainability: translate ML features into human factors

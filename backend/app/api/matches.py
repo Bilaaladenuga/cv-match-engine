@@ -41,6 +41,7 @@ def _build_response(match_row, output) -> MatchResponse:
         semantic=output.semantic,
         education=output.education,
         certifications=output.certifications,
+        ml_details=output.ml_details,
     )
 
 

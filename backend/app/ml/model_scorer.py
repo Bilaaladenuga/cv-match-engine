@@ -1,0 +1,165 @@
+"""
+Model Scorer — applies the Phase 12 trained classifier alongside the
+deterministic hybrid engine.
+
+The model is a 3-class fit classifier (No / Potential / Good Fit) over the
+16 Phase 12 features. At inference it contributes two things to a match
+report:
+
+    - ml_fit_score:  P(Good Fit) + 0.5 * P(Potential Fit)  ->  0..1
+    - ml_label + per-class probabilities for explainability
+
+Design rules
+------------
+    - Lazy, cached loading from ml/models/baseline_gradient_boosting.joblib
+      (the strongest baseline in training_report.json).
+    - Artifacts are gitignored and may be absent (fresh clone, slim deploy):
+      raise ModelNotAvailableError so callers can degrade to the pure hybrid
+      engine instead of crashing. Availability is checked ONCE per process.
+    - The artifact's stored feature_names_in_ is the schema contract; if the
+      live feature dict diverges from training, scoring fails loudly rather
+      than silently producing garbage.
+    - The expected-value mapping (1.0 * P(Good) + 0.5 * P(Potential)) treats
+      the classes as ordinal and lands "Potential" mid-scale — the same
+      convention used to build the training labels' target meaning.
+"""
+
+from __future__ import annotations
+
+import logging
+from dataclasses import dataclass
+from pathlib import Path
+
+logger = logging.getLogger(__name__)
+
+REPO_ROOT = Path(__file__).resolve().parents[3]
+MODEL_PATH = REPO_ROOT / "ml" / "models" / "baseline_gradient_boosting.joblib"
+
+# Label index -> (name, value contribution). Mirrors train_baseline.py's
+# LABEL_ORDER = ["No Fit", "Potential Fit", "Good Fit"].
+_LABEL_NAMES = ["No Fit", "Potential Fit", "Good Fit"]
+_LABEL_VALUES = [0.0, 0.5, 1.0]
+
+
+class ModelNotAvailableError(RuntimeError):
+    """The trained model artifact is missing or cannot be loaded."""
+
+
+@dataclass
+class MLScorerResult:
+    """Outcome of applying the trained classifier to one feature vector."""
+
+    fit_score: float                 # expected-value score, 0..1
+    label: str                       # argmax class name
+    probabilities: dict[str, float]  # per-class probabilities
+    model_version: str               # stamped by the training script
+
+    def to_dict(self) -> dict:
+        return {
+            "fit_score": round(self.fit_score, 4),
+            "label": self.label,
+            "probabilities": {k: round(v, 4) for k, v in self.probabilities.items()},
+            "model_version": self.model_version,
+        }
+
+
+_model = None
+_load_attempted = False
+
+
+def _load_model():
+    """Load (once) the trained pipeline. Raises ModelNotAvailableError."""
+    global _model, _load_attempted
+    if _load_attempted:
+        return _model
+    _load_attempted = True
+
+    import joblib  # local import: only needed when an artifact exists
+
+    if not MODEL_PATH.exists():
+        logger.info("ML model artifact not found at %s; ML scorer disabled", MODEL_PATH)
+        return None
+    try:
+        _model = joblib.load(MODEL_PATH)
+        logger.info("ML model loaded from %s", MODEL_PATH)
+    except Exception as exc:  # corrupted artifact etc.
+        logger.warning("Failed to load ML model artifact: %s", exc)
+        _model = None
+    return _model
+
+
+def reset_model_cache() -> None:
+    """Forget the cached model (used by tests)."""
+    global _model, _load_attempted
+    _model = None
+    _load_attempted = False
+
+
+def ml_model_available() -> bool:
+    """True if the trained model is loadable in this process."""
+    return _load_model() is not None
+
+
+def score_features(features: dict[str, float]) -> MLScorerResult | None:
+    """
+    Score one feature dict with the trained classifier.
+
+    Returns None when the model artifact is unavailable — callers are
+    expected to fall back to the hybrid engine alone. Raises ValueError if
+    the feature schema diverges from training (a bug, not a degradation).
+    """
+    model = _load_model()
+    if model is None:
+        return None
+
+    import pandas as pd
+
+    expected = list(getattr(model, "feature_names_in_", []))
+    if expected:
+        missing = [name for name in expected if name not in features]
+        extra = [name for name in features if name not in expected]
+        if missing or extra:
+            raise ValueError(
+                "Feature schema mismatch with trained model: "
+                f"missing={missing}, extra={extra}"
+            )
+        feature_frame = pd.DataFrame([features])[expected]
+    else:  # pragma: no cover - artifacts always carry feature_names_in_
+        feature_frame = pd.DataFrame([features])
+
+    proba = model.predict_proba(feature_frame)[0]
+    raw_classes = [str(c) for c in model.classes_]
+    # The artifact is trained on integer-encoded labels (0/1/2 per
+    # train_baseline.py's LABEL_ORDER). Map index positions onto the canonical
+    # label names; if the model was ever retrained on raw string labels,
+    # they pass through unchanged.
+    if set(raw_classes) <= {"0", "1", "2"}:
+        classes = [_LABEL_NAMES[int(c)] for c in raw_classes]
+    else:
+        classes = raw_classes
+    probabilities = dict(zip(classes, (float(p) for p in proba), strict=True))
+
+    fit_score = sum(
+        probabilities.get(name, 0.0) * value
+        for name, value in zip(_LABEL_NAMES, _LABEL_VALUES, strict=True)
+    )
+    label = max(probabilities, key=probabilities.get) if probabilities else _LABEL_NAMES[0]
+
+    version = "match-model-v0.2-baseline"
+    try:  # read the authoritative version from the training report
+        report = REPO_ROOT / "ml" / "models" / "training_report.json"
+        if report.exists():
+            import json
+
+            version = json.loads(report.read_text(encoding="utf-8")).get(
+                "gradient_boosting", {}
+            ).get("model_version", version)
+    except Exception:  # noqa: BLE001 - version stamping must never break scoring
+        pass
+
+    return MLScorerResult(
+        fit_score=max(0.0, min(1.0, fit_score)),
+        label=label,
+        probabilities=probabilities,
+        model_version=version,
+    )

@@ -13,6 +13,8 @@ from dataclasses import dataclass
 
 from sqlalchemy.orm import Session
 
+from app.ml.feature_extraction import build_feature_vector
+from app.ml.model_scorer import score_features
 from app.ml.semantic_matcher import compute_semantic_match
 from app.models.candidate import CandidateProfile
 from app.models.job import Job
@@ -62,6 +64,7 @@ class PipelineOutput:
     semantic: dict
     education: dict
     certifications: dict
+    ml_details: dict | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -102,6 +105,25 @@ def run_pipeline(
         [c.name for c in candidate.certifications], job.certifications
     )
 
+    # Build the Phase 12 feature vector from the SAME engine outputs the
+    # hybrid model consumes (train/serve consistency — the trained
+    # classifier must see features identical to training-time ones).
+    features = build_feature_vector(
+        candidate=candidate,
+        job=job,
+        skill_match=skill_match,
+        experience_match=experience_match,
+        semantic_match=semantic_match,
+        education_match=education_match,
+        certification_match=certification_match,
+        cv_text=cv_text,
+    )
+    ml_result = None
+    try:
+        ml_result = score_features(features)
+    except Exception:  # noqa: BLE001 - ML is supplementary, never fatal
+        logger.exception("ML scorer failed; falling back to hybrid-only")
+
     result = compute_match_score(
         MatcherInputs(
             skill_match=skill_match,
@@ -109,6 +131,7 @@ def run_pipeline(
             semantic_match=semantic_match,
             education_match=education_match,
             certification_match=certification_match,
+            ml_result=ml_result,
             job_title=job.job_title,
         ),
         weights=weights,
@@ -126,6 +149,7 @@ def run_pipeline(
         semantic=semantic_match.to_dict(),
         education=education_match.to_dict(),
         certifications=certification_match.to_dict(),
+        ml_details=result.ml_details,
     )
 
 
@@ -280,6 +304,7 @@ def _persist_match(db: Session, candidate_id: int, job_id: int, output: Pipeline
             "components": {c.name: c.to_dict() for c in result.components},
             "weights": result.weights,
             "band": result.band,
+            "ml_details": result.ml_details,
         },
     )
     db.add(match_row)

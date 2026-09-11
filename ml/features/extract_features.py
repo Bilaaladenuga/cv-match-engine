@@ -31,8 +31,19 @@ sys.path.insert(0, str(BACKEND_DIR))
 from app.ml.feature_extraction import FEATURE_NAMES, extract_features  # noqa: E402
 
 
-def select_rows(df: pd.DataFrame, per_class: int | None, limit: int | None) -> pd.DataFrame:
-    """Optionally subsample: stratified per-class head, then a global cap."""
+def select_rows(
+    df: pd.DataFrame,
+    per_class: int | None = None,
+    limit: int | None = None,
+    skip_per_class: int | None = None,
+) -> pd.DataFrame:
+    """Optionally subsample: stratified per-class slice, then a global cap."""
+    if skip_per_class is not None:
+        # cumcount = per-label ordinal position, so this keeps rows
+        # [skip_per_class : skip_per_class + per_class] per label
+        # regardless of how the source CSV is ordered.
+        rank = df.groupby("label").cumcount()
+        df = df[rank >= skip_per_class]
     if per_class is not None:
         df = (
             df.groupby("label", group_keys=False)
@@ -49,6 +60,10 @@ def main() -> None:
     parser.add_argument("--split", choices=["train", "test"], required=True)
     parser.add_argument("--per-class", type=int, default=None,
                         help="Stratified subsample: take the first N rows per label")
+    parser.add_argument("--skip-per-class", type=int, default=None,
+                        help="Skip the first N rows per label before applying --per-class. "
+                             "Used to extend an existing extraction without re-processing "
+                             "rows that are already in another part file.")
     parser.add_argument("--limit", type=int, default=None, help="Global row cap")
     parser.add_argument("--checkpoint-every", type=int, default=25)
     parser.add_argument("--out", default=None, help="Output CSV path override")
@@ -58,7 +73,7 @@ def main() -> None:
     if not src.exists():
         sys.exit(f"Missing {src}; run ml/preprocessing/build_dataset.py first")
     df = pd.read_csv(src)
-    df = select_rows(df, args.per_class, args.limit)
+    df = select_rows(df, args.per_class, args.limit, args.skip_per_class)
 
     out_path = Path(args.out) if args.out else PROCESSED_DIR / f"{args.split}_features.csv"
     progress_path = out_path.with_suffix(".progress.json")
@@ -77,7 +92,9 @@ def main() -> None:
     failures = 0
     for i in range(start_idx, len(df)):
         row = df.iloc[i]
-        record = {"label": row["label"], "label_int": row["label_int"], "split_row": int(i)}
+        # row.name = index in the source CSV (preserved through the skip
+        # filter), so split_row stays globally unique across part files.
+        record = {"label": row["label"], "label_int": row["label_int"], "split_row": int(row.name)}
         try:
             record.update(extract_features(row["resume_text"], row["job_description_text"]))
         except Exception as exc:  # noqa: BLE001 - keep batch going, mark row failed

@@ -94,13 +94,20 @@ def test_text_mode_returns_full_result(client):
     assert body["model_version"].startswith("match-model-v")
     assert 0 <= body["overall_percent"] <= 100
     assert body["band"]
-    assert {c["name"] for c in body["components"]} == {
+    expected_components = {
         "skills", "semantic", "experience", "education", "certifications",
     }
+    if body["ml_details"] is not None:
+        expected_components.add("ml_model")
+    assert {c["name"] for c in body["components"]} == expected_components
     assert body["disclaimer"].startswith("This score is a model-estimated")
     # detail blocks are attached
     assert isinstance(body["skill_matches"], list) and body["skill_matches"]
     assert body["experience"]["summary"]["total_experience_years"] is not None
+    # ml_details present only when the trained artifact exists on this machine
+    if body["ml_details"] is not None:
+        assert body["model_version"].startswith("match-model-v0.1+")
+        assert "probabilities" in body["ml_details"]
 
 
 def test_entity_mode_persists_and_scores(client):
@@ -123,7 +130,10 @@ def test_entity_mode_persists_and_scores(client):
     match_row = db.get(Match, body["match_id"])
     assert match_row is not None
     assert match_row.model_version == body["model_version"]
-    assert match_row.feature_values["weights"]["skills"] == pytest.approx(0.40)
+    # ML share (0.25) is applied only when the trained artifact exists;
+    # otherwise the pure hybrid weights apply.
+    expected_skills = 0.40 * (1 - 0.25) if body["ml_details"] else 0.40
+    assert match_row.feature_values["weights"]["skills"] == pytest.approx(expected_skills)
     exp = db.query(MatchExplanation).filter_by(match_id=match_row.id).one()
     assert isinstance(exp.matched_skills, list)
     db.close()
@@ -216,5 +226,6 @@ def test_custom_weights_change_score(client):
     )
     assert resp2.status_code == 201
     custom = resp2.json()
-    assert custom["weights"]["semantic"] == pytest.approx(0.7)
+    scale = 1 - 0.25 if custom["ml_details"] else 1
+    assert custom["weights"]["semantic"] == pytest.approx(0.7 * scale)
     assert custom["overall_score"] != default["overall_score"]
