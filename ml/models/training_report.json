@@ -1,0 +1,216 @@
+{
+  "logistic_regression": {
+    "accuracy": 0.4167,
+    "macro_f1": 0.4135,
+    "per_class_f1": {
+      "No Fit": 0.493,
+      "Potential Fit": 0.3617,
+      "Good Fit": 0.3858
+    },
+    "confusion_matrix": [
+      [
+        53,
+        22,
+        25
+      ],
+      [
+        32,
+        34,
+        34
+      ],
+      [
+        30,
+        32,
+        38
+      ]
+    ],
+    "classification_report": {
+      "No Fit": {
+        "precision": 0.4608695652173913,
+        "recall": 0.53,
+        "f1-score": 0.4930232558139535,
+        "support": 100.0
+      },
+      "Potential Fit": {
+        "precision": 0.38636363636363635,
+        "recall": 0.34,
+        "f1-score": 0.3617021276595745,
+        "support": 100.0
+      },
+      "Good Fit": {
+        "precision": 0.3917525773195876,
+        "recall": 0.38,
+        "f1-score": 0.38578680203045684,
+        "support": 100.0
+      },
+      "accuracy": 0.4166666666666667,
+      "macro avg": {
+        "precision": 0.41299525963353845,
+        "recall": 0.4166666666666667,
+        "f1-score": 0.41350406183466165,
+        "support": 300.0
+      },
+      "weighted avg": {
+        "precision": 0.41299525963353845,
+        "recall": 0.4166666666666667,
+        "f1-score": 0.41350406183466165,
+        "support": 300.0
+      }
+    },
+    "mean_max_probability": 0.5262,
+    "fit_seconds": 2.2,
+    "model_version": "match-model-v0.2-baseline"
+  },
+  "random_forest": {
+    "accuracy": 0.4367,
+    "macro_f1": 0.4348,
+    "per_class_f1": {
+      "No Fit": 0.507,
+      "Potential Fit": 0.3905,
+      "Good Fit": 0.4068
+    },
+    "confusion_matrix": [
+      [
+        54,
+        29,
+        17
+      ],
+      [
+        35,
+        41,
+        24
+      ],
+      [
+        24,
+        40,
+        36
+      ]
+    ],
+    "classification_report": {
+      "No Fit": {
+        "precision": 0.4778761061946903,
+        "recall": 0.54,
+        "f1-score": 0.5070422535211268,
+        "support": 100.0
+      },
+      "Potential Fit": {
+        "precision": 0.37272727272727274,
+        "recall": 0.41,
+        "f1-score": 0.3904761904761905,
+        "support": 100.0
+      },
+      "Good Fit": {
+        "precision": 0.4675324675324675,
+        "recall": 0.36,
+        "f1-score": 0.4067796610169492,
+        "support": 100.0
+      },
+      "accuracy": 0.43666666666666665,
+      "macro avg": {
+        "precision": 0.4393786154848102,
+        "recall": 0.4366666666666667,
+        "f1-score": 0.43476603500475547,
+        "support": 300.0
+      },
+      "weighted avg": {
+        "precision": 0.4393786154848102,
+        "recall": 0.43666666666666665,
+        "f1-score": 0.4347660350047554,
+        "support": 300.0
+      }
+    },
+    "mean_max_probability": 0.5336,
+    "fit_seconds": 3.7,
+    "model_version": "match-model-v0.2-baseline"
+  },
+  "gradient_boosting": {
+    "accuracy": 0.4367,
+    "macro_f1": 0.4311,
+    "per_class_f1": {
+      "No Fit": 0.5388,
+      "Potential Fit": 0.3832,
+      "Good Fit": 0.3713
+    },
+    "confusion_matrix": [
+      [
+        59,
+        29,
+        12
+      ],
+      [
+        35,
+        41,
+        24
+      ],
+      [
+        25,
+        44,
+        31
+      ]
+    ],
+    "classification_report": {
+      "No Fit": {
+        "precision": 0.4957983193277311,
+        "recall": 0.59,
+        "f1-score": 0.5388127853881278,
+        "support": 100.0
+      },
+      "Potential Fit": {
+        "precision": 0.35964912280701755,
+        "recall": 0.41,
+        "f1-score": 0.38317757009345793,
+        "support": 100.0
+      },
+      "Good Fit": {
+        "precision": 0.4626865671641791,
+        "recall": 0.31,
+        "f1-score": 0.3712574850299401,
+        "support": 100.0
+      },
+      "accuracy": 0.43666666666666665,
+      "macro avg": {
+        "precision": 0.4393780030996426,
+        "recall": 0.4366666666666667,
+        "f1-score": 0.43108261350384197,
+        "support": 300.0
+      },
+      "weighted avg": {
+        "precision": 0.43937800309964264,
+        "recall": 0.43666666666666665,
+        "f1-score": 0.43108261350384197,
+        "support": 300.0
+      }
+    },
+    "mean_max_probability": 0.6335,
+    "fit_seconds": 3.9,
+    "model_version": "match-model-v0.2-baseline"
+  },
+  "label_mapping": {
+    "No Fit": 0,
+    "Potential Fit": 1,
+    "Good Fit": 2
+  },
+  "feature_names": [
+    "skill_overlap_ratio",
+    "required_skill_coverage",
+    "required_plus_partial",
+    "preferred_skill_coverage",
+    "semantic_similarity",
+    "experience_gap_years",
+    "experience_score",
+    "experience_data_available",
+    "seniority_match",
+    "education_level_score",
+    "education_field_score",
+    "certification_match_ratio",
+    "job_title_similarity",
+    "n_candidate_skills",
+    "n_required_skills",
+    "n_preferred_skills"
+  ],
+  "dataset": {
+    "train_rows": 600,
+    "test_rows": 300,
+    "source": "cnamuangtoun/resume-job-description-fit (subsampled 200/100 per class)"
+  }
+}

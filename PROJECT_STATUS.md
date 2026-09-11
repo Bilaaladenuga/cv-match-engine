@@ -88,6 +88,21 @@ numpy==1.26.4
 - Separation verified: top discriminators are skill counts, experience gap,
   required coverage, semantic similarity (Good vs No Fit)
 
+### Phase 12 (continued) — Baseline Models Trained ✅
+- `ml/training/train_baseline.py` — Logistic Regression (scaled, class-weighted),
+  Random Forest (balanced subsample), Gradient Boosting (sample-weighted);
+  fixed seeds; artifacts joblib-dumped to `ml/models/` (gitignored —
+  reproducible from script), metrics in `ml/models/training_report.json`
+- Test set (300 rows, 100/class): **all three ~0.42-0.44 accuracy vs 0.33
+  chance**; macro-F1 ≈ 0.41-0.43; errors concentrate in adjacent classes
+  (Potential↔Good), consistent with the ordinal label structure
+- End-to-end inference verified: sample CV×JD -> Good Fit p=0.59,
+  Potential p=0.38, No Fit p=0.03 (consistent with hybrid 87/100)
+- Honest limitations: 16 features are mostly coarse aggregate ratios;
+  Potential Fit is the hardest class (its definition is closest to
+  annotator judgment); more rows + richer features are the levers,
+  documented in docs/ml-methodology.md
+
 ## Test Summary
 ```
 Total: 355 tests passing
@@ -99,8 +114,3 @@ Total: 355 tests passing
 - 11 feature extraction tests (NEW)
 - 3 misc
 ```
-
-## Next Up
-**Phase 12 (continued) — Train baseline models** on the extracted feature
-tables: Logistic Regression / Random Forest / Gradient Boosting, then
-Phase 13 evaluation (accuracy, per-class F1, confusion matrix, Precision@K).
