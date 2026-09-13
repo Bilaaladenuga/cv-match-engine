@@ -45,13 +45,9 @@ def select_rows(
         rank = df.groupby("label").cumcount()
         df = df[rank >= skip_per_class]
     if per_class is not None:
-        df = (
-            df.groupby("label", group_keys=False)
-            .head(per_class)
-            .reset_index(drop=True)
-        )
+        df = df.groupby("label", group_keys=False).head(per_class)
     if limit is not None:
-        df = df.head(limit).reset_index(drop=True)
+        df = df.head(limit)
     return df
 
 
@@ -74,6 +70,10 @@ def main() -> None:
         sys.exit(f"Missing {src}; run ml/preprocessing/build_dataset.py first")
     df = pd.read_csv(src)
     df = select_rows(df, args.per_class, args.limit, args.skip_per_class)
+    # Keep the source-CSV index: split_row must identify the original row so
+    # part files can be merged safely and re-extraction stays deterministic.
+    # (Earlier reset_index calls here silently destroyed provenance and
+    # corrupted a merge - ordinals are only valid within a single selection.)
 
     out_path = Path(args.out) if args.out else PROCESSED_DIR / f"{args.split}_features.csv"
     progress_path = out_path.with_suffix(".progress.json")
@@ -92,8 +92,9 @@ def main() -> None:
     failures = 0
     for i in range(start_idx, len(df)):
         row = df.iloc[i]
-        # row.name = index in the source CSV (preserved through the skip
-        # filter), so split_row stays globally unique across part files.
+        # row.name = original source-CSV index, preserved through selection.
+        # split_row is therefore globally unique across train/test parts
+        # (label-blocked CSV => disjoint index ranges per split).
         record = {"label": row["label"], "label_int": row["label_int"], "split_row": int(row.name)}
         try:
             record.update(extract_features(row["resume_text"], row["job_description_text"]))

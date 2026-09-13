@@ -123,6 +123,30 @@ numpy==1.26.4
 - Bug caught by tests: integer-encoded classes_ (0/1/2) now mapped onto
   canonical label names before probability lookup
 
+## Dataset Expansion + Retrain (Phase 12 conclusion)
+- Training set expanded 600 -> 2,100 rows (700/class); test set 300 (100/class)
+- Provenance root cause fixed: extract_features.py now preserves the source
+  CSV index in split_row (reset_index had silently destroyed it, which
+  corrupted an earlier merge); all ambiguous part files deleted, tables
+  re-extracted end-to-end from scratch
+- Leakage audit: 0 exact (CV, JD) pair overlaps across the HF train/test
+  boundary; 476 CV bodies repeat across splits (upstream dataset property,
+  narrow channel with 16 aggregate features) - documented in
+  docs/ml-methodology.md as a limitation
+- Performance: embedding engine now int8-quantized (EMBEDDINGS_INT8=1
+  default) with 4 torch threads -> ~2.4x faster encode measured on this box;
+  shared by batch extraction AND API inference, so no train/serve skew;
+  cosine retention vs fp32 >= 0.95
+- Full re-extraction: 2,400 rows, 0 failures
+- Retrain results (test = 300 rows, chance = 33%):
+  - LogisticRegression acc 0.413 / macro-F1 0.404 (saturated - feature-bound)
+  - RandomForest      acc 0.430 / macro-F1 0.419
+  - GradientBoosting  acc 0.463 / macro-F1 0.451  <- best, up from ~0.44
+- Caveat: test features were re-extracted under int8 embeddings, so the
+  600->2,100 comparison is not a perfectly controlled ablation
+- Artifacts re-stamped match-model-v0.2.1-baseline; training_report.json
+  regenerated; model-scorer wiring re-verified against the new artifact
+
 ## Test Summary
 ```
 Total: 366 tests passing
@@ -137,8 +161,6 @@ Total: 366 tests passing
 ```
 
 ## Next Up
-- Finish expanding the training set to 2,100 train / 600 test rows
-  (part files extracted; merge + retrain, compare metrics vs 600 rows)
 - Phase 13 — full evaluation report (per-class metrics, Precision@K/NDCG
   for ranking, error analysis)
 - Phase 14 — explainability: translate ML features into human factors

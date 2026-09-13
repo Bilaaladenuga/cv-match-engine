@@ -45,7 +45,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 PROCESSED_DIR = REPO_ROOT / "data" / "processed"
 MODELS_DIR = REPO_ROOT / "ml" / "models"
 
-MODEL_VERSION = "match-model-v0.2-baseline"
+MODEL_VERSION = "match-model-v0.2.1-baseline"
 
 LABEL_ORDER = ["No Fit", "Potential Fit", "Good Fit"]
 
@@ -154,7 +154,9 @@ def main() -> None:
     results["dataset"] = {
         "train_rows": int(len(X_train)),
         "test_rows": int(len(X_test)),
-        "source": "cnamuangtoun/resume-job-description-fit (subsampled 200/100 per class)",
+        "source": "cnamuangtoun/resume-job-description-fit (train subsample 700/class, test 100/class; "
+                  "int8-quantized MiniLM embeddings; resume bodies may repeat across the "
+                  "upstream train/test boundary - see docs/ml-methodology.md)",
     }
     (MODELS_DIR / "training_report.json").write_text(
         json.dumps(results, indent=2), encoding="utf-8"

@@ -1,189 +1,189 @@
 {
   "logistic_regression": {
-    "accuracy": 0.4167,
-    "macro_f1": 0.4135,
+    "accuracy": 0.4133,
+    "macro_f1": 0.4042,
     "per_class_f1": {
-      "No Fit": 0.493,
-      "Potential Fit": 0.3617,
-      "Good Fit": 0.3858
-    },
-    "confusion_matrix": [
-      [
-        53,
-        22,
-        25
-      ],
-      [
-        32,
-        34,
-        34
-      ],
-      [
-        30,
-        32,
-        38
-      ]
-    ],
-    "classification_report": {
-      "No Fit": {
-        "precision": 0.4608695652173913,
-        "recall": 0.53,
-        "f1-score": 0.4930232558139535,
-        "support": 100.0
-      },
-      "Potential Fit": {
-        "precision": 0.38636363636363635,
-        "recall": 0.34,
-        "f1-score": 0.3617021276595745,
-        "support": 100.0
-      },
-      "Good Fit": {
-        "precision": 0.3917525773195876,
-        "recall": 0.38,
-        "f1-score": 0.38578680203045684,
-        "support": 100.0
-      },
-      "accuracy": 0.4166666666666667,
-      "macro avg": {
-        "precision": 0.41299525963353845,
-        "recall": 0.4166666666666667,
-        "f1-score": 0.41350406183466165,
-        "support": 300.0
-      },
-      "weighted avg": {
-        "precision": 0.41299525963353845,
-        "recall": 0.4166666666666667,
-        "f1-score": 0.41350406183466165,
-        "support": 300.0
-      }
-    },
-    "mean_max_probability": 0.5262,
-    "fit_seconds": 2.2,
-    "model_version": "match-model-v0.2-baseline"
-  },
-  "random_forest": {
-    "accuracy": 0.4367,
-    "macro_f1": 0.4348,
-    "per_class_f1": {
-      "No Fit": 0.507,
-      "Potential Fit": 0.3905,
-      "Good Fit": 0.4068
-    },
-    "confusion_matrix": [
-      [
-        54,
-        29,
-        17
-      ],
-      [
-        35,
-        41,
-        24
-      ],
-      [
-        24,
-        40,
-        36
-      ]
-    ],
-    "classification_report": {
-      "No Fit": {
-        "precision": 0.4778761061946903,
-        "recall": 0.54,
-        "f1-score": 0.5070422535211268,
-        "support": 100.0
-      },
-      "Potential Fit": {
-        "precision": 0.37272727272727274,
-        "recall": 0.41,
-        "f1-score": 0.3904761904761905,
-        "support": 100.0
-      },
-      "Good Fit": {
-        "precision": 0.4675324675324675,
-        "recall": 0.36,
-        "f1-score": 0.4067796610169492,
-        "support": 100.0
-      },
-      "accuracy": 0.43666666666666665,
-      "macro avg": {
-        "precision": 0.4393786154848102,
-        "recall": 0.4366666666666667,
-        "f1-score": 0.43476603500475547,
-        "support": 300.0
-      },
-      "weighted avg": {
-        "precision": 0.4393786154848102,
-        "recall": 0.43666666666666665,
-        "f1-score": 0.4347660350047554,
-        "support": 300.0
-      }
-    },
-    "mean_max_probability": 0.5336,
-    "fit_seconds": 3.7,
-    "model_version": "match-model-v0.2-baseline"
-  },
-  "gradient_boosting": {
-    "accuracy": 0.4367,
-    "macro_f1": 0.4311,
-    "per_class_f1": {
-      "No Fit": 0.5388,
-      "Potential Fit": 0.3832,
-      "Good Fit": 0.3713
+      "No Fit": 0.5086,
+      "Potential Fit": 0.3146,
+      "Good Fit": 0.3895
     },
     "confusion_matrix": [
       [
         59,
+        21,
+        20
+      ],
+      [
+        39,
+        28,
+        33
+      ],
+      [
+        34,
         29,
-        12
-      ],
-      [
-        35,
-        41,
-        24
-      ],
-      [
-        25,
-        44,
-        31
+        37
       ]
     ],
     "classification_report": {
       "No Fit": {
-        "precision": 0.4957983193277311,
+        "precision": 0.44696969696969696,
         "recall": 0.59,
-        "f1-score": 0.5388127853881278,
+        "f1-score": 0.5086206896551724,
         "support": 100.0
       },
       "Potential Fit": {
-        "precision": 0.35964912280701755,
-        "recall": 0.41,
-        "f1-score": 0.38317757009345793,
+        "precision": 0.358974358974359,
+        "recall": 0.28,
+        "f1-score": 0.3146067415730337,
         "support": 100.0
       },
       "Good Fit": {
-        "precision": 0.4626865671641791,
-        "recall": 0.31,
-        "f1-score": 0.3712574850299401,
+        "precision": 0.4111111111111111,
+        "recall": 0.37,
+        "f1-score": 0.3894736842105263,
         "support": 100.0
       },
-      "accuracy": 0.43666666666666665,
+      "accuracy": 0.41333333333333333,
       "macro avg": {
-        "precision": 0.4393780030996426,
-        "recall": 0.4366666666666667,
-        "f1-score": 0.43108261350384197,
+        "precision": 0.4056850556850557,
+        "recall": 0.41333333333333333,
+        "f1-score": 0.4042337051462441,
         "support": 300.0
       },
       "weighted avg": {
-        "precision": 0.43937800309964264,
-        "recall": 0.43666666666666665,
-        "f1-score": 0.43108261350384197,
+        "precision": 0.4056850556850557,
+        "recall": 0.41333333333333333,
+        "f1-score": 0.4042337051462441,
         "support": 300.0
       }
     },
-    "mean_max_probability": 0.6335,
-    "fit_seconds": 3.9,
-    "model_version": "match-model-v0.2-baseline"
+    "mean_max_probability": 0.5126,
+    "fit_seconds": 0.2,
+    "model_version": "match-model-v0.2.1-baseline"
+  },
+  "random_forest": {
+    "accuracy": 0.43,
+    "macro_f1": 0.4186,
+    "per_class_f1": {
+      "No Fit": 0.5385,
+      "Potential Fit": 0.3897,
+      "Good Fit": 0.3275
+    },
+    "confusion_matrix": [
+      [
+        63,
+        20,
+        17
+      ],
+      [
+        36,
+        38,
+        26
+      ],
+      [
+        35,
+        37,
+        28
+      ]
+    ],
+    "classification_report": {
+      "No Fit": {
+        "precision": 0.4701492537313433,
+        "recall": 0.63,
+        "f1-score": 0.5384615384615384,
+        "support": 100.0
+      },
+      "Potential Fit": {
+        "precision": 0.4,
+        "recall": 0.38,
+        "f1-score": 0.38974358974358975,
+        "support": 100.0
+      },
+      "Good Fit": {
+        "precision": 0.39436619718309857,
+        "recall": 0.28,
+        "f1-score": 0.32748538011695905,
+        "support": 100.0
+      },
+      "accuracy": 0.43,
+      "macro avg": {
+        "precision": 0.42150515030481395,
+        "recall": 0.43,
+        "f1-score": 0.4185635027740291,
+        "support": 300.0
+      },
+      "weighted avg": {
+        "precision": 0.42150515030481395,
+        "recall": 0.43,
+        "f1-score": 0.41856350277402904,
+        "support": 300.0
+      }
+    },
+    "mean_max_probability": 0.5366,
+    "fit_seconds": 2.9,
+    "model_version": "match-model-v0.2.1-baseline"
+  },
+  "gradient_boosting": {
+    "accuracy": 0.4633,
+    "macro_f1": 0.4505,
+    "per_class_f1": {
+      "No Fit": 0.5983,
+      "Potential Fit": 0.3936,
+      "Good Fit": 0.3596
+    },
+    "confusion_matrix": [
+      [
+        70,
+        13,
+        17
+      ],
+      [
+        34,
+        37,
+        29
+      ],
+      [
+        30,
+        38,
+        32
+      ]
+    ],
+    "classification_report": {
+      "No Fit": {
+        "precision": 0.5223880597014925,
+        "recall": 0.7,
+        "f1-score": 0.5982905982905983,
+        "support": 100.0
+      },
+      "Potential Fit": {
+        "precision": 0.42045454545454547,
+        "recall": 0.37,
+        "f1-score": 0.39361702127659576,
+        "support": 100.0
+      },
+      "Good Fit": {
+        "precision": 0.41025641025641024,
+        "recall": 0.32,
+        "f1-score": 0.3595505617977528,
+        "support": 100.0
+      },
+      "accuracy": 0.4633333333333333,
+      "macro avg": {
+        "precision": 0.4510330051374827,
+        "recall": 0.4633333333333333,
+        "f1-score": 0.4504860604549823,
+        "support": 300.0
+      },
+      "weighted avg": {
+        "precision": 0.45103300513748273,
+        "recall": 0.4633333333333333,
+        "f1-score": 0.4504860604549823,
+        "support": 300.0
+      }
+    },
+    "mean_max_probability": 0.5799,
+    "fit_seconds": 7.0,
+    "model_version": "match-model-v0.2.1-baseline"
   },
   "label_mapping": {
     "No Fit": 0,
@@ -209,8 +209,8 @@
     "n_preferred_skills"
   ],
   "dataset": {
-    "train_rows": 600,
+    "train_rows": 2100,
     "test_rows": 300,
-    "source": "cnamuangtoun/resume-job-description-fit (subsampled 200/100 per class)"
+    "source": "cnamuangtoun/resume-job-description-fit (train subsample 700/class, test 100/class; int8-quantized MiniLM embeddings; resume bodies may repeat across the upstream train/test boundary - see docs/ml-methodology.md)"
   }
 }

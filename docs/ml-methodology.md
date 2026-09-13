@@ -212,6 +212,33 @@ Preprocessing: dedupe identical CVs/JDs, strip contact data (§9), normalize
 through the same parsers used at inference, label distribution checked for
 imbalance before training.
 
+### 6.1 Chosen dataset & audited limitations (updated after expansion)
+
+Selected: `cnamuangtoun/resume-job-description-fit` (HuggingFace) — 6,241
+train / 1,759 test CV–JD pairs, 3-class fit labels (No / Potential / Good).
+Working subsample: **2,100 train (700/class) + 300 test (100/class)**,
+extracted with the production feature pipeline.
+
+Audited limitations (documented, not hidden):
+
+- **No exact pair leakage**: 0 identical (CV, JD) pairs across the upstream
+  train/test boundary (verified by hash audit).
+- **CV-body repetition**: 476 resume bodies appear on both sides of the
+  upstream boundary (paired with different JDs). This is a property of the
+  public dataset, not our split. With 16 aggregate features the
+  memorization channel is narrow, but ranking-style per-candidate metrics
+  (Phase 13) must respect CV grouping to avoid inflated scores.
+- **Unstructured CVs**: prose-style resumes defeated the original section
+  detector (0/40 parsed experience). Fixed via full-text fallback + stated-
+  claims parsing; `experience_data_available` flags residual missingness so
+  the model can learn it rather than treat it as a negative gap.
+- **Embedding precision**: features are computed with int8-quantized MiniLM
+  (cosine retention ≥ 0.95 vs fp32, ~2.4× faster on the CPU-only target).
+  The quantization switch is shared by training and serving so vectors stay
+  consistent (`EMBEDDINGS_INT8=0` reverts to fp32). Because the test table
+  was re-extracted under int8, the 600→2,100 metric comparison is
+  directional, not a controlled ablation.
+
 ---
 
 ## 7. Model plan & evaluation (Phases 12–13)
