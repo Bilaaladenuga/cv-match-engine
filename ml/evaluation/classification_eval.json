@@ -1,0 +1,1858 @@
+{
+  "meta": {
+    "n_rows": 1759,
+    "label_counts": {
+      "No Fit": 857,
+      "Good Fit": 458,
+      "Potential Fit": 444
+    },
+    "chance_accuracy": 0.4872086412734508
+  },
+  "results": {
+    "logistic_regression": {
+      "as_trained": {
+        "accuracy": 0.40420693575895394,
+        "macro_f1": 0.3906,
+        "per_class": {
+          "No Fit": {
+            "precision": 0.5474,
+            "recall": 0.4247,
+            "f1": 0.4783,
+            "support": 857
+          },
+          "Potential Fit": {
+            "precision": 0.3255,
+            "recall": 0.3446,
+            "f1": 0.3348,
+            "support": 444
+          },
+          "Good Fit": {
+            "precision": 0.3109,
+            "recall": 0.4236,
+            "f1": 0.3586,
+            "support": 458
+          }
+        },
+        "confusion_matrix": [
+          [
+            364,
+            214,
+            279
+          ],
+          [
+            140,
+            153,
+            151
+          ],
+          [
+            161,
+            103,
+            194
+          ]
+        ],
+        "roc_auc": {
+          "ovr_macro": 0.5761,
+          "good_vs_rest": 0.5918,
+          "no_vs_potential": 0.5617,
+          "potential_vs_good": 0.5622
+        },
+        "calibration_bins": {
+          "good_vs_rest": [
+            {
+              "range": "[0.0,0.2)",
+              "n": 384,
+              "mean_predicted": 0.128,
+              "empirical_good_rate": 0.169
+            },
+            {
+              "range": "[0.2,0.4)",
+              "n": 743,
+              "mean_predicted": 0.295,
+              "empirical_good_rate": 0.26
+            },
+            {
+              "range": "[0.4,0.6)",
+              "n": 357,
+              "mean_predicted": 0.491,
+              "empirical_good_rate": 0.266
+            },
+            {
+              "range": "[0.6,0.8)",
+              "n": 211,
+              "mean_predicted": 0.694,
+              "empirical_good_rate": 0.389
+            },
+            {
+              "range": "[0.8,1.0]",
+              "n": 64,
+              "mean_predicted": 0.878,
+              "empirical_good_rate": 0.359
+            }
+          ]
+        },
+        "errors": {
+          "n_errors": 1048,
+          "overrated": 644,
+          "underrated": 404,
+          "adjacent_errors": 608,
+          "distant_errors": 440,
+          "confusion_cells": {
+            "No Fit -> Good Fit": 279,
+            "No Fit -> Potential Fit": 214,
+            "Good Fit -> No Fit": 161,
+            "Potential Fit -> Good Fit": 151,
+            "Potential Fit -> No Fit": 140,
+            "Good Fit -> Potential Fit": 103
+          },
+          "profile_potential_to_good": {
+            "n_error_rows": 151,
+            "n_correct_rows": 153,
+            "n_candidate_skills": {
+              "error_rows": 10.497,
+              "correct_rows": 6.837,
+              "delta": 3.66
+            },
+            "n_required_skills": {
+              "error_rows": 4.497,
+              "correct_rows": 2.157,
+              "delta": 2.34
+            },
+            "n_preferred_skills": {
+              "error_rows": 1.914,
+              "correct_rows": 0.987,
+              "delta": 0.927
+            },
+            "cov_database_n": {
+              "error_rows": 0.821,
+              "correct_rows": 0.32,
+              "delta": 0.501
+            },
+            "cov_machine_learning_n": {
+              "error_rows": 0.437,
+              "correct_rows": 0.026,
+              "delta": 0.411
+            },
+            "cov_cloud_n": {
+              "error_rows": 0.45,
+              "correct_rows": 0.046,
+              "delta": 0.405
+            }
+          },
+          "profile_good_to_potential": {
+            "n_error_rows": 103,
+            "n_correct_rows": 194,
+            "n_candidate_skills": {
+              "error_rows": 8.99,
+              "correct_rows": 12.186,
+              "delta": 3.195
+            },
+            "n_preferred_skills": {
+              "error_rows": 0.592,
+              "correct_rows": 3.263,
+              "delta": 2.671
+            },
+            "n_required_skills": {
+              "error_rows": 3.058,
+              "correct_rows": 4.454,
+              "delta": 1.395
+            },
+            "cov_cloud_n": {
+              "error_rows": 0.107,
+              "correct_rows": 0.959,
+              "delta": 0.852
+            },
+            "cov_database_n": {
+              "error_rows": 0.204,
+              "correct_rows": 0.881,
+              "delta": 0.678
+            },
+            "cov_machine_learning_n": {
+              "error_rows": 0.049,
+              "correct_rows": 0.691,
+              "delta": 0.642
+            }
+          },
+          "profile_no_to_potential": {
+            "n_error_rows": 214,
+            "n_correct_rows": 364,
+            "n_candidate_skills": {
+              "error_rows": 10.21,
+              "correct_rows": 5.717,
+              "delta": 4.493
+            },
+            "experience_gap_years": {
+              "error_rows": 1.275,
+              "correct_rows": 2.344,
+              "delta": 1.069
+            },
+            "cov_frontend_n": {
+              "error_rows": 0.879,
+              "correct_rows": 0.396,
+              "delta": 0.483
+            },
+            "cov_programming_n": {
+              "error_rows": 0.869,
+              "correct_rows": 0.418,
+              "delta": 0.452
+            },
+            "n_required_skills": {
+              "error_rows": 3.192,
+              "correct_rows": 2.783,
+              "delta": 0.409
+            },
+            "education_level_score": {
+              "error_rows": 0.715,
+              "correct_rows": 0.374,
+              "delta": 0.341
+            }
+          },
+          "profile_potential_to_no": {
+            "n_error_rows": 140,
+            "n_correct_rows": 153,
+            "n_candidate_skills": {
+              "error_rows": 5.329,
+              "correct_rows": 6.837,
+              "delta": 1.508
+            },
+            "experience_gap_years": {
+              "error_rows": 1.484,
+              "correct_rows": 0.77,
+              "delta": 0.714
+            },
+            "n_required_skills": {
+              "error_rows": 2.864,
+              "correct_rows": 2.157,
+              "delta": 0.707
+            },
+            "n_preferred_skills": {
+              "error_rows": 0.6,
+              "correct_rows": 0.987,
+              "delta": 0.387
+            },
+            "cov_devops_n": {
+              "error_rows": 0.064,
+              "correct_rows": 0.307,
+              "delta": 0.243
+            },
+            "cov_database_n": {
+              "error_rows": 0.529,
+              "correct_rows": 0.32,
+              "delta": 0.208
+            }
+          },
+          "top_confident_errors": [
+            {
+              "split_row": 695,
+              "true": "No Fit",
+              "predicted": "Good Fit",
+              "confidence": 0.983,
+              "distance": 2
+            },
+            {
+              "split_row": 986,
+              "true": "Potential Fit",
+              "predicted": "Good Fit",
+              "confidence": 0.982,
+              "distance": 1
+            },
+            {
+              "split_row": 776,
+              "true": "No Fit",
+              "predicted": "Good Fit",
+              "confidence": 0.972,
+              "distance": 2
+            },
+            {
+              "split_row": 1009,
+              "true": "Potential Fit",
+              "predicted": "Good Fit",
+              "confidence": 0.969,
+              "distance": 1
+            },
+            {
+              "split_row": 1034,
+              "true": "Potential Fit",
+              "predicted": "Good Fit",
+              "confidence": 0.967,
+              "distance": 1
+            },
+            {
+              "split_row": 1143,
+              "true": "Potential Fit",
+              "predicted": "Good Fit",
+              "confidence": 0.967,
+              "distance": 1
+            },
+            {
+              "split_row": 815,
+              "true": "No Fit",
+              "predicted": "Good Fit",
+              "confidence": 0.958,
+              "distance": 2
+            },
+            {
+              "split_row": 764,
+              "true": "No Fit",
+              "predicted": "Good Fit",
+              "confidence": 0.956,
+              "distance": 2
+            },
+            {
+              "split_row": 624,
+              "true": "No Fit",
+              "predicted": "Good Fit",
+              "confidence": 0.951,
+              "distance": 2
+            },
+            {
+              "split_row": 583,
+              "true": "No Fit",
+              "predicted": "Good Fit",
+              "confidence": 0.898,
+              "distance": 2
+            }
+          ]
+        }
+      },
+      "prior_corrected": {
+        "accuracy": 0.43149516770892554,
+        "macro_f1": 0.3792,
+        "per_class": {
+          "No Fit": {
+            "precision": 0.5208,
+            "recall": 0.5986,
+            "f1": 0.557,
+            "support": 857
+          },
+          "Potential Fit": {
+            "precision": 0.3288,
+            "recall": 0.2185,
+            "f1": 0.2625,
+            "support": 444
+          },
+          "Good Fit": {
+            "precision": 0.3111,
+            "recall": 0.3253,
+            "f1": 0.318,
+            "support": 458
+          }
+        },
+        "confusion_matrix": [
+          [
+            513,
+            129,
+            215
+          ],
+          [
+            232,
+            97,
+            115
+          ],
+          [
+            240,
+            69,
+            149
+          ]
+        ],
+        "roc_auc": {
+          "ovr_macro": 0.5738,
+          "good_vs_rest": 0.585,
+          "no_vs_potential": 0.5675,
+          "potential_vs_good": 0.5528
+        },
+        "calibration_bins": {
+          "good_vs_rest": [
+            {
+              "range": "[0.0,0.2)",
+              "n": 660,
+              "mean_predicted": 0.116,
+              "empirical_good_rate": 0.217
+            },
+            {
+              "range": "[0.2,0.4)",
+              "n": 619,
+              "mean_predicted": 0.282,
+              "empirical_good_rate": 0.25
+            },
+            {
+              "range": "[0.4,0.6)",
+              "n": 279,
+              "mean_predicted": 0.484,
+              "empirical_good_rate": 0.315
+            },
+            {
+              "range": "[0.6,0.8)",
+              "n": 161,
+              "mean_predicted": 0.689,
+              "empirical_good_rate": 0.335
+            },
+            {
+              "range": "[0.8,1.0]",
+              "n": 40,
+              "mean_predicted": 0.895,
+              "empirical_good_rate": 0.45
+            }
+          ]
+        },
+        "errors": {
+          "n_errors": 1000,
+          "overrated": 459,
+          "underrated": 541,
+          "adjacent_errors": 545,
+          "distant_errors": 455,
+          "confusion_cells": {
+            "Good Fit -> No Fit": 240,
+            "Potential Fit -> No Fit": 232,
+            "No Fit -> Good Fit": 215,
+            "No Fit -> Potential Fit": 129,
+            "Potential Fit -> Good Fit": 115,
+            "Good Fit -> Potential Fit": 69
+          },
+          "profile_potential_to_good": {
+            "n_error_rows": 115,
+            "n_correct_rows": 97,
+            "n_candidate_skills": {
+              "error_rows": 11.322,
+              "correct_rows": 7.66,
+              "delta": 3.662
+            },
+            "n_required_skills": {
+              "error_rows": 4.739,
+              "correct_rows": 2.021,
+              "delta": 2.719
+            },
+            "n_preferred_skills": {
+              "error_rows": 2.304,
+              "correct_rows": 1.216,
+              "delta": 1.088
+            },
+            "cov_database_n": {
+              "error_rows": 0.948,
+              "correct_rows": 0.299,
+              "delta": 0.649
+            },
+            "cov_machine_learning_n": {
+              "error_rows": 0.53,
+              "correct_rows": 0.031,
+              "delta": 0.5
+            },
+            "cov_cloud_n": {
+              "error_rows": 0.53,
+              "correct_rows": 0.052,
+              "delta": 0.479
+            }
+          },
+          "profile_good_to_potential": {
+            "n_error_rows": 69,
+            "n_correct_rows": 149,
+            "n_candidate_skills": {
+              "error_rows": 9.362,
+              "correct_rows": 12.725,
+              "delta": 3.363
+            },
+            "n_preferred_skills": {
+              "error_rows": 0.536,
+              "correct_rows": 3.799,
+              "delta": 3.262
+            },
+            "n_required_skills": {
+              "error_rows": 3.522,
+              "correct_rows": 4.396,
+              "delta": 0.874
+            },
+            "cov_cloud_n": {
+              "error_rows": 0.174,
+              "correct_rows": 0.987,
+              "delta": 0.813
+            },
+            "cov_database_n": {
+              "error_rows": 0.261,
+              "correct_rows": 1.04,
+              "delta": 0.779
+            },
+            "cov_machine_learning_n": {
+              "error_rows": 0.072,
+              "correct_rows": 0.765,
+              "delta": 0.693
+            }
+          },
+          "profile_no_to_potential": {
+            "n_error_rows": 129,
+            "n_correct_rows": 513,
+            "n_candidate_skills": {
+              "error_rows": 10.891,
+              "correct_rows": 6.593,
+              "delta": 4.299
+            },
+            "cov_frontend_n": {
+              "error_rows": 1.116,
+              "correct_rows": 0.386,
+              "delta": 0.73
+            },
+            "experience_gap_years": {
+              "error_rows": 1.263,
+              "correct_rows": 1.92,
+              "delta": 0.657
+            },
+            "cov_programming_n": {
+              "error_rows": 1.047,
+              "correct_rows": 0.458,
+              "delta": 0.588
+            },
+            "n_required_skills": {
+              "error_rows": 3.504,
+              "correct_rows": 2.918,
+              "delta": 0.586
+            },
+            "education_level_score": {
+              "error_rows": 0.751,
+              "correct_rows": 0.403,
+              "delta": 0.349
+            }
+          },
+          "profile_potential_to_no": {
+            "n_error_rows": 232,
+            "n_correct_rows": 97,
+            "n_candidate_skills": {
+              "error_rows": 5.741,
+              "correct_rows": 7.66,
+              "delta": 1.918
+            },
+            "n_required_skills": {
+              "error_rows": 2.884,
+              "correct_rows": 2.021,
+              "delta": 0.863
+            },
+            "n_preferred_skills": {
+              "error_rows": 0.608,
+              "correct_rows": 1.216,
+              "delta": 0.609
+            },
+            "experience_gap_years": {
+              "error_rows": 1.196,
+              "correct_rows": 0.66,
+              "delta": 0.536
+            },
+            "cov_devops_n": {
+              "error_rows": 0.103,
+              "correct_rows": 0.392,
+              "delta": 0.288
+            },
+            "education_level_score": {
+              "error_rows": 0.374,
+              "correct_rows": 0.57,
+              "delta": 0.196
+            }
+          },
+          "top_confident_errors": [
+            {
+              "split_row": 986,
+              "true": "Potential Fit",
+              "predicted": "Good Fit",
+              "confidence": 0.979,
+              "distance": 1
+            },
+            {
+              "split_row": 695,
+              "true": "No Fit",
+              "predicted": "Good Fit",
+              "confidence": 0.977,
+              "distance": 2
+            },
+            {
+              "split_row": 776,
+              "true": "No Fit",
+              "predicted": "Good Fit",
+              "confidence": 0.962,
+              "distance": 2
+            },
+            {
+              "split_row": 1034,
+              "true": "Potential Fit",
+              "predicted": "Good Fit",
+              "confidence": 0.96,
+              "distance": 1
+            },
+            {
+              "split_row": 1009,
+              "true": "Potential Fit",
+              "predicted": "Good Fit",
+              "confidence": 0.96,
+              "distance": 1
+            },
+            {
+              "split_row": 1143,
+              "true": "Potential Fit",
+              "predicted": "Good Fit",
+              "confidence": 0.96,
+              "distance": 1
+            },
+            {
+              "split_row": 815,
+              "true": "No Fit",
+              "predicted": "Good Fit",
+              "confidence": 0.949,
+              "distance": 2
+            },
+            {
+              "split_row": 764,
+              "true": "No Fit",
+              "predicted": "Good Fit",
+              "confidence": 0.945,
+              "distance": 2
+            },
+            {
+              "split_row": 948,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.942,
+              "distance": 1
+            },
+            {
+              "split_row": 624,
+              "true": "No Fit",
+              "predicted": "Good Fit",
+              "confidence": 0.94,
+              "distance": 2
+            }
+          ]
+        }
+      },
+      "natural_prior": {
+        "No Fit": 0.5036,
+        "Potential Fit": 0.2493,
+        "Good Fit": 0.2471
+      }
+    },
+    "random_forest": {
+      "as_trained": {
+        "accuracy": 0.4025014212620807,
+        "macro_f1": 0.3897,
+        "per_class": {
+          "No Fit": {
+            "precision": 0.5372,
+            "recall": 0.4212,
+            "f1": 0.4722,
+            "support": 857
+          },
+          "Potential Fit": {
+            "precision": 0.2987,
+            "recall": 0.3559,
+            "f1": 0.3248,
+            "support": 444
+          },
+          "Good Fit": {
+            "precision": 0.3387,
+            "recall": 0.4127,
+            "f1": 0.372,
+            "support": 458
+          }
+        },
+        "confusion_matrix": [
+          [
+            361,
+            258,
+            238
+          ],
+          [
+            155,
+            158,
+            131
+          ],
+          [
+            156,
+            113,
+            189
+          ]
+        ],
+        "roc_auc": {
+          "ovr_macro": 0.5652,
+          "good_vs_rest": 0.5755,
+          "no_vs_potential": 0.5555,
+          "potential_vs_good": 0.5577
+        },
+        "calibration_bins": {
+          "good_vs_rest": [
+            {
+              "range": "[0.0,0.2)",
+              "n": 507,
+              "mean_predicted": 0.138,
+              "empirical_good_rate": 0.213
+            },
+            {
+              "range": "[0.2,0.4)",
+              "n": 766,
+              "mean_predicted": 0.3,
+              "empirical_good_rate": 0.249
+            },
+            {
+              "range": "[0.4,0.6)",
+              "n": 422,
+              "mean_predicted": 0.483,
+              "empirical_good_rate": 0.353
+            },
+            {
+              "range": "[0.6,0.8)",
+              "n": 64,
+              "mean_predicted": 0.644,
+              "empirical_good_rate": 0.156
+            },
+            {
+              "range": "[0.8,1.0]",
+              "n": 0,
+              "mean_predicted": null,
+              "empirical_good_rate": null
+            }
+          ]
+        },
+        "errors": {
+          "n_errors": 1051,
+          "overrated": 627,
+          "underrated": 424,
+          "adjacent_errors": 657,
+          "distant_errors": 394,
+          "confusion_cells": {
+            "No Fit -> Potential Fit": 258,
+            "No Fit -> Good Fit": 238,
+            "Good Fit -> No Fit": 156,
+            "Potential Fit -> No Fit": 155,
+            "Potential Fit -> Good Fit": 131,
+            "Good Fit -> Potential Fit": 113
+          },
+          "profile_potential_to_good": {
+            "n_error_rows": 131,
+            "n_correct_rows": 158,
+            "n_candidate_skills": {
+              "error_rows": 11.023,
+              "correct_rows": 6.278,
+              "delta": 4.744
+            },
+            "n_required_skills": {
+              "error_rows": 4.573,
+              "correct_rows": 2.468,
+              "delta": 2.104
+            },
+            "n_preferred_skills": {
+              "error_rows": 1.756,
+              "correct_rows": 1.139,
+              "delta": 0.616
+            },
+            "cov_database_n": {
+              "error_rows": 0.748,
+              "correct_rows": 0.373,
+              "delta": 0.375
+            },
+            "cov_programming_n": {
+              "error_rows": 0.87,
+              "correct_rows": 0.544,
+              "delta": 0.326
+            },
+            "cov_devops_n": {
+              "error_rows": 0.603,
+              "correct_rows": 0.316,
+              "delta": 0.287
+            }
+          },
+          "profile_good_to_potential": {
+            "n_error_rows": 113,
+            "n_correct_rows": 189,
+            "n_candidate_skills": {
+              "error_rows": 8.912,
+              "correct_rows": 12.259,
+              "delta": 3.348
+            },
+            "n_preferred_skills": {
+              "error_rows": 0.664,
+              "correct_rows": 2.825,
+              "delta": 2.162
+            },
+            "n_required_skills": {
+              "error_rows": 3.088,
+              "correct_rows": 4.651,
+              "delta": 1.562
+            },
+            "experience_gap_years": {
+              "error_rows": 1.459,
+              "correct_rows": 0.694,
+              "delta": 0.765
+            },
+            "cov_devops_n": {
+              "error_rows": 0.354,
+              "correct_rows": 0.974,
+              "delta": 0.62
+            },
+            "cov_cloud_n": {
+              "error_rows": 0.327,
+              "correct_rows": 0.868,
+              "delta": 0.54
+            }
+          },
+          "profile_no_to_potential": {
+            "n_error_rows": 258,
+            "n_correct_rows": 361,
+            "n_candidate_skills": {
+              "error_rows": 9.174,
+              "correct_rows": 6.114,
+              "delta": 3.061
+            },
+            "experience_gap_years": {
+              "error_rows": 1.276,
+              "correct_rows": 2.071,
+              "delta": 0.795
+            },
+            "cov_frontend_n": {
+              "error_rows": 0.767,
+              "correct_rows": 0.299,
+              "delta": 0.468
+            },
+            "n_required_skills": {
+              "error_rows": 3.267,
+              "correct_rows": 2.806,
+              "delta": 0.461
+            },
+            "n_preferred_skills": {
+              "error_rows": 0.593,
+              "correct_rows": 0.884,
+              "delta": 0.291
+            },
+            "required_plus_partial": {
+              "error_rows": 0.398,
+              "correct_rows": 0.179,
+              "delta": 0.219
+            }
+          },
+          "profile_potential_to_no": {
+            "n_error_rows": 155,
+            "n_correct_rows": 158,
+            "experience_gap_years": {
+              "error_rows": 1.308,
+              "correct_rows": 0.858,
+              "delta": 0.45
+            },
+            "n_preferred_skills": {
+              "error_rows": 0.735,
+              "correct_rows": 1.139,
+              "delta": 0.404
+            },
+            "cov_devops_n": {
+              "error_rows": 0.058,
+              "correct_rows": 0.316,
+              "delta": 0.258
+            },
+            "n_required_skills": {
+              "error_rows": 2.716,
+              "correct_rows": 2.468,
+              "delta": 0.248
+            },
+            "n_candidate_skills": {
+              "error_rows": 6.071,
+              "correct_rows": 6.278,
+              "delta": 0.208
+            },
+            "cov_database_n": {
+              "error_rows": 0.581,
+              "correct_rows": 0.373,
+              "delta": 0.207
+            }
+          },
+          "top_confident_errors": [
+            {
+              "split_row": 938,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.895,
+              "distance": 1
+            },
+            {
+              "split_row": 908,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.874,
+              "distance": 1
+            },
+            {
+              "split_row": 1625,
+              "true": "Good Fit",
+              "predicted": "Potential Fit",
+              "confidence": 0.837,
+              "distance": 1
+            },
+            {
+              "split_row": 1481,
+              "true": "Good Fit",
+              "predicted": "Potential Fit",
+              "confidence": 0.837,
+              "distance": 1
+            },
+            {
+              "split_row": 1542,
+              "true": "Good Fit",
+              "predicted": "Potential Fit",
+              "confidence": 0.836,
+              "distance": 1
+            },
+            {
+              "split_row": 1514,
+              "true": "Good Fit",
+              "predicted": "Potential Fit",
+              "confidence": 0.833,
+              "distance": 1
+            },
+            {
+              "split_row": 966,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.83,
+              "distance": 1
+            },
+            {
+              "split_row": 1675,
+              "true": "Good Fit",
+              "predicted": "Potential Fit",
+              "confidence": 0.828,
+              "distance": 1
+            },
+            {
+              "split_row": 883,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.82,
+              "distance": 1
+            },
+            {
+              "split_row": 1623,
+              "true": "Good Fit",
+              "predicted": "Potential Fit",
+              "confidence": 0.817,
+              "distance": 1
+            }
+          ]
+        }
+      },
+      "prior_corrected": {
+        "accuracy": 0.450255827174531,
+        "macro_f1": 0.377,
+        "per_class": {
+          "No Fit": {
+            "precision": 0.5191,
+            "recall": 0.6803,
+            "f1": 0.5889,
+            "support": 857
+          },
+          "Potential Fit": {
+            "precision": 0.3185,
+            "recall": 0.2095,
+            "f1": 0.2527,
+            "support": 444
+          },
+          "Good Fit": {
+            "precision": 0.3372,
+            "recall": 0.2533,
+            "f1": 0.2893,
+            "support": 458
+          }
+        },
+        "confusion_matrix": [
+          [
+            583,
+            139,
+            135
+          ],
+          [
+            258,
+            93,
+            93
+          ],
+          [
+            282,
+            60,
+            116
+          ]
+        ],
+        "roc_auc": {
+          "ovr_macro": 0.5644,
+          "good_vs_rest": 0.5703,
+          "no_vs_potential": 0.5627,
+          "potential_vs_good": 0.5484
+        },
+        "calibration_bins": {
+          "good_vs_rest": [
+            {
+              "range": "[0.0,0.2)",
+              "n": 784,
+              "mean_predicted": 0.117,
+              "empirical_good_rate": 0.228
+            },
+            {
+              "range": "[0.2,0.4)",
+              "n": 692,
+              "mean_predicted": 0.291,
+              "empirical_good_rate": 0.266
+            },
+            {
+              "range": "[0.4,0.6)",
+              "n": 265,
+              "mean_predicted": 0.471,
+              "empirical_good_rate": 0.343
+            },
+            {
+              "range": "[0.6,0.8)",
+              "n": 18,
+              "mean_predicted": 0.633,
+              "empirical_good_rate": 0.222
+            },
+            {
+              "range": "[0.8,1.0]",
+              "n": 0,
+              "mean_predicted": null,
+              "empirical_good_rate": null
+            }
+          ]
+        },
+        "errors": {
+          "n_errors": 967,
+          "overrated": 367,
+          "underrated": 600,
+          "adjacent_errors": 550,
+          "distant_errors": 417,
+          "confusion_cells": {
+            "Good Fit -> No Fit": 282,
+            "Potential Fit -> No Fit": 258,
+            "No Fit -> Potential Fit": 139,
+            "No Fit -> Good Fit": 135,
+            "Potential Fit -> Good Fit": 93,
+            "Good Fit -> Potential Fit": 60
+          },
+          "profile_potential_to_good": {
+            "n_error_rows": 93,
+            "n_correct_rows": 93,
+            "n_candidate_skills": {
+              "error_rows": 11.806,
+              "correct_rows": 6.484,
+              "delta": 5.323
+            },
+            "n_required_skills": {
+              "error_rows": 5.075,
+              "correct_rows": 2.097,
+              "delta": 2.978
+            },
+            "n_preferred_skills": {
+              "error_rows": 1.677,
+              "correct_rows": 0.925,
+              "delta": 0.753
+            },
+            "cov_database_n": {
+              "error_rows": 0.892,
+              "correct_rows": 0.204,
+              "delta": 0.688
+            },
+            "cov_programming_n": {
+              "error_rows": 0.968,
+              "correct_rows": 0.473,
+              "delta": 0.495
+            },
+            "cov_devops_n": {
+              "error_rows": 0.656,
+              "correct_rows": 0.333,
+              "delta": 0.323
+            }
+          },
+          "profile_good_to_potential": {
+            "n_error_rows": 60,
+            "n_correct_rows": 116,
+            "n_candidate_skills": {
+              "error_rows": 8.5,
+              "correct_rows": 14.017,
+              "delta": 5.517
+            },
+            "n_preferred_skills": {
+              "error_rows": 0.8,
+              "correct_rows": 3.578,
+              "delta": 2.778
+            },
+            "n_required_skills": {
+              "error_rows": 2.867,
+              "correct_rows": 4.603,
+              "delta": 1.737
+            },
+            "cov_cloud_n": {
+              "error_rows": 0.167,
+              "correct_rows": 0.931,
+              "delta": 0.764
+            },
+            "cov_devops_n": {
+              "error_rows": 0.483,
+              "correct_rows": 1.224,
+              "delta": 0.741
+            },
+            "experience_gap_years": {
+              "error_rows": 1.325,
+              "correct_rows": 0.641,
+              "delta": 0.684
+            }
+          },
+          "profile_no_to_potential": {
+            "n_error_rows": 139,
+            "n_correct_rows": 583,
+            "n_candidate_skills": {
+              "error_rows": 10.115,
+              "correct_rows": 6.813,
+              "delta": 3.302
+            },
+            "experience_gap_years": {
+              "error_rows": 0.787,
+              "correct_rows": 1.759,
+              "delta": 0.972
+            },
+            "cov_frontend_n": {
+              "error_rows": 1.173,
+              "correct_rows": 0.29,
+              "delta": 0.883
+            },
+            "n_preferred_skills": {
+              "error_rows": 0.309,
+              "correct_rows": 1.072,
+              "delta": 0.763
+            },
+            "n_required_skills": {
+              "error_rows": 3.691,
+              "correct_rows": 2.959,
+              "delta": 0.732
+            },
+            "cov_programming_n": {
+              "error_rows": 0.914,
+              "correct_rows": 0.52,
+              "delta": 0.394
+            }
+          },
+          "profile_potential_to_no": {
+            "n_error_rows": 258,
+            "n_correct_rows": 93,
+            "n_required_skills": {
+              "error_rows": 2.88,
+              "correct_rows": 2.097,
+              "delta": 0.783
+            },
+            "experience_gap_years": {
+              "error_rows": 1.156,
+              "correct_rows": 0.774,
+              "delta": 0.382
+            },
+            "cov_database_n": {
+              "error_rows": 0.562,
+              "correct_rows": 0.204,
+              "delta": 0.358
+            },
+            "cov_data_science_n": {
+              "error_rows": 0.244,
+              "correct_rows": 0.054,
+              "delta": 0.19
+            },
+            "n_preferred_skills": {
+              "error_rows": 1.093,
+              "correct_rows": 0.925,
+              "delta": 0.168
+            },
+            "cov_devops_n": {
+              "error_rows": 0.178,
+              "correct_rows": 0.333,
+              "delta": 0.155
+            }
+          },
+          "top_confident_errors": [
+            {
+              "split_row": 938,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.945,
+              "distance": 1
+            },
+            {
+              "split_row": 908,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.933,
+              "distance": 1
+            },
+            {
+              "split_row": 966,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.908,
+              "distance": 1
+            },
+            {
+              "split_row": 883,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.902,
+              "distance": 1
+            },
+            {
+              "split_row": 1096,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.899,
+              "distance": 1
+            },
+            {
+              "split_row": 1064,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.896,
+              "distance": 1
+            },
+            {
+              "split_row": 1215,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.885,
+              "distance": 1
+            },
+            {
+              "split_row": 1018,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.868,
+              "distance": 1
+            },
+            {
+              "split_row": 1068,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.862,
+              "distance": 1
+            },
+            {
+              "split_row": 1495,
+              "true": "Good Fit",
+              "predicted": "No Fit",
+              "confidence": 0.861,
+              "distance": 2
+            }
+          ]
+        }
+      },
+      "natural_prior": {
+        "No Fit": 0.5036,
+        "Potential Fit": 0.2493,
+        "Good Fit": 0.2471
+      }
+    },
+    "gradient_boosting": {
+      "as_trained": {
+        "accuracy": 0.40363843092666285,
+        "macro_f1": 0.388,
+        "per_class": {
+          "No Fit": {
+            "precision": 0.5589,
+            "recall": 0.4376,
+            "f1": 0.4908,
+            "support": 857
+          },
+          "Potential Fit": {
+            "precision": 0.3074,
+            "recall": 0.3649,
+            "f1": 0.3337,
+            "support": 444
+          },
+          "Good Fit": {
+            "precision": 0.3084,
+            "recall": 0.3777,
+            "f1": 0.3395,
+            "support": 458
+          }
+        },
+        "confusion_matrix": [
+          [
+            375,
+            234,
+            248
+          ],
+          [
+            142,
+            162,
+            140
+          ],
+          [
+            154,
+            131,
+            173
+          ]
+        ],
+        "roc_auc": {
+          "ovr_macro": 0.5594,
+          "good_vs_rest": 0.5611,
+          "no_vs_potential": 0.5582,
+          "potential_vs_good": 0.5343
+        },
+        "calibration_bins": {
+          "good_vs_rest": [
+            {
+              "range": "[0.0,0.2)",
+              "n": 619,
+              "mean_predicted": 0.114,
+              "empirical_good_rate": 0.208
+            },
+            {
+              "range": "[0.2,0.4)",
+              "n": 576,
+              "mean_predicted": 0.293,
+              "empirical_good_rate": 0.267
+            },
+            {
+              "range": "[0.4,0.6)",
+              "n": 374,
+              "mean_predicted": 0.487,
+              "empirical_good_rate": 0.321
+            },
+            {
+              "range": "[0.6,0.8)",
+              "n": 175,
+              "mean_predicted": 0.696,
+              "empirical_good_rate": 0.28
+            },
+            {
+              "range": "[0.8,1.0]",
+              "n": 15,
+              "mean_predicted": 0.818,
+              "empirical_good_rate": 0.4
+            }
+          ]
+        },
+        "errors": {
+          "n_errors": 1049,
+          "overrated": 622,
+          "underrated": 427,
+          "adjacent_errors": 647,
+          "distant_errors": 402,
+          "confusion_cells": {
+            "No Fit -> Good Fit": 248,
+            "No Fit -> Potential Fit": 234,
+            "Good Fit -> No Fit": 154,
+            "Potential Fit -> No Fit": 142,
+            "Potential Fit -> Good Fit": 140,
+            "Good Fit -> Potential Fit": 131
+          },
+          "profile_potential_to_good": {
+            "n_error_rows": 140,
+            "n_correct_rows": 162,
+            "n_candidate_skills": {
+              "error_rows": 10.507,
+              "correct_rows": 6.765,
+              "delta": 3.742
+            },
+            "n_required_skills": {
+              "error_rows": 4.721,
+              "correct_rows": 1.975,
+              "delta": 2.746
+            },
+            "n_preferred_skills": {
+              "error_rows": 1.0,
+              "correct_rows": 1.654,
+              "delta": 0.654
+            },
+            "cov_devops_n": {
+              "error_rows": 0.6,
+              "correct_rows": 0.265,
+              "delta": 0.335
+            },
+            "cov_machine_learning_n": {
+              "error_rows": 0.371,
+              "correct_rows": 0.086,
+              "delta": 0.285
+            },
+            "cov_programming_required": {
+              "error_rows": 0.331,
+              "correct_rows": 0.088,
+              "delta": 0.242
+            }
+          },
+          "profile_good_to_potential": {
+            "n_error_rows": 131,
+            "n_correct_rows": 173,
+            "n_candidate_skills": {
+              "error_rows": 8.962,
+              "correct_rows": 12.434,
+              "delta": 3.472
+            },
+            "n_required_skills": {
+              "error_rows": 2.679,
+              "correct_rows": 4.78,
+              "delta": 2.101
+            },
+            "experience_gap_years": {
+              "error_rows": 1.405,
+              "correct_rows": 0.517,
+              "delta": 0.888
+            },
+            "n_preferred_skills": {
+              "error_rows": 1.71,
+              "correct_rows": 2.179,
+              "delta": 0.469
+            },
+            "cov_programming_n": {
+              "error_rows": 0.733,
+              "correct_rows": 1.11,
+              "delta": 0.377
+            },
+            "cov_cloud_n": {
+              "error_rows": 0.412,
+              "correct_rows": 0.786,
+              "delta": 0.374
+            }
+          },
+          "profile_no_to_potential": {
+            "n_error_rows": 234,
+            "n_correct_rows": 375,
+            "n_candidate_skills": {
+              "error_rows": 9.966,
+              "correct_rows": 5.765,
+              "delta": 4.2
+            },
+            "experience_gap_years": {
+              "error_rows": 0.668,
+              "correct_rows": 2.346,
+              "delta": 1.678
+            },
+            "cov_frontend_n": {
+              "error_rows": 0.761,
+              "correct_rows": 0.299,
+              "delta": 0.462
+            },
+            "cov_programming_n": {
+              "error_rows": 0.812,
+              "correct_rows": 0.512,
+              "delta": 0.3
+            },
+            "n_preferred_skills": {
+              "error_rows": 1.111,
+              "correct_rows": 0.872,
+              "delta": 0.239
+            },
+            "education_level_score": {
+              "error_rows": 0.567,
+              "correct_rows": 0.367,
+              "delta": 0.199
+            }
+          },
+          "profile_potential_to_no": {
+            "n_error_rows": 142,
+            "n_correct_rows": 162,
+            "n_candidate_skills": {
+              "error_rows": 5.704,
+              "correct_rows": 6.765,
+              "delta": 1.061
+            },
+            "n_required_skills": {
+              "error_rows": 3.021,
+              "correct_rows": 1.975,
+              "delta": 1.046
+            },
+            "n_preferred_skills": {
+              "error_rows": 0.817,
+              "correct_rows": 1.654,
+              "delta": 0.837
+            },
+            "experience_gap_years": {
+              "error_rows": 1.469,
+              "correct_rows": 0.792,
+              "delta": 0.677
+            },
+            "cov_frontend_n": {
+              "error_rows": 0.38,
+              "correct_rows": 0.191,
+              "delta": 0.189
+            },
+            "cov_devops_n": {
+              "error_rows": 0.077,
+              "correct_rows": 0.265,
+              "delta": 0.188
+            }
+          },
+          "top_confident_errors": [
+            {
+              "split_row": 938,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.973,
+              "distance": 1
+            },
+            {
+              "split_row": 966,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.952,
+              "distance": 1
+            },
+            {
+              "split_row": 1064,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.949,
+              "distance": 1
+            },
+            {
+              "split_row": 1096,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.946,
+              "distance": 1
+            },
+            {
+              "split_row": 883,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.946,
+              "distance": 1
+            },
+            {
+              "split_row": 1410,
+              "true": "Good Fit",
+              "predicted": "No Fit",
+              "confidence": 0.943,
+              "distance": 2
+            },
+            {
+              "split_row": 925,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.942,
+              "distance": 1
+            },
+            {
+              "split_row": 909,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.926,
+              "distance": 1
+            },
+            {
+              "split_row": 908,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.92,
+              "distance": 1
+            },
+            {
+              "split_row": 1333,
+              "true": "Good Fit",
+              "predicted": "No Fit",
+              "confidence": 0.918,
+              "distance": 2
+            }
+          ]
+        }
+      },
+      "prior_corrected": {
+        "accuracy": 0.4252416145537237,
+        "macro_f1": 0.3695,
+        "per_class": {
+          "No Fit": {
+            "precision": 0.52,
+            "recall": 0.6079,
+            "f1": 0.5605,
+            "support": 857
+          },
+          "Potential Fit": {
+            "precision": 0.3192,
+            "recall": 0.2545,
+            "f1": 0.2832,
+            "support": 444
+          },
+          "Good Fit": {
+            "precision": 0.2829,
+            "recall": 0.2489,
+            "f1": 0.2648,
+            "support": 458
+          }
+        },
+        "confusion_matrix": [
+          [
+            521,
+            156,
+            180
+          ],
+          [
+            222,
+            113,
+            109
+          ],
+          [
+            259,
+            85,
+            114
+          ]
+        ],
+        "roc_auc": {
+          "ovr_macro": 0.5588,
+          "good_vs_rest": 0.5553,
+          "no_vs_potential": 0.5648,
+          "potential_vs_good": 0.5234
+        },
+        "calibration_bins": {
+          "good_vs_rest": [
+            {
+              "range": "[0.0,0.2)",
+              "n": 829,
+              "mean_predicted": 0.1,
+              "empirical_good_rate": 0.229
+            },
+            {
+              "range": "[0.2,0.4)",
+              "n": 536,
+              "mean_predicted": 0.29,
+              "empirical_good_rate": 0.271
+            },
+            {
+              "range": "[0.4,0.6)",
+              "n": 263,
+              "mean_predicted": 0.484,
+              "empirical_good_rate": 0.338
+            },
+            {
+              "range": "[0.6,0.8)",
+              "n": 130,
+              "mean_predicted": 0.688,
+              "empirical_good_rate": 0.262
+            },
+            {
+              "range": "[0.8,1.0]",
+              "n": 1,
+              "mean_predicted": 0.844,
+              "empirical_good_rate": 0.0
+            }
+          ]
+        },
+        "errors": {
+          "n_errors": 1011,
+          "overrated": 445,
+          "underrated": 566,
+          "adjacent_errors": 572,
+          "distant_errors": 439,
+          "confusion_cells": {
+            "Good Fit -> No Fit": 259,
+            "Potential Fit -> No Fit": 222,
+            "No Fit -> Good Fit": 180,
+            "No Fit -> Potential Fit": 156,
+            "Potential Fit -> Good Fit": 109,
+            "Good Fit -> Potential Fit": 85
+          },
+          "profile_potential_to_good": {
+            "n_error_rows": 109,
+            "n_correct_rows": 113,
+            "n_candidate_skills": {
+              "error_rows": 11.486,
+              "correct_rows": 6.619,
+              "delta": 4.867
+            },
+            "n_required_skills": {
+              "error_rows": 4.89,
+              "correct_rows": 1.92,
+              "delta": 2.97
+            },
+            "n_preferred_skills": {
+              "error_rows": 0.991,
+              "correct_rows": 1.628,
+              "delta": 0.637
+            },
+            "experience_gap_years": {
+              "error_rows": 0.743,
+              "correct_rows": 0.419,
+              "delta": 0.325
+            },
+            "cov_devops_n": {
+              "error_rows": 0.633,
+              "correct_rows": 0.327,
+              "delta": 0.306
+            },
+            "cov_programming_required": {
+              "error_rows": 0.367,
+              "correct_rows": 0.094,
+              "delta": 0.273
+            }
+          },
+          "profile_good_to_potential": {
+            "n_error_rows": 85,
+            "n_correct_rows": 114,
+            "n_candidate_skills": {
+              "error_rows": 9.6,
+              "correct_rows": 13.105,
+              "delta": 3.505
+            },
+            "n_required_skills": {
+              "error_rows": 2.753,
+              "correct_rows": 4.158,
+              "delta": 1.405
+            },
+            "n_preferred_skills": {
+              "error_rows": 1.906,
+              "correct_rows": 2.965,
+              "delta": 1.059
+            },
+            "experience_gap_years": {
+              "error_rows": 1.64,
+              "correct_rows": 0.599,
+              "delta": 1.041
+            },
+            "cov_backend_n": {
+              "error_rows": 0.176,
+              "correct_rows": 0.57,
+              "delta": 0.394
+            },
+            "cov_programming_n": {
+              "error_rows": 0.812,
+              "correct_rows": 1.105,
+              "delta": 0.293
+            }
+          },
+          "profile_no_to_potential": {
+            "n_error_rows": 156,
+            "n_correct_rows": 521,
+            "n_candidate_skills": {
+              "error_rows": 11.154,
+              "correct_rows": 6.37,
+              "delta": 4.783
+            },
+            "experience_gap_years": {
+              "error_rows": 0.613,
+              "correct_rows": 1.889,
+              "delta": 1.277
+            },
+            "cov_frontend_n": {
+              "error_rows": 0.872,
+              "correct_rows": 0.338,
+              "delta": 0.534
+            },
+            "n_preferred_skills": {
+              "error_rows": 1.244,
+              "correct_rows": 0.914,
+              "delta": 0.33
+            },
+            "cov_programming_n": {
+              "error_rows": 0.821,
+              "correct_rows": 0.572,
+              "delta": 0.249
+            },
+            "job_title_similarity": {
+              "error_rows": 0.291,
+              "correct_rows": 0.068,
+              "delta": 0.222
+            }
+          },
+          "profile_potential_to_no": {
+            "n_error_rows": 222,
+            "n_correct_rows": 113,
+            "n_required_skills": {
+              "error_rows": 2.973,
+              "correct_rows": 1.92,
+              "delta": 1.053
+            },
+            "experience_gap_years": {
+              "error_rows": 1.332,
+              "correct_rows": 0.419,
+              "delta": 0.913
+            },
+            "n_preferred_skills": {
+              "error_rows": 1.045,
+              "correct_rows": 1.628,
+              "delta": 0.583
+            },
+            "n_candidate_skills": {
+              "error_rows": 6.203,
+              "correct_rows": 6.619,
+              "delta": 0.417
+            },
+            "cov_data_science_n": {
+              "error_rows": 0.275,
+              "correct_rows": 0.08,
+              "delta": 0.195
+            },
+            "cov_frontend_n": {
+              "error_rows": 0.342,
+              "correct_rows": 0.15,
+              "delta": 0.192
+            }
+          },
+          "top_confident_errors": [
+            {
+              "split_row": 938,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.986,
+              "distance": 1
+            },
+            {
+              "split_row": 966,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.976,
+              "distance": 1
+            },
+            {
+              "split_row": 1064,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.974,
+              "distance": 1
+            },
+            {
+              "split_row": 1096,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.973,
+              "distance": 1
+            },
+            {
+              "split_row": 883,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.972,
+              "distance": 1
+            },
+            {
+              "split_row": 1410,
+              "true": "Good Fit",
+              "predicted": "No Fit",
+              "confidence": 0.971,
+              "distance": 2
+            },
+            {
+              "split_row": 925,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.971,
+              "distance": 1
+            },
+            {
+              "split_row": 909,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.962,
+              "distance": 1
+            },
+            {
+              "split_row": 908,
+              "true": "Potential Fit",
+              "predicted": "No Fit",
+              "confidence": 0.959,
+              "distance": 1
+            },
+            {
+              "split_row": 1333,
+              "true": "Good Fit",
+              "predicted": "No Fit",
+              "confidence": 0.958,
+              "distance": 2
+            }
+          ]
+        }
+      },
+      "natural_prior": {
+        "No Fit": 0.5036,
+        "Potential Fit": 0.2493,
+        "Good Fit": 0.2471
+      }
+    }
+  }
+}

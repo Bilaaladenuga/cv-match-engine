@@ -160,12 +160,12 @@ def _write_markdown(results: dict) -> None:
 
     def table(group_key: str, all_results: dict) -> list[str]:
         rows = [
-            "| Model | P@3 | R@3 | N@3 | P@5 | R@5 | N@5 | P@10 | R@10 | N@10 | random N@5 | groups |",
+            "| Model | P@3 | rand P@3 | R@3 | N@3 | rand N@3 | P@5 | rand P@5 | R@5 | N@5 | rand N@5 | groups |",
             "|---|---|---|---|---|---|---|---|---|---|---|---|",
         ]
         for name, agg in all_results[group_key].items():
             p, r, n = agg["precision_at_k"], agg["recall_at_k"], agg["ndcg_at_k"]
-            rb = agg["random_baseline_ndcg"]
+            rbp, rbn = agg["random_baseline_precision_at_k"], agg["random_baseline_ndcg"]
 
             def cell(k: str, d: dict[str, float], metric_agg: dict) -> str:
                 # A metric cell is only meaningful when at least one group of
@@ -178,27 +178,32 @@ def _write_markdown(results: dict) -> None:
                 return metric_agg["n_groups_used"].get(k, 0)
 
             rows.append(
-                f"| {name} | {cell('3', p, agg)} | {cell('3', r, agg)} | {cell('3', n, agg)} "
-                f"| {cell('5', p, agg)} | {cell('5', r, agg)} | {cell('5', n, agg)} "
-                f"| {cell('10', p, agg)} | {cell('10', r, agg)} | {cell('10', n, agg)} "
-                f"| {rb['5'] if groups_at('5', agg) else 'n/a'} | {groups_at('5', agg)} |"
+                f"| {name} | {cell('3', p, agg)} | {cell('3', rbp, agg)} | {cell('3', r, agg)} | {cell('3', n, agg)} | {cell('3', rbn, agg)} "
+                f"| {cell('5', p, agg)} | {cell('5', rbp, agg)} | {cell('5', r, agg)} | {cell('5', n, agg)} | {cell('5', rbn, agg)} "
+                f"| {groups_at('5', agg)} |"
             )
         return rows
 
     lines += table("jd_groups", results)
     lines += [
         "",
-        "### Interpretation (JD slates)",
+        "### Interpretation (JD slates, full test set)",
         "",
-        "- P@5 ~ 0.80 means 4 of the top-5 shortlisted candidates are relevant",
-        "  (Potential or Good Fit) - directly usable as a recruiter shortlist.",
-        "- The random baseline is high (~0.88 NDCG@5) because slates are large",
-        "  (up to 15 candidates) and mostly relevant, so almost any ordering",
-        "  puts relevant items near the top. The honest signal is the LIFT over",
-        "  random (~+0.05-0.08 NDCG@5, ~+0.06-0.08 NDCG@3), not the raw value.",
-        "- Random Forest edges out the other models on NDCG@3/5 despite losing",
-        "  on pointwise accuracy to Logistic Regression - ordering quality and",
-        "  thresholding quality are different skills.",
+        "- The full 1,759-row set is imbalanced (857 No / 444 Potential / 458",
+        "  Good), so relevant candidates are the MINORITY in a slate. This is",
+        "  the honest production distribution - the earlier 300-row balanced",
+        "  sample was an easier, non-representative regime (NDCG@5 ~0.94 there",
+        "  vs ~0.71-0.73 here).",
+        "- NDCG@5 lift over random: +0.05 to +0.10 depending on model - the",
+        "  models DO put the strongest candidates (Good Fit, gain 2) near the",
+        "  top of a slate.",
+        "- P@5 shows NO lift over random (~0.50 both): the models surface",
+        "  Good fits but cannot separate Potential Fit from No Fit when the",
+        "  relevant class is the minority. Binary shortlist precision is the",
+        "  weak spot - consistent with Potential Fit being the weakest class",
+        "  in classification too.",
+        "- Practical read: the ranking is useful for surfacing excellent",
+        "  candidates, not for binary go/no-go shortlisting.",
         "",
         "## CV groups - one candidate, many jobs (exploratory)",
         "",
@@ -206,13 +211,22 @@ def _write_markdown(results: dict) -> None:
         "boundary, so per-CV aggregates may be optimistic. See",
         "docs/ml-methodology.md section 6.1.",
         "",
-        "NOTE: only 1-3 CV groups in the 300-row sample reach the minimum",
-        "group size - these numbers are NOT statistically meaningful. A",
-        "reliable per-candidate evaluation needs the full test set extracted",
-        "(1,759 rows) and is deferred until the feature pipeline is fast enough.",
-        "",
     ]
     lines += table("cv_groups", results)
+    lines += [
+        "",
+        "### Interpretation (CV groups)",
+        "",
+        "- 177 CV groups with >=4 applications (1,224 rows) - statistically",
+        "  meaningful, unlike the earlier 300-row sample.",
+        "- There is NO lift over random on any metric for any model: ordering",
+        "  a candidate's job fits is currently at chance level. The features",
+        "  aggregate the whole CV, so they capture what the candidate IS but",
+        "  barely vary across jobs - a listwise comparison problem our",
+        "  pointwise model cannot see. Likely fixes: per-pair interaction",
+        "  features or a pairwise/listwise objective.",
+        "",
+    ]
 
     (EVAL_DIR / "ranking_eval.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
     print(f"Wrote {EVAL_DIR / 'ranking_eval.md'}")

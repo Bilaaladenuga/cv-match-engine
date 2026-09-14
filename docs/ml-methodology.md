@@ -274,6 +274,36 @@ Forest, Gradient Boosting. Metrics:
   raw value — is the honest signal (Random Forest: +0.08 NDCG@5).
 - **Calibration:** reliability curves if scores are exposed as probabilities.
 
+### 7.1 Results on the full test set (Phase 13 complete)
+
+Full reports: `ml/evaluation/classification_eval.md` (per-class metrics,
+confusion matrices, ordinal FP/FN error analysis, calibration,
+prior-corrected variant) and `ml/evaluation/ranking_eval.md`. Headline
+findings, stated honestly:
+
+- **Classification:** no baseline beats the 0.487 majority-class accuracy
+  (best prior-corrected: 0.450); best Good-vs-rest ROC-AUC 0.592 (LogReg).
+  The trained models' value is grade separation and slate ordering, not
+  thresholded labels.
+- **Ranking (JD slates):** NDCG@5 lift over random +0.05–0.10 (GB best);
+  binary shortlist precision shows no lift — models surface *Good* fits
+  but cannot separate Potential from No when relevant is the minority.
+- **Ranking (CV groups):** no lift over random — pointwise aggregate
+  features cannot rank one candidate's jobs against each other (listwise
+  problem).
+- **Overconfidence**: top calibration bin predicts ~0.88 Good probability
+  vs ~0.36 empirical — a direct consequence of training on the stratified
+  (uniform-prior) table; a Saerens-style prior correction recovers 3–5
+  accuracy points but not discrimination. Raw probabilities are never
+  shown to users as confidence.
+- **Volume-proxy shortcut**: error-row feature deltas show overrated
+  candidates list ~10.5 skills vs ~6.8 for correctly-graded rows — 'long
+  CV' is conflated with 'good fit'; CV-length normalization is the first
+  candidate for the next feature generation.
+
+These findings drive the Phase 14 explainability design and the v0.4
+feature roadmap; see `docs/model-card.md` for the full card.
+
 An honest evaluation includes error analysis (false positives = candidates
 overrated by the model; false negatives = underrated), class imbalance
 handling, and explicit dataset-limitation notes. A single high metric is

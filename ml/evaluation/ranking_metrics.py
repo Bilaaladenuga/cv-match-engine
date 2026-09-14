@@ -91,6 +91,8 @@ class GroupAggregates:
     n_groups_used: dict[int, int] = field(default_factory=dict)
     n_rows_used: dict[int, int] = field(default_factory=dict)
     random_baseline_ndcg: dict[int, float] = field(default_factory=dict)
+    random_baseline_precision_at_k: dict[int, float] = field(default_factory=dict)
+    random_baseline_recall_at_k: dict[int, float] = field(default_factory=dict)
     skipped_groups: int = 0
 
 
@@ -117,6 +119,8 @@ def evaluate_grouped_ranking(
     p_sums = {k: 0.0 for k in k_values}
     r_sums = {k: 0.0 for k in k_values}
     n_sums = {k: 0.0 for k in k_values}
+    rand_p_sums = {k: 0.0 for k in k_values}
+    rand_r_sums = {k: 0.0 for k in k_values}
     rand_sums = {k: 0.0 for k in k_values}
     rng = np.random.default_rng(seed)
 
@@ -134,6 +138,8 @@ def evaluate_grouped_ranking(
                 ordered.assign(_perm=perm_scores).sort_values("_perm", ascending=False)[gain_col].to_list()
             )
             rand_sums[k] += ndcg(perm_gains[:k])
+            rand_p_sums[k] += precision_at_k(perm_gains, k)
+            rand_r_sums[k] += recall_at_k(perm_gains, k)
             agg.n_groups_used[k] = agg.n_groups_used.get(k, 0) + 1
             agg.n_rows_used[k] = agg.n_rows_used.get(k, 0) + len(gains)
 
@@ -144,6 +150,8 @@ def evaluate_grouped_ranking(
         agg.recall_at_k[k] = r_sums[k] / n_used if n_used else 0.0
         agg.ndcg_at_k[k] = n_sums[k] / n_used if n_used else 0.0
         agg.random_baseline_ndcg[k] = rand_sums[k] / n_used if n_used else 0.0
+        agg.random_baseline_precision_at_k[k] = rand_p_sums[k] / n_used if n_used else 0.0
+        agg.random_baseline_recall_at_k[k] = rand_r_sums[k] / n_used if n_used else 0.0
     agg.skipped_groups = n_total_groups - max(agg.n_groups_used.values(), default=0)
     return agg
 
@@ -156,6 +164,12 @@ def aggregates_to_dict(agg: GroupAggregates) -> dict:
         "recall_at_k": {str(k): round(v, 4) for k, v in agg.recall_at_k.items()},
         "ndcg_at_k": {str(k): round(v, 4) for k, v in agg.ndcg_at_k.items()},
         "random_baseline_ndcg": {str(k): round(v, 4) for k, v in agg.random_baseline_ndcg.items()},
+        "random_baseline_precision_at_k": {
+            str(k): round(v, 4) for k, v in agg.random_baseline_precision_at_k.items()
+        },
+        "random_baseline_recall_at_k": {
+            str(k): round(v, 4) for k, v in agg.random_baseline_recall_at_k.items()
+        },
         "n_groups_used": {str(k): v for k, v in agg.n_groups_used.items()},
         "n_rows_used": {str(k): v for k, v in agg.n_rows_used.items()},
         "skipped_groups": agg.skipped_groups,

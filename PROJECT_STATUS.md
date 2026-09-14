@@ -195,10 +195,42 @@ numpy==1.26.4
   permutation robustness of fit_score_from_proba
 - Findings written into ml/evaluation/ranking_eval.md (committable)
 
+## Phase 13 (part 2) — Full-Set Classification Evaluation & Error Analysis
+- Extracted the FULL 1,759-row test set (0 failures) — ranking eval re-run
+  on the honest imbalanced distribution (857/444/458):
+  - JD slates (69 groups): NDCG@5 lift over random +0.05-0.10 (GB best
+    0.732 vs 0.637 random); P@5 ~0.507 vs ~0.45 random — models surface
+    Good fits but CANNOT binary-shortlist
+  - CV groups (177 groups, 1,224 rows): NO lift over random on any metric
+    for any model — pointwise features cannot do listwise comparison;
+    documented as the key open problem (needs per-pair interaction
+    features or pairwise/listwise objectives)
+- New ml/evaluation/run_classification_eval.py: per-class P/R/F1,
+  confusion matrices, ROC-AUC (OvR macro + Good-vs-rest + adjacent-pair
+  AUCs), calibration bins, ordinal FP/FN analysis (overrated/underrated,
+  adjacent/distant), confusion-cell decomposition, feature-delta profiles,
+  top-confident-errors, and a Saerens-style prior-corrected variant
+- Honest headline: NO model beats the 0.487 majority baseline on accuracy
+  (best prior-corrected 0.450); best Good-vs-rest AUC 0.592 (LogReg)
+- Error analysis findings (all documented in classification_eval.md):
+  1. Overconfidence on Good (predicted ~0.88 vs empirical ~0.36 in the top
+     bin) — root cause: stratified training table taught a uniform prior
+     vs the ~50/25/25 source distribution; prior correction recovers 3-5
+     acc pts but does not change AUC
+  2. Volume-proxy shortcut: overrated candidates list ~10.5 skills vs ~6.8
+     for correct Potential rows — 'long CV' conflated with 'good fit'
+  3. 38% of errors skip a class (ordinal structure underused)
+  4. Potential Fit is the weakest class in classification AND ranking
+- 9 new helper tests (prior correction, calibration bins, error
+  direction/distance, feature-delta profiles); suite at 400 passing
+- docs/model-card.md CREATED (Phase 23 deliverable pulled forward): full
+  v0.3.0 documentation with honest metrics, failure modes, limitations
+
 ## Test Summary
 ```
-Total: 391 tests passing
-- 19 ranking metric tests (NEW)
+Total: 400 tests passing
+- 9 classification-eval helper tests (NEW)
+- 19 ranking metric tests
 - 17 feature extraction tests (+6 category-coverage tests)
 - 11 model scorer / hybrid-ML integration tests
 - 11 model / 39 parser / 27 extraction / 27 taxonomy / 5 seed skills
@@ -210,6 +242,12 @@ Total: 391 tests passing
 ```
 
 ## Next Up
-- Phase 13 — full evaluation report (per-class metrics, Precision@K/NDCG
-  for ranking, error analysis)
-- Phase 14 — explainability: translate ML features into human factors
+- Phase 13 COMPLETE — next: Phase 14 (explainability: translate ML
+  features + error-analysis findings into human-readable factors;
+  feature-delta deltas are the template)
+- Feature generation v0.4 candidates (in priority order, from the error
+  analysis): CV-length normalization to kill the volume-proxy shortcut,
+  per-pair interaction features for CV-group ranking, ordinal-aware
+  training objective, prior-aware training (or calibrate at serving)
+- Phase 15 — candidate ranking endpoint (use the ranking eval findings:
+  optimize for Good-Fit surfacing, do not promise binary shortlisting)
