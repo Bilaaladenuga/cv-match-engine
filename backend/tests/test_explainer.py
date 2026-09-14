@@ -14,9 +14,7 @@ import pytest
 
 from app.ml.explainer import (
     FEATURE_LABELS,
-    GRADE_UNCERTAINTY_MARGIN,
     MODEL_DISCLAIMER,
-    VOLUME_COVERAGE_MAX,
     VOLUME_RATIO_THRESHOLD,
     explain_score,
 )

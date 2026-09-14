@@ -65,6 +65,8 @@ fail immediately rather than silently creating a bogus category.
 | `design` | Design |
 | `tools` | Tools |
 | `soft_skills` | Soft Skills |
+| `healthcare` | Healthcare |
+| `finance` | Finance |
 
 ## Adding a skill
 
