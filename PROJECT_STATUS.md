@@ -276,10 +276,31 @@ numpy==1.26.4
   the model card as the explainer reporting what the model actually
   learned, quirks included
 
+## v0.4.0 — CV-Length Normalization (volume-proxy shortcut fixed)
+- 3 new features via shared compute_cv_length_features(): cv_word_count,
+  skills_per_100_words (density), cv_length_bucket — 36-feature schema
+- Augmentation over re-extraction: new columns derive from cv_text +
+  n_candidate_skills, so ml/preprocessing/augment_cv_length_features.py
+  joins tables to raw CSVs by split_row and computes ONLY the new columns
+  (33 expensive embedding columns pass through untouched) — seconds, not
+  an hour; same helper as serving = no drift
+- Retrain (v0.4.0-baseline): acc 0.404-0.408 raw / up to 0.441 prior-
+  corrected, AUC ~unchanged (0.567-0.578 OvR) — expected: the shortcut
+  had been HELPING accuracy while corrupting ranking
+- THE FIX, measured (perm importance of n_candidate_skills):
+  0.0231 (#1, dominant) -> 0.0049 (#5) = 4.7x collapse; skills density
+  itself picked up the signal (0.0056) — transferred, not deleted
+- Ranking held: GB NDCG@5 0.738 (was 0.732); JD-slate lift intact
+- Overconfidence persists (prior/separation issue, not shortcut) —
+  serving-time calibration remains the mitigation
+- 10 new/updated feature tests (helper semantics, buckets, density,
+  unbounded-range contract). Suite: 439 passing, Ruff clean
+
 ## Test Summary
 ```
-Total: 429 tests passing
-- 14 explainer tests (NEW)
+Total: 439 tests passing
+- 27 feature extraction tests (+10 CV-length, NEW)
+- 14 explainer tests
 - 15 calibration / serving-integration tests
 - 9 classification-eval helper tests
 - 19 ranking metric tests
@@ -297,9 +318,8 @@ Total: 429 tests passing
 - Phase 13 COMPLETE — next: Phase 14 (explainability: translate ML
   features + error-analysis findings into human-readable factors;
   feature-delta deltas are the template)
-- Feature generation v0.4 candidates (in priority order, from the error
-  analysis): CV-length normalization to kill the volume-proxy shortcut,
-  per-pair interaction features for CV-group ranking, ordinal-aware
-  training objective, prior-aware training (or calibrate at serving)
+- Feature roadmap: v0.4 (CV-length normalization) DONE — remaining
+  candidates from the error analysis: per-pair interaction features for
+  CV-group ranking (the listwise gap), ordinal-aware training objective
 - Phase 15 — candidate ranking endpoint (use the ranking eval findings:
   optimize for Good-Fit surfacing, do not promise binary shortlisting)

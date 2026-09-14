@@ -304,6 +304,34 @@ findings, stated honestly:
 These findings drive the Phase 14 explainability design and the v0.4
 feature roadmap; see `docs/model-card.md` for the full card.
 
+### 7.2 v0.4.0 — fixing the volume-proxy shortcut (CV-length normalization)
+
+The Phase 13 error analysis showed the model leaned on `n_candidate_skills`
+as a "long CV = good fit" proxy (its #1 permutation-importance feature,
+0.023 — 2.2× the runner-up). v0.4.0 adds three features computed by a
+shared helper (`compute_cv_length_features`) used by both the serving
+builder and the table augmentation script:
+
+- `cv_word_count` — explicit CV length,
+- `skills_per_100_words` — skill density,
+- `cv_length_bucket` — ordinal length class.
+
+Augmentation (not re-extraction): the three columns derive from
+cv_text + n_candidate_skills, so `ml/preprocessing/augment_cv_length_features.py`
+joins the existing tables to the raw CSVs by `split_row` and computes only
+the new columns — the 33 expensive (embedding-based) columns pass through
+untouched.
+
+Outcome (full test set): `n_candidate_skills` importance collapsed 4.7×
+(0.0231 → 0.0049, #1 → #5) while `skills_per_100_words` is itself
+informative (0.0056) — the signal transferred from "how many" to "how
+dense". Ranking held (GB NDCG@5 0.738 vs 0.732), classification is
+statistically unchanged (accuracy was never the point of this fix; the
+shortcut had been helping accuracy while corrupting the ranking signal),
+and the calibrated overconfidence persists (§7.1 finding 3 — that is a
+prior/separation problem, addressed separately by serving-time
+calibration).
+
 An honest evaluation includes error analysis (false positives = candidates
 overrated by the model; false negatives = underrated), class imbalance
 handling, and explicit dataset-limitation notes. A single high metric is

@@ -1,6 +1,6 @@
 # Model Card — CV–Job Match Classifier
 
-**Version:** `match-model-v0.3.2-baseline` (trained classifier, prior-calibrated + explainable) · hybrid engine: `match-model-v0.1`
+**Version:** `match-model-v0.4.0-baseline` (36-feature schema, prior-calibrated, explainable) · hybrid engine: `match-model-v0.1`
 **Status:** baseline (Phase 12–13) — decision-support only, **not** an automated hiring decision tool.
 **Date:** 2026-09-14
 
@@ -34,7 +34,7 @@ by default (`backend/app/ml/model_scorer.py`), Random Forest is the best
 - **Prior note:** the train table is stratified (uniform 1/3 prior); the
   natural source distribution is ~50/25/25. Consequences in §5.
 
-## 3. Features (33)
+## 3. Features (36, v0.4.0)
 
 | Group | Features |
 |---|---|
@@ -44,7 +44,12 @@ by default (`backend/app/ml/model_scorer.py`), Random Forest is the best
 | Education (2) | `education_level_score`, `education_field_score` |
 | Title (1) | `job_title_similarity` |
 | Volume counts (3) | `n_candidate_skills`, `n_required_skills`, `n_preferred_skills` |
-| Per-category coverage (17) | `cov_<cat>_required` ×9 (programming, frontend, backend, database, cloud, devops, data_science, machine_learning, other) + `cov_<cat>_n` ×8 demand counts |
+| Per-category coverage (17) | `cov_<cat>_required` ×9 + `cov_<cat>_n` ×8 demand counts |
+| CV-length normalization (3, v0.4.0) | `cv_word_count`, `skills_per_100_words`, `cv_length_bucket` |
+
+The v0.4.0 CV-length block exists to kill the volume-proxy shortcut (§5.3):
+it gives the model explicit CV length and skill density so the raw skill
+count no longer acts as a hidden length proxy.
 
 All features are computed by the same code path at training and serving
 time (single source of truth: `backend/app/ml/feature_extraction.py`).
@@ -56,29 +61,51 @@ bump.
 
 ## 4. Evaluation (full 1,759-row held-out set)
 
-Reports: `ml/evaluation/classification_eval.md`, `ml/evaluation/ranking_eval.md`.
+Reports: `ml/evaluation/classification_eval.md`, `ml/evaluation/ranking_eval.md`,
+`ml/evaluation/perm_importance.json`.
 
-### Classification
+### Classification (v0.4.0)
 
 | model | acc (as trained) | acc (prior-corrected) | macro-F1 | OvR AUC | Good-vs-rest AUC |
 |---|---|---|---|---|---|
-| logistic_regression | 0.404 | **0.432** | 0.391 | **0.576** | **0.592** |
-| random_forest | 0.403 | 0.450 | 0.390 | 0.565 | 0.576 |
-| gradient_boosting | 0.404 | 0.425 | 0.388 | 0.559 | 0.561 |
+| logistic_regression | 0.404 | 0.430 | 0.390 | **0.578** | **0.590** |
+| random_forest | 0.408 | **0.441** | 0.395 | 0.565 | 0.574 |
+| gradient_boosting | 0.404 | 0.427 | 0.388 | 0.567 | 0.574 |
 
-Majority-class baseline: **0.487**. **No model beats it on accuracy.**
+Majority-class baseline: **0.487** — still unbeaten on raw accuracy, and
+this was EXPECTED for the shortcut fix: the shortcut helped accuracy while
+corrupting the ranking signal. The success metric was importance
+reallocation (below), not accuracy.
+
+### The volume-proxy shortcut, before and after (the v0.4.0 point)
+
+Permutation importance of `n_candidate_skills` on the fit score:
+
+| schema | importance | rank |
+|---|---|---|
+| v0.3.2 (33 features) | 0.0231 | **#1 (dominant, 2.2× runner-up)** |
+| v0.4.0 (36 features) | 0.0049 | #5 (behind demand counts + overlap) |
+
+A 4.7× importance collapse: the model no longer leans on "long CV".
+Reassuringly, `skills_per_100_words` (the density feature) is itself
+informative (0.0056) — length normalization transferred signal rather
+than deleting it. Ranking quality held up (GB NDCG@5 0.738 vs 0.732
+random-baseline-lift similar), error balance shifted slightly toward
+fewer distant errors, and the calibrated top-bin reliability is
+unchanged (overconfidence is a prior/separation issue, not a shortcut
+issue — §5.2 stands).
 
 ### Ranking (recruiter slates, 69 JD groups)
 
-| model | P@5 (rand 0.45) | NDCG@5 (rand 0.64–0.66) |
+| model | P@5 (rand 0.45) | NDCG@5 (rand 0.61–0.66) |
 |---|---|---|
-| gradient_boosting | **0.507** | **0.732** |
-| random_forest | 0.487 | 0.718 |
-| logistic_regression | 0.507 | 0.706 |
+| gradient_boosting | 0.481 | **0.738** |
+| random_forest | 0.493 | 0.717 |
+| logistic_regression | 0.507 | 0.715 |
 
 Ordering a candidate's jobs (CV groups, 177 groups): **no lift over random**
 on any metric — the pointwise feature set does not support listwise
-comparison.
+comparison. This remains the key open problem.
 
 ## 5. Known failure modes (from error analysis)
 

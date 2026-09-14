@@ -45,7 +45,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 PROCESSED_DIR = REPO_ROOT / "data" / "processed"
 MODELS_DIR = REPO_ROOT / "ml" / "models"
 
-MODEL_VERSION = "match-model-v0.3.2-baseline"  # v0.3.2: artifacts carry reference stats for the explainer
+MODEL_VERSION = "match-model-v0.4.0-baseline"  # v0.4.0: 36-feature schema (adds CV-length normalization)
 
 LABEL_ORDER = ["No Fit", "Potential Fit", "Good Fit"]
 

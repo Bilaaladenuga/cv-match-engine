@@ -95,8 +95,10 @@ class TestFeatureContract:
     def test_scores_within_unit_range(self, good_features):
         for name in FEATURE_NAMES:
             if name in ("experience_gap_years", "n_candidate_skills",
-                        "n_required_skills", "n_preferred_skills"):
-                continue
+                        "n_required_skills", "n_preferred_skills",
+                        "cv_word_count", "cv_length_bucket",
+                        "skills_per_100_words"):
+                continue  # unbounded counts / ratios / buckets, not 0-1 scores
             if name.startswith("cov_") and name.endswith("_n"):
                 continue  # unbounded demand counts, not ratios
             assert 0.0 <= good_features[name] <= 1.0, name
@@ -167,7 +169,7 @@ class TestDegenerateInputs:
 class TestPerCategoryCoverage:
     """Category coverage features (Phase 12.1) — stubbed engine outputs."""
 
-    def _build(self, cand_skills, req, pref=(), matched=(), partial=()):
+    def _build(self, cand_skills, req, pref=(), matched=(), partial=(), cv_text="developer"):
         from types import SimpleNamespace
 
         from app.ml.feature_extraction import build_feature_vector
@@ -199,7 +201,7 @@ class TestPerCategoryCoverage:
             semantic_match=SimpleNamespace(raw_score=0.6),
             education_match=SimpleNamespace(level_score=1.0, field_score=1.0),
             certification_match=SimpleNamespace(score=0.0),
-            cv_text="developer",
+            cv_text=cv_text,
         )
 
     def test_per_category_coverage(self):
@@ -253,3 +255,38 @@ class TestPerCategoryCoverage:
         from app.ml.feature_extraction import build_feature_vector  # noqa: F401
         f = self._build(cand_skills=["Python"], req=["Python"], matched=["Python"])
         assert set(f.keys()) == set(FEATURE_NAMES)
+
+
+class TestCvLengthFeatures(TestPerCategoryCoverage):
+    """CV-length normalization (v0.4.0) — kills the volume-proxy shortcut."""
+
+    def test_word_count_and_density(self):
+        # 10-word CV with 2 skills -> density = 100 * 2 / 10 = 20
+        text = " ".join(["word"] * 10)
+        f = self._build(cand_skills=["Python", "React"], req=["Python"], cv_text=text)
+        assert f["cv_word_count"] == 10.0
+        assert f["skills_per_100_words"] == pytest.approx(20.0)
+
+    def test_empty_cv_is_zeroed(self):
+        f = self._build(cand_skills=["Python"], req=["Python"], cv_text="")
+        assert f["cv_word_count"] == 0.0
+        assert f["skills_per_100_words"] == 0.0
+        assert f["cv_length_bucket"] == 0.0
+
+    def test_length_buckets(self):
+        from app.ml.feature_extraction import compute_cv_length_features
+
+        def words(n: int) -> str:
+            return "w " * n  # n whitespace-separated tokens
+
+        assert compute_cv_length_features(words(499), 0)["cv_length_bucket"] == 0.0
+        assert compute_cv_length_features(words(500), 0)["cv_length_bucket"] == 1.0
+        assert compute_cv_length_features(words(1199), 0)["cv_length_bucket"] == 1.0
+        assert compute_cv_length_features(words(1200), 0)["cv_length_bucket"] == 2.0
+        assert compute_cv_length_features(words(2500), 0)["cv_length_bucket"] == 3.0
+
+    def test_density_uses_skill_count_from_matcher(self):
+        # n_candidate_skills comes from the candidate profile, not the text
+        text = " ".join(["word"] * 20)
+        f = self._build(cand_skills=["Python", "React", "AWS"], req=["Python"], cv_text=text)
+        assert f["skills_per_100_words"] == pytest.approx(100 * 3 / 20)

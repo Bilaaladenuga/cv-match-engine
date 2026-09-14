@@ -50,6 +50,14 @@ Per-category coverage (taxonomy-driven; breaks the aggregate-only ceiling):
                                  soft_skills) or unknown to the taxonomy.
     cov_<cat>_n                  JD demand: count of required+preferred
                                  skills from category <cat>.
+
+CV-length normalization (v0.4.0; Phase 13 finding: the model used raw
+skill count as a 'long CV = good fit' proxy):
+
+    cv_word_count                normalized whitespace token count of the CV
+    skills_per_100_words         100 * n_candidate_skills / cv_word_count
+                                 (density; 0.0 when the CV is empty)
+    cv_length_bucket             0 <500 words, 1 <1200, 2 <2500, 3 >=2500
 """
 
 from __future__ import annotations
@@ -103,6 +111,10 @@ FEATURE_NAMES: list[str] = [
     "cov_devops_n",
     "cov_data_science_n",
     "cov_machine_learning_n",
+    # CV-length normalization (v0.4.0)
+    "cv_word_count",
+    "skills_per_100_words",
+    "cv_length_bucket",
 ]
 
 # Taxonomy categories with their own coverage feature. Everything else
@@ -228,6 +240,9 @@ def build_feature_vector(
     # --- Per-category coverage (taxonomy-driven) -----------------------------
     cat_features = compute_category_coverage(req_names, pref_names, matched_set)
 
+    # --- CV-length normalization (v0.4.0) ------------------------------------
+    length_features = compute_cv_length_features(cv_text, len(cand_names))
+
     return {
         "skill_overlap_ratio": round(skill_overlap, 6),
         "required_skill_coverage": round(skill_match.required_coverage, 6),
@@ -246,6 +261,40 @@ def build_feature_vector(
         "n_required_skills": float(len(req_names)),
         "n_preferred_skills": float(len(pref_names)),
         **cat_features,
+        **length_features,
+    }
+
+
+def compute_cv_length_features(cv_text: str, n_skills: int) -> dict[str, float]:
+    """CV-length normalization features (v0.4.0).
+
+    Phase 13's error analysis showed the model conflated 'long CV / many
+    skills listed' with 'good fit' (overrated candidates: ~10.5 skills vs
+    ~6.8; permutation importance ranks n_candidate_skills #1). These
+    features give the model explicit access to CV length and skill DENSITY
+    so raw count no longer has to act as a hidden length proxy:
+
+        cv_word_count      whitespace token count of the CV text
+        skills_per_100_words  100 * n_skills / cv_word_count (0.0 if empty)
+        cv_length_bucket   ordinal length class (see module docstring)
+
+    Shared by build_feature_vector and the table augmentation script so
+    training and serving cannot diverge.
+    """
+    words = len(cv_text.split()) if cv_text else 0
+    density = (100.0 * n_skills / words) if words > 0 else 0.0
+    if words >= 2500:
+        bucket = 3.0
+    elif words >= 1200:
+        bucket = 2.0
+    elif words >= 500:
+        bucket = 1.0
+    else:
+        bucket = 0.0
+    return {
+        "cv_word_count": float(words),
+        "skills_per_100_words": round(density, 6),
+        "cv_length_bucket": bucket,
     }
 
 
