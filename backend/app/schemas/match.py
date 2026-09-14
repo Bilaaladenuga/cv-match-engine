@@ -119,3 +119,45 @@ class RankingRunResponse(BaseModel):
     ranked: list[RankedCandidateOut]
     failed_resume_ids: list[int] = Field(default_factory=list)
     disclaimer: str
+
+
+# ---------------------------------------------------------------------------
+# History (retrieval of stored analyses)
+# ---------------------------------------------------------------------------
+
+
+class HistoryEntryOut(BaseModel):
+    """One stored match, list view (no raw documents)."""
+
+    match_id: int
+    candidate_id: int
+    job_id: int
+    candidate_name: str | None = None
+    job_title: str | None = None
+    overall_score: float
+    band: str | None = None
+    model_version: str
+    created_at: str | None = None
+    ml_fit_score: float | None = None
+    ml_label: str | None = None
+    matched_skills: list[str] = Field(default_factory=list)
+    missing_skills: list[str] = Field(default_factory=list)
+
+
+class MatchDetailResponse(BaseModel):
+    """Full stored analysis for one match (read back, no recomputation)."""
+
+    match_id: int
+    candidate_id: int
+    job_id: int
+    candidate_name: str | None = None
+    job_title: str | None = None
+    job_company: str | None = None
+    overall_score: float
+    band: str | None = None
+    model_version: str
+    created_at: str | None = None
+    component_scores: dict[str, float]
+    ml: dict
+    explanation: dict
+    feature_values: dict | None = None
