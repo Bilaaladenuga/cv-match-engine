@@ -248,10 +248,39 @@ numpy==1.26.4
   serving; graceful degradation; artifact-metadata presence). Suite: 415
   passing, Ruff clean
 
+## Phase 14 — Explainability Engine (v0.3.2)
+- New backend/app/ml/explainer.py: per-match factor contributions via
+  reference substitution (feature -> training median, "a typical
+  applicant"); 34 forward passes, ~10 ms, computed on the CALIBRATED fit
+  score so explanations match the displayed number
+- Training embeds reference_stats_ (per-feature training medians) on the
+  artifacts; version re-stamped match-model-v0.3.2-baseline
+- Plain-language layer grounded in the Phase 13 error analysis:
+  - volume-proxy caution fires when skill count >= 1.5x the training
+    median while required coverage <= 0.60 (guards the model's PRIMARY
+    signal — perm importance shows n_candidate_skills is #1 at 0.023,
+    2.2x the runner-up, while semantic_similarity is 15th at 0.0015)
+  - grade-uncertainty note: adjacent grades within 0.15 are reported as
+    borderline, not a verdict
+  - every explanation carries the decision-support disclaimer
+- Advisory integration: model_scorer attaches explanation (any explainer
+  failure degrades to no explanation, never a failed request); hybrid
+  layer forwards it via ml_details; degradation carries a reason string
+- Global view: ml/evaluation/perm_importance.py (seeded permutation
+  importance on the fit score, committable JSON evidence)
+- 14 new tests incl. EXACT additivity on an affine stub (fit(reference) +
+  sum(contributions) == fit(x) to 1e-9) and all caution/uncertainty/
+  degradation paths. Suite: 429 passing, Ruff clean
+- Known quirk surfaced honestly by the explainer: the model sometimes
+  PENALIZES high title similarity (rare in training data) — documented in
+  the model card as the explainer reporting what the model actually
+  learned, quirks included
+
 ## Test Summary
 ```
-Total: 415 tests passing
-- 15 calibration / serving-integration tests (NEW)
+Total: 429 tests passing
+- 14 explainer tests (NEW)
+- 15 calibration / serving-integration tests
 - 9 classification-eval helper tests
 - 19 ranking metric tests
 - 17 feature extraction tests (+6 category-coverage tests)

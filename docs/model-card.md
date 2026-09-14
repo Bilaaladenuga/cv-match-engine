@@ -1,6 +1,6 @@
 # Model Card — CV–Job Match Classifier
 
-**Version:** `match-model-v0.3.1-baseline` (trained classifier, prior-calibrated) · hybrid engine: `match-model-v0.1`
+**Version:** `match-model-v0.3.2-baseline` (trained classifier, prior-calibrated + explainable) · hybrid engine: `match-model-v0.1`
 **Status:** baseline (Phase 12–13) — decision-support only, **not** an automated hiring decision tool.
 **Date:** 2026-09-14
 
@@ -124,18 +124,42 @@ comparison.
   "chance of getting hired". It is decision-support and must not be the
   sole basis for hiring decisions.
 
-## 7. Serving calibration (v0.3.1)
+## 7. Serving calibration (v0.3.1) & explainability (v0.3.2)
 
 - Artifact metadata: `calibration_ = {method, natural_prior,
-  training_prior}` written by `ml/training/train_baseline.py` at train
-  time — model and calibration are inseparable.
+  training_prior}` and `reference_stats_ = {medians, n_train}` written by
+  `ml/training/train_baseline.py` at train time — model, calibration, and
+  reference statistics are inseparable.
 - Serving: `model_scorer.score_features` corrects raw posteriors to the
   natural prior; on missing/invalid metadata it degrades to raw
   probabilities and logs a warning (never fails a match request).
 - API: `ml_details.probabilities` = calibrated, `ml_details
   .raw_probabilities` = pre-correction, `ml_details.calibration_method` =
   applied method (`saerens_prior_correction` or `none`).
-- Combined version stamp: `match-model-v0.1+v0.3.1-baseline`.
+- Combined version stamp: `match-model-v0.1+v0.3.2-baseline`.
+
+### Explanations (Phase 14, v0.3.2)
+
+- Per match, `ml_details.explanation` carries reference-substitution
+  factor contributions computed against the CALIBRATED fit score: each
+  factor is the score change from replacing one feature with the training
+  median ("a typical applicant"). For linear models the decomposition is
+  exact (unit-tested); tree models are approximate.
+- Plain-language layer is grounded in the Phase 13 findings: a
+  volume-proxy signature (skill count far above typical while required
+  coverage is weak) triggers an explicit caution; close grade
+  probabilities are reported as borderline instead of a verdict; every
+  explanation carries the decision-support disclaimer.
+- Global view: `ml/evaluation/perm_importance.py` (permutation importance
+  on the fit score). Its output confirms the Phase 13 volume finding at
+  the global level — `n_candidate_skills` is the model's most-relied-on
+  feature (0.023, ~2.2x the runner-up), while semantic similarity ranks
+  far lower (0.0015). The volume caution therefore guards the model's
+  PRIMARY signal, not an edge case.
+- Local explanations can surface counterintuitive model behavior (e.g.
+  penalizing high title similarity, which is rare in training data).
+  That is the explainer working: it reports what the model actually
+  learned, including its quirks.
 
 ## 8. Reproducibility
 

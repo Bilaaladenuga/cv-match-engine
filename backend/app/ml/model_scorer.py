@@ -32,6 +32,8 @@ from pathlib import Path
 
 import numpy as np
 
+from app.ml.explainer import ModelExplanation  # noqa: F401 (type re-export)
+
 logger = logging.getLogger(__name__)
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -57,6 +59,7 @@ class MLScorerResult:
     model_version: str               # stamped by the training script
     raw_probabilities: dict[str, float] = field(default_factory=dict)
     calibration_method: str | None = None
+    explanation: ModelExplanation | None = None
 
     def to_dict(self) -> dict:
         out = {
@@ -71,6 +74,8 @@ class MLScorerResult:
             }
         if self.calibration_method:
             out["calibration_method"] = self.calibration_method
+        if self.explanation is not None:
+            out["explanation"] = self.explanation.to_dict()
         return out
 
 
@@ -192,6 +197,18 @@ def score_features(features: dict[str, float]) -> MLScorerResult | None:
     except Exception:  # noqa: BLE001 - version stamping must never break scoring
         pass
 
+    # --- Explainability (Phase 14) -----------------------------------------
+    # Advisory: any failure inside the explainer degrades to no explanation
+    # rather than failing the match. Contributions are computed against the
+    # calibrated probabilities shown to the user.
+    explanation = None
+    try:
+        from app.ml.explainer import explain_score
+
+        explanation = explain_score(model, features, probabilities, fit_score)
+    except Exception:  # noqa: BLE001 - explanations must never break scoring
+        logger.exception("Explainer failed; continuing without model explanation")
+
     return MLScorerResult(
         fit_score=max(0.0, min(1.0, fit_score)),
         label=label,
@@ -199,4 +216,5 @@ def score_features(features: dict[str, float]) -> MLScorerResult | None:
         model_version=version,
         raw_probabilities=raw_probabilities,
         calibration_method=applied_method,
+        explanation=explanation,
     )

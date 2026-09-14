@@ -45,7 +45,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 PROCESSED_DIR = REPO_ROOT / "data" / "processed"
 MODELS_DIR = REPO_ROOT / "ml" / "models"
 
-MODEL_VERSION = "match-model-v0.3.1-baseline"  # v0.3.1: artifacts carry prior-calibration metadata
+MODEL_VERSION = "match-model-v0.3.2-baseline"  # v0.3.2: artifacts carry reference stats for the explainer
 
 LABEL_ORDER = ["No Fit", "Potential Fit", "Good Fit"]
 
@@ -170,6 +170,13 @@ def main() -> None:
             "method": "saerens_prior_correction",
             "natural_prior": compute_natural_prior(),
             "training_prior": {name: 1.0 / 3.0 for name in LABEL_ORDER},
+        }
+        # Reference statistics for the Phase 14 explainer: per-feature
+        # training medians define the "typical candidate" baseline that
+        # reference-substitution explanations compare against.
+        model.reference_stats_ = {
+            "medians": {name: float(v) for name, v in X_train.median().items()},
+            "n_train": int(len(X_train)),
         }
         joblib.dump(model, MODELS_DIR / f"baseline_{name}.joblib")
 

@@ -361,6 +361,10 @@ def compute_match_score(
         calibration_method = getattr(ml, "calibration_method", None)
         if calibration_method:
             ml_details["calibration_method"] = calibration_method
+        # Phase 14: model-driven factor explanations (advisory payload).
+        explanation = getattr(ml, "explanation", None)
+        if explanation is not None:
+            ml_details["explanation"] = explanation.to_dict()
 
     out_weights = dict(engine_weights)
     if ml is not None:

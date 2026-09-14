@@ -58,8 +58,8 @@
       }
     },
     "mean_max_probability": 0.5575,
-    "fit_seconds": 0.3,
-    "model_version": "match-model-v0.3.1-baseline"
+    "fit_seconds": 0.8,
+    "model_version": "match-model-v0.3.2-baseline"
   },
   "random_forest": {
     "accuracy": 0.4025,
@@ -120,8 +120,8 @@
       }
     },
     "mean_max_probability": 0.5152,
-    "fit_seconds": 2.6,
-    "model_version": "match-model-v0.3.1-baseline"
+    "fit_seconds": 3.7,
+    "model_version": "match-model-v0.3.2-baseline"
   },
   "gradient_boosting": {
     "accuracy": 0.4036,
@@ -182,8 +182,8 @@
       }
     },
     "mean_max_probability": 0.5774,
-    "fit_seconds": 7.6,
-    "model_version": "match-model-v0.3.1-baseline"
+    "fit_seconds": 8.5,
+    "model_version": "match-model-v0.3.2-baseline"
   },
   "label_mapping": {
     "No Fit": 0,

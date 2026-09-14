@@ -1,0 +1,209 @@
+{
+  "meta": {
+    "model_version": "unknown",
+    "n_rows": 1759,
+    "n_repeats": 10,
+    "seed": 13,
+    "metric": "mean drop in fit score P(Good)+0.5*P(Potential) under column permutation"
+  },
+  "importances": [
+    {
+      "feature": "n_candidate_skills",
+      "importance": 0.02309,
+      "std": 0.00154,
+      "training_median": 7.0
+    },
+    {
+      "feature": "n_preferred_skills",
+      "importance": 0.01048,
+      "std": 0.00106,
+      "training_median": 0.0
+    },
+    {
+      "feature": "cov_programming_n",
+      "importance": 0.009,
+      "std": 0.00058,
+      "training_median": 0.0
+    },
+    {
+      "feature": "cov_other_required",
+      "importance": 0.00333,
+      "std": 0.00033,
+      "training_median": 0.0
+    },
+    {
+      "feature": "skill_overlap_ratio",
+      "importance": 0.00331,
+      "std": 0.00035,
+      "training_median": 0.3333
+    },
+    {
+      "feature": "n_required_skills",
+      "importance": 0.00329,
+      "std": 0.00095,
+      "training_median": 2.0
+    },
+    {
+      "feature": "cov_backend_n",
+      "importance": 0.00284,
+      "std": 0.00029,
+      "training_median": 0.0
+    },
+    {
+      "feature": "experience_gap_years",
+      "importance": 0.00267,
+      "std": 0.00066,
+      "training_median": 0.0
+    },
+    {
+      "feature": "cov_cloud_n",
+      "importance": 0.00226,
+      "std": 0.00015,
+      "training_median": 0.0
+    },
+    {
+      "feature": "education_field_score",
+      "importance": 0.00222,
+      "std": 0.0006,
+      "training_median": 0.85
+    },
+    {
+      "feature": "education_level_score",
+      "importance": 0.00189,
+      "std": 0.00032,
+      "training_median": 0.85
+    },
+    {
+      "feature": "required_skill_coverage",
+      "importance": 0.00185,
+      "std": 0.00051,
+      "training_median": 0.0
+    },
+    {
+      "feature": "cov_machine_learning_n",
+      "importance": 0.00162,
+      "std": 0.00019,
+      "training_median": 0.0
+    },
+    {
+      "feature": "semantic_similarity",
+      "importance": 0.00152,
+      "std": 0.00063,
+      "training_median": 0.4457
+    },
+    {
+      "feature": "preferred_skill_coverage",
+      "importance": 0.00071,
+      "std": 0.0001,
+      "training_median": 0.0
+    },
+    {
+      "feature": "cov_programming_required",
+      "importance": 0.00059,
+      "std": 0.00056,
+      "training_median": 0.0
+    },
+    {
+      "feature": "cov_frontend_n",
+      "importance": 0.00046,
+      "std": 0.00073,
+      "training_median": 0.0
+    },
+    {
+      "feature": "cov_devops_n",
+      "importance": 0.00042,
+      "std": 0.00039,
+      "training_median": 0.0
+    },
+    {
+      "feature": "cov_database_n",
+      "importance": 0.00039,
+      "std": 0.00036,
+      "training_median": 0.0
+    },
+    {
+      "feature": "cov_data_science_required",
+      "importance": 0.00031,
+      "std": 0.00024,
+      "training_median": 0.0
+    },
+    {
+      "feature": "cov_cloud_required",
+      "importance": 0.00023,
+      "std": 7e-05,
+      "training_median": 0.0
+    },
+    {
+      "feature": "cov_data_science_n",
+      "importance": 0.00021,
+      "std": 0.00026,
+      "training_median": 0.0
+    },
+    {
+      "feature": "cov_database_required",
+      "importance": 0.00015,
+      "std": 0.00026,
+      "training_median": 0.0
+    },
+    {
+      "feature": "experience_score",
+      "importance": 9e-05,
+      "std": 8e-05,
+      "training_median": 0.0
+    },
+    {
+      "feature": "experience_data_available",
+      "importance": -0.0,
+      "std": 4e-05,
+      "training_median": 0.0
+    },
+    {
+      "feature": "cov_machine_learning_required",
+      "importance": -3e-05,
+      "std": 1e-05,
+      "training_median": 0.0
+    },
+    {
+      "feature": "cov_devops_required",
+      "importance": -0.00042,
+      "std": 0.00011,
+      "training_median": 0.0
+    },
+    {
+      "feature": "cov_backend_required",
+      "importance": -0.00056,
+      "std": 7e-05,
+      "training_median": 0.0
+    },
+    {
+      "feature": "seniority_match",
+      "importance": -0.00063,
+      "std": 0.00032,
+      "training_median": 1.0
+    },
+    {
+      "feature": "certification_match_ratio",
+      "importance": -0.00105,
+      "std": 0.00055,
+      "training_median": 0.85
+    },
+    {
+      "feature": "cov_frontend_required",
+      "importance": -0.00223,
+      "std": 0.00015,
+      "training_median": 0.0
+    },
+    {
+      "feature": "job_title_similarity",
+      "importance": -0.00462,
+      "std": 0.00065,
+      "training_median": 0.0
+    },
+    {
+      "feature": "required_plus_partial",
+      "importance": -0.00719,
+      "std": 0.00036,
+      "training_median": 0.2
+    }
+  ]
+}
