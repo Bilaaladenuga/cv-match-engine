@@ -296,10 +296,38 @@ numpy==1.26.4
 - 10 new/updated feature tests (helper semantics, buckets, density,
   unbounded-range contract). Suite: 439 passing, Ruff clean
 
+## Phase 15 — Candidate Ranking Endpoint (recruiter mode)
+- POST /api/jobs/{job_id}/rank-candidates with {resume_ids, weights?}:
+  runs the SAME pipeline as /api/matches per candidate (no ranking-specific
+  scoring code), orders the slate by overall score desc with a
+  deterministic candidate_id-asc tiebreak, persists a Match +
+  MatchExplanation row per candidate
+- Reproducibility contract: response stamps ranking_run_id (uuid), the
+  combined model_version, the exact weights used, ISO created_at, and
+  per-candidate match_ids — re-running with the same inputs + model
+  version reproduces the ordering (pipeline is deterministic)
+- Honest slate framing per Phase 13 eval: response disclaimer states
+  rankings are model-estimated compatibility, not hiring recommendations;
+  per-row explanations (matched/missing skills, top positive/negative
+  factors) ship alongside
+- Failure isolation: missing/empty/failed resumes land in
+  failed_resume_ids instead of killing the run; empty/duplicate
+  resume_ids -> 400; unknown job -> 404; invalid weights -> 422
+- New files: app/services/ranking_service.py, app/api/ranking.py; schemas
+  in app/schemas/match.py; router wired in app/main.py
+- 8 integration tests (SQLite, real pipeline): ordering, persistence,
+  determinism across request orders, failure isolation, error mapping.
+  Suite: 447 passing, Ruff clean
+- Debugging note: a fixture set dependency_overrides[get_db] to a
+  sessionmaker CLASS instead of a generator callable — this FastAPI/
+  Starlette version's dependency machinery failed it with a confusing
+  `local_kw` 422. Fixed by wrapping in a generator function.
+
 ## Test Summary
 ```
-Total: 439 tests passing
-- 27 feature extraction tests (+10 CV-length, NEW)
+Total: 447 tests passing
+- 8 ranking endpoint tests (NEW)
+- 27 feature extraction tests (+10 CV-length)
 - 14 explainer tests
 - 15 calibration / serving-integration tests
 - 9 classification-eval helper tests

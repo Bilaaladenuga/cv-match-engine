@@ -73,3 +73,49 @@ class MatchResponse(BaseModel):
 
 class ErrorResponse(BaseModel):
     detail: str
+
+
+# ---------------------------------------------------------------------------
+# Ranking (Phase 15)
+# ---------------------------------------------------------------------------
+
+
+class RankCandidatesRequest(BaseModel):
+    """Request body for POST /api/jobs/{job_id}/rank-candidates."""
+
+    resume_ids: list[int] = Field(..., description="Resumes (candidates) to rank", min_length=1)
+    weights: dict[str, float] | None = Field(
+        None, description="Optional hybrid weight overrides; must sum to 1.0"
+    )
+
+
+class RankedCandidateOut(BaseModel):
+    """One row of the ranking slate."""
+
+    rank: int
+    candidate_id: int
+    resume_id: int
+    candidate_name: str | None = None
+    match_id: int
+    overall_score: float
+    fit_score: float | None = None
+    ml_label: str | None = None
+    band: str
+    matched_skills: list[str] = Field(default_factory=list)
+    missing_skills: list[str] = Field(default_factory=list)
+    top_positive_factors: list[str] = Field(default_factory=list)
+    top_negative_factors: list[str] = Field(default_factory=list)
+
+
+class RankingRunResponse(BaseModel):
+    """Version-stamped, reproducible ranking for one job."""
+
+    ranking_run_id: str
+    job_id: int
+    job_title: str
+    model_version: str
+    weights: dict[str, float]
+    created_at: str
+    ranked: list[RankedCandidateOut]
+    failed_resume_ids: list[int] = Field(default_factory=list)
+    disclaimer: str

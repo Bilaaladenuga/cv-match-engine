@@ -10,6 +10,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.matches import router as matches_router
+from app.api.ranking import router as ranking_router
 from app.core.config import get_settings
 
 settings = get_settings()
@@ -43,6 +44,7 @@ app.add_middleware(
 
 # Routers
 app.include_router(matches_router)
+app.include_router(ranking_router)
 
 
 @app.get("/health")
