@@ -45,7 +45,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 PROCESSED_DIR = REPO_ROOT / "data" / "processed"
 MODELS_DIR = REPO_ROOT / "ml" / "models"
 
-MODEL_VERSION = "match-model-v0.2.1-baseline"
+MODEL_VERSION = "match-model-v0.3.0-baseline"  # 33-feature schema (adds per-category coverage)
 
 LABEL_ORDER = ["No Fit", "Potential Fit", "Good Fit"]
 

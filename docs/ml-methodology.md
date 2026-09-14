@@ -184,8 +184,18 @@ deterministic pipeline, which keeps training faithful to inference:
 | education_level_score | education matcher | float 0–1 |
 | education_field_score | education matcher | float 0–1 |
 | certification_match_ratio | cert matcher | float 0–1 |
-| job_title_similarity | embeddings | float 0–1 (planned) |
-| skill_category_coverage | taxonomy | float 0–1 (planned) |
+| job_title_similarity | embeddings | float 0–1 |
+| n_candidate_skills / n_required_skills / n_preferred_skills | parsers | int counts |
+| experience_data_available | experience matcher | bool/float |
+| cov_<category>_required (×9) | skill matcher × taxonomy | float 0–1, required-skill coverage per category |
+| cov_<category>_n (×8) | skill matcher × taxonomy | int, required-skill demand per category |
+
+**33 features total** (v0.3.0 schema). The per-category coverage block
+(`cov_*`, 17 features) was added to break the accuracy ceiling identified
+after the 600→2,100 row expansion: aggregate ratios only say *how much*
+matched, not *which kinds* of skills a candidate covers relative to what a
+job demands (e.g. an all-frontend candidate against a devops-heavy job).
+Categories with no demanded skills score 0.5 — neutral, not penalized.
 
 **Leakage rule:** features may only use information available at inference
 time on a single (CV, JD) pair. Dataset-side artifacts (popularity priors,
@@ -225,9 +235,11 @@ Audited limitations (documented, not hidden):
   train/test boundary (verified by hash audit).
 - **CV-body repetition**: 476 resume bodies appear on both sides of the
   upstream boundary (paired with different JDs). This is a property of the
-  public dataset, not our split. With 16 aggregate features the
+  public dataset, not our split. With aggregate + per-category features the
   memorization channel is narrow, but ranking-style per-candidate metrics
-  (Phase 13) must respect CV grouping to avoid inflated scores.
+  (Phase 13) must respect CV grouping to avoid inflated scores. With the
+  v0.3.0 feature set the memorization channel is narrower still, but the
+  grouping requirement for ranking metrics stands.
 - **Unstructured CVs**: prose-style resumes defeated the original section
   detector (0/40 parsed experience). Fixed via full-text fallback + stated-
   claims parsing; `experience_data_available` flags residual missingness so
@@ -261,9 +273,11 @@ the baseline to beat.
 
 ## 8. Reproducibility & versioning
 
-- `model_version` (currently `match-model-v0.1`) stamps every Match row and
-  API response; format `match-model-v<major>.<minor>` — minor bumps for
-  tuning, major for redesign.
+- `model_version` stamps every Match row and API response. The hybrid engine
+  stamps `match-model-v0.1`; when the trained classifier is available the
+  combined stamp is `match-model-v0.1+<classifier version>` (currently
+  `match-model-v0.1+v0.3.0-baseline`). Format: minor bumps for tuning,
+  major for redesign or a feature-schema change.
 - Embedding model fixed at `sentence-transformers/all-MiniLM-L6-v2` (384-d);
   changing it is a major bump.
 - Taxonomy has `schema_version`; skill changes are additive and seeded

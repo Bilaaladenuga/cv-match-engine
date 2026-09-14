@@ -147,16 +147,40 @@ numpy==1.26.4
 - Artifacts re-stamped match-model-v0.2.1-baseline; training_report.json
   regenerated; model-scorer wiring re-verified against the new artifact
 
+## v0.3.0 — Per-Category Coverage Features (breaking the feature ceiling)
+- Motivation: the 600->2,100 expansion (+2 acc pts) showed the model is
+  feature-starved, not data-starved; aggregate ratios say HOW MUCH matched
+  but not WHICH KINDS of skills a candidate covers vs what the job demands
+- 17 new cov_* features: 9 per-category required-coverage ratios
+  (programming, frontend, backend, database, cloud, devops, data_science,
+  machine_learning, other) + 8 per-category demand counts; categories with
+  no demanded skills score 0.5 (neutral, not penalized)
+- Shared implementation: compute_category_coverage() in
+  app/ml/feature_extraction.py used by both batch extraction and the API
+  feature path — no train/serve drift
+- Full re-extraction with the 33-feature schema: 2,100 train (700/class)
+  + 300 test (100/class), 0 failures, 0 NaNs, disjoint split_row ranges
+- Retrain results (test = 300 rows, chance = 33%):
+  - LogisticRegression acc 0.457 / macro-F1 0.452 (up from 0.413)
+  - RandomForest      acc 0.453 / macro-F1 0.446 (up from 0.430)
+  - GradientBoosting  acc 0.443 / macro-F1 0.434 (down from 0.463 — within
+    noise on a 300-row test set)
+- Read: the linear model clearly benefits (category coverage is a directly
+  linearly-separable signal); tree ensembles are statistically flat, so
+  the remaining ceiling likely needs richer features rather than more rows
+- Artifacts re-stamped match-model-v0.3.0-baseline (feature-schema change);
+  training_report.json regenerated; model scorer re-verified end-to-end
+
 ## Test Summary
 ```
-Total: 366 tests passing
-- 11 model scorer / hybrid-ML integration tests (NEW)
+Total: 372 tests passing
+- 17 feature extraction tests (+6 category-coverage tests, NEW)
+- 11 model scorer / hybrid-ML integration tests
 - 11 model / 39 parser / 27 extraction / 27 taxonomy / 5 seed skills
 - 38 job parser tests (+4 infinite-loop regressions)
 - 36 embedding / 35 skill matcher / 26 experience matcher / 22 semantic
 - 11 weights / 22 education+cert / 23 matching model / 12 API (SQLite)
 - 10 experience-extractor fallback tests
-- 11 feature extraction tests
 - 3 misc
 ```
 

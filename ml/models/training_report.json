@@ -1,189 +1,189 @@
 {
   "logistic_regression": {
-    "accuracy": 0.4133,
-    "macro_f1": 0.4042,
+    "accuracy": 0.4567,
+    "macro_f1": 0.452,
     "per_class_f1": {
-      "No Fit": 0.5086,
-      "Potential Fit": 0.3146,
-      "Good Fit": 0.3895
+      "No Fit": 0.5156,
+      "Potential Fit": 0.3846,
+      "Good Fit": 0.456
     },
     "confusion_matrix": [
       [
-        59,
-        21,
-        20
-      ],
-      [
-        39,
-        28,
-        33
-      ],
-      [
-        34,
-        29,
-        37
-      ]
-    ],
-    "classification_report": {
-      "No Fit": {
-        "precision": 0.44696969696969696,
-        "recall": 0.59,
-        "f1-score": 0.5086206896551724,
-        "support": 100.0
-      },
-      "Potential Fit": {
-        "precision": 0.358974358974359,
-        "recall": 0.28,
-        "f1-score": 0.3146067415730337,
-        "support": 100.0
-      },
-      "Good Fit": {
-        "precision": 0.4111111111111111,
-        "recall": 0.37,
-        "f1-score": 0.3894736842105263,
-        "support": 100.0
-      },
-      "accuracy": 0.41333333333333333,
-      "macro avg": {
-        "precision": 0.4056850556850557,
-        "recall": 0.41333333333333333,
-        "f1-score": 0.4042337051462441,
-        "support": 300.0
-      },
-      "weighted avg": {
-        "precision": 0.4056850556850557,
-        "recall": 0.41333333333333333,
-        "f1-score": 0.4042337051462441,
-        "support": 300.0
-      }
-    },
-    "mean_max_probability": 0.5126,
-    "fit_seconds": 0.2,
-    "model_version": "match-model-v0.2.1-baseline"
-  },
-  "random_forest": {
-    "accuracy": 0.43,
-    "macro_f1": 0.4186,
-    "per_class_f1": {
-      "No Fit": 0.5385,
-      "Potential Fit": 0.3897,
-      "Good Fit": 0.3275
-    },
-    "confusion_matrix": [
-      [
-        63,
-        20,
-        17
-      ],
-      [
-        36,
-        38,
-        26
+        58,
+        23,
+        19
       ],
       [
         35,
-        37,
-        28
+        35,
+        30
+      ],
+      [
+        32,
+        24,
+        44
       ]
     ],
     "classification_report": {
       "No Fit": {
-        "precision": 0.4701492537313433,
-        "recall": 0.63,
-        "f1-score": 0.5384615384615384,
+        "precision": 0.464,
+        "recall": 0.58,
+        "f1-score": 0.5155555555555555,
         "support": 100.0
       },
       "Potential Fit": {
-        "precision": 0.4,
-        "recall": 0.38,
-        "f1-score": 0.38974358974358975,
+        "precision": 0.4268292682926829,
+        "recall": 0.35,
+        "f1-score": 0.38461538461538464,
         "support": 100.0
       },
       "Good Fit": {
-        "precision": 0.39436619718309857,
-        "recall": 0.28,
-        "f1-score": 0.32748538011695905,
+        "precision": 0.4731182795698925,
+        "recall": 0.44,
+        "f1-score": 0.45595854922279794,
         "support": 100.0
       },
-      "accuracy": 0.43,
+      "accuracy": 0.45666666666666667,
       "macro avg": {
-        "precision": 0.42150515030481395,
-        "recall": 0.43,
-        "f1-score": 0.4185635027740291,
+        "precision": 0.45464918262085846,
+        "recall": 0.4566666666666666,
+        "f1-score": 0.45204316313124604,
         "support": 300.0
       },
       "weighted avg": {
-        "precision": 0.42150515030481395,
-        "recall": 0.43,
-        "f1-score": 0.41856350277402904,
+        "precision": 0.4546491826208585,
+        "recall": 0.45666666666666667,
+        "f1-score": 0.45204316313124604,
         "support": 300.0
       }
     },
-    "mean_max_probability": 0.5366,
-    "fit_seconds": 2.9,
-    "model_version": "match-model-v0.2.1-baseline"
+    "mean_max_probability": 0.5572,
+    "fit_seconds": 0.2,
+    "model_version": "match-model-v0.3.0-baseline"
   },
-  "gradient_boosting": {
-    "accuracy": 0.4633,
-    "macro_f1": 0.4505,
+  "random_forest": {
+    "accuracy": 0.4533,
+    "macro_f1": 0.4457,
     "per_class_f1": {
-      "No Fit": 0.5983,
-      "Potential Fit": 0.3936,
-      "Good Fit": 0.3596
+      "No Fit": 0.521,
+      "Potential Fit": 0.3596,
+      "Good Fit": 0.4565
     },
     "confusion_matrix": [
       [
-        70,
-        13,
-        17
+        62,
+        20,
+        18
       ],
       [
-        34,
-        37,
-        29
+        44,
+        32,
+        24
       ],
       [
-        30,
-        38,
-        32
+        32,
+        26,
+        42
       ]
     ],
     "classification_report": {
       "No Fit": {
-        "precision": 0.5223880597014925,
-        "recall": 0.7,
-        "f1-score": 0.5982905982905983,
+        "precision": 0.4492753623188406,
+        "recall": 0.62,
+        "f1-score": 0.5210084033613446,
         "support": 100.0
       },
       "Potential Fit": {
-        "precision": 0.42045454545454547,
-        "recall": 0.37,
-        "f1-score": 0.39361702127659576,
-        "support": 100.0
-      },
-      "Good Fit": {
         "precision": 0.41025641025641024,
         "recall": 0.32,
         "f1-score": 0.3595505617977528,
         "support": 100.0
       },
-      "accuracy": 0.4633333333333333,
+      "Good Fit": {
+        "precision": 0.5,
+        "recall": 0.42,
+        "f1-score": 0.45652173913043476,
+        "support": 100.0
+      },
+      "accuracy": 0.4533333333333333,
       "macro avg": {
-        "precision": 0.4510330051374827,
-        "recall": 0.4633333333333333,
-        "f1-score": 0.4504860604549823,
+        "precision": 0.45317725752508364,
+        "recall": 0.4533333333333333,
+        "f1-score": 0.4456935680965107,
         "support": 300.0
       },
       "weighted avg": {
-        "precision": 0.45103300513748273,
-        "recall": 0.4633333333333333,
-        "f1-score": 0.4504860604549823,
+        "precision": 0.4531772575250836,
+        "recall": 0.4533333333333333,
+        "f1-score": 0.44569356809651073,
         "support": 300.0
       }
     },
-    "mean_max_probability": 0.5799,
-    "fit_seconds": 7.0,
-    "model_version": "match-model-v0.2.1-baseline"
+    "mean_max_probability": 0.5266,
+    "fit_seconds": 3.0,
+    "model_version": "match-model-v0.3.0-baseline"
+  },
+  "gradient_boosting": {
+    "accuracy": 0.4433,
+    "macro_f1": 0.4335,
+    "per_class_f1": {
+      "No Fit": 0.5614,
+      "Potential Fit": 0.339,
+      "Good Fit": 0.4
+    },
+    "confusion_matrix": [
+      [
+        64,
+        14,
+        22
+      ],
+      [
+        36,
+        30,
+        34
+      ],
+      [
+        28,
+        33,
+        39
+      ]
+    ],
+    "classification_report": {
+      "No Fit": {
+        "precision": 0.5,
+        "recall": 0.64,
+        "f1-score": 0.5614035087719298,
+        "support": 100.0
+      },
+      "Potential Fit": {
+        "precision": 0.38961038961038963,
+        "recall": 0.3,
+        "f1-score": 0.3389830508474576,
+        "support": 100.0
+      },
+      "Good Fit": {
+        "precision": 0.4105263157894737,
+        "recall": 0.39,
+        "f1-score": 0.4,
+        "support": 100.0
+      },
+      "accuracy": 0.44333333333333336,
+      "macro avg": {
+        "precision": 0.4333789017999545,
+        "recall": 0.44333333333333336,
+        "f1-score": 0.4334621865397958,
+        "support": 300.0
+      },
+      "weighted avg": {
+        "precision": 0.4333789017999544,
+        "recall": 0.44333333333333336,
+        "f1-score": 0.4334621865397958,
+        "support": 300.0
+      }
+    },
+    "mean_max_probability": 0.5827,
+    "fit_seconds": 7.4,
+    "model_version": "match-model-v0.3.0-baseline"
   },
   "label_mapping": {
     "No Fit": 0,
@@ -206,7 +206,24 @@
     "job_title_similarity",
     "n_candidate_skills",
     "n_required_skills",
-    "n_preferred_skills"
+    "n_preferred_skills",
+    "cov_programming_required",
+    "cov_frontend_required",
+    "cov_backend_required",
+    "cov_database_required",
+    "cov_cloud_required",
+    "cov_devops_required",
+    "cov_data_science_required",
+    "cov_machine_learning_required",
+    "cov_other_required",
+    "cov_programming_n",
+    "cov_frontend_n",
+    "cov_backend_n",
+    "cov_database_n",
+    "cov_cloud_n",
+    "cov_devops_n",
+    "cov_data_science_n",
+    "cov_machine_learning_n"
   ],
   "dataset": {
     "train_rows": 2100,

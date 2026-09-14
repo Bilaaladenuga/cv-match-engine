@@ -34,6 +34,22 @@ Feature vector (one CV–JD pair):
     n_candidate_skills           meta: candidate skill count
     n_required_skills            meta: required skill count
     n_preferred_skills           meta: preferred skill count
+
+Per-category coverage (taxonomy-driven; breaks the aggregate-only ceiling):
+
+    cov_<cat>_required           fraction of REQUIRED skills in taxonomy
+                                 category <cat> that the candidate covers
+                                 (full or partial). Categories: programming,
+                                 frontend, backend, database, cloud, devops,
+                                 data_science, machine_learning. 0.0 when the
+                                 JD demands nothing from that category (no
+                                 demand -> no credit, matching the convention
+                                 of the aggregate coverage features).
+    cov_other_required           same ratio over required skills in all
+                                 remaining categories (gis, design, tools,
+                                 soft_skills) or unknown to the taxonomy.
+    cov_<cat>_n                  JD demand: count of required+preferred
+                                 skills from category <cat>.
 """
 
 from __future__ import annotations
@@ -46,6 +62,7 @@ from app.nlp.candidate_builder import build_candidate_profile
 from app.nlp.experience_matcher import match_experience
 from app.nlp.job_parser import parse_job_description
 from app.nlp.skill_matcher import match_skills
+from app.nlp.taxonomy import load_taxonomy
 from app.scoring.certification_matcher import match_certifications
 from app.scoring.education_matcher import match_education
 
@@ -68,7 +85,32 @@ FEATURE_NAMES: list[str] = [
     "n_candidate_skills",
     "n_required_skills",
     "n_preferred_skills",
+    # per-category coverage (Phase 12.1)
+    "cov_programming_required",
+    "cov_frontend_required",
+    "cov_backend_required",
+    "cov_database_required",
+    "cov_cloud_required",
+    "cov_devops_required",
+    "cov_data_science_required",
+    "cov_machine_learning_required",
+    "cov_other_required",
+    "cov_programming_n",
+    "cov_frontend_n",
+    "cov_backend_n",
+    "cov_database_n",
+    "cov_cloud_n",
+    "cov_devops_n",
+    "cov_data_science_n",
+    "cov_machine_learning_n",
 ]
+
+# Taxonomy categories with their own coverage feature. Everything else
+# (gis, design, tools, soft_skills) and unknown skills fall into "other".
+_COVERAGE_CATEGORIES = (
+    "programming", "frontend", "backend", "database",
+    "cloud", "devops", "data_science", "machine_learning",
+)
 
 # Seniority ranking used for the seniority_match feature
 _SENIORITY_RANK = {
@@ -183,6 +225,9 @@ def build_feature_vector(
     # --- Job title similarity ------------------------------------------------
     title_sim = _job_title_similarity(candidate.job_titles, job.job_title, cv_text)
 
+    # --- Per-category coverage (taxonomy-driven) -----------------------------
+    cat_features = compute_category_coverage(req_names, pref_names, matched_set)
+
     return {
         "skill_overlap_ratio": round(skill_overlap, 6),
         "required_skill_coverage": round(skill_match.required_coverage, 6),
@@ -200,7 +245,68 @@ def build_feature_vector(
         "n_candidate_skills": float(len(cand_names)),
         "n_required_skills": float(len(req_names)),
         "n_preferred_skills": float(len(pref_names)),
+        **cat_features,
     }
+
+
+def compute_category_coverage(
+    req_names: list[str],
+    pref_names: list[str],
+    covered: set[str],
+) -> dict[str, float]:
+    """
+    Per-taxonomy-category coverage features.
+
+    Args:
+        req_names: canonical required skill names from the JD.
+        pref_names: canonical preferred skill names (demand counts only).
+        covered: canonical names matched fully or partially, from the
+            Phase 8 skill matcher.
+
+    Returns the cov_* feature dict (see module docstring for semantics).
+    Shared by build_feature_vector and the table augmentation script so
+    training rows and live inference cannot diverge.
+    """
+    taxonomy = load_taxonomy()
+
+    # Map each REQUIRED skill to its taxonomy category (None = unknown/other).
+    req_cats: dict[str | None, list[str]] = {}
+    for name in req_names:
+        skill = taxonomy.get_skill(name)
+        cat = skill.category if skill is not None else None
+        req_cats.setdefault(cat, []).append(name)
+
+    cat_features: dict[str, float] = {}
+    for cat in _COVERAGE_CATEGORIES:
+        demanded = req_cats.get(cat, [])
+        cov = (
+            len([s for s in demanded if s in covered]) / len(demanded)
+            if demanded
+            else 0.0
+        )
+        cat_features[f"cov_{cat}_required"] = round(cov, 6)
+    other_demanded = req_cats.get(None, [])
+    for cat in taxonomy.category_ids:
+        if cat not in _COVERAGE_CATEGORIES:
+            other_demanded.extend(req_cats.get(cat, []))
+    other_cov = (
+        len([s for s in other_demanded if s in covered]) / len(other_demanded)
+        if other_demanded
+        else 0.0
+    )
+    cat_features["cov_other_required"] = round(other_cov, 6)
+
+    # Demand counts: how many required+preferred skills come from each
+    # category (JD complexity profile; complements the coverage ratios).
+    for cat in _COVERAGE_CATEGORIES:
+        n = sum(
+            1
+            for name in req_names + pref_names
+            if (skill := taxonomy.get_skill(name)) is not None
+            and skill.category == cat
+        )
+        cat_features[f"cov_{cat}_n"] = float(n)
+    return cat_features
 
 
 def _job_title_similarity(
