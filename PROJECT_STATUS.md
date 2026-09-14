@@ -226,10 +226,33 @@ numpy==1.26.4
 - docs/model-card.md CREATED (Phase 23 deliverable pulled forward): full
   v0.3.0 documentation with honest metrics, failure modes, limitations
 
+## v0.3.1 — Prior Calibration in Serving (fixing the overconfidence finding)
+- New backend/app/ml/calibration.py: single source of truth for the
+  Saerens prior correction; audited NATURAL_PRIOR constants regression-
+  guarded against data/raw/train.csv by a unit test
+- Training embeds calibration_ metadata ON the artifact (method + natural
+  prior + training prior) so model and calibration are inseparable;
+  artifacts re-stamped match-model-v0.3.1-baseline
+- Serving: model_scorer.score_features applies the correction using the
+  artifact metadata (module constants as fallback for older artifacts);
+  invalid metadata degrades to raw probabilities with a warning, never a
+  failed request; MLScorerResult now carries raw_probabilities +
+  calibration_method alongside the calibrated values
+- Hybrid layer forwards both through ml_details; API now returns
+  calibrated probabilities, raw probabilities, and the method name
+- End-to-end verified via TestClient on the stateless /api/matches path:
+  version stamp match-model-v0.1+v0.3.1-baseline, No Fit share boosted
+  (~1.5% -> ~3.1% on the sample pair) as the natural prior requires
+- 15 new tests (correction math incl. column-order independence,
+  renormalization, degenerate input; audited-prior guard; metadata-driven
+  serving; graceful degradation; artifact-metadata presence). Suite: 415
+  passing, Ruff clean
+
 ## Test Summary
 ```
-Total: 400 tests passing
-- 9 classification-eval helper tests (NEW)
+Total: 415 tests passing
+- 15 calibration / serving-integration tests (NEW)
+- 9 classification-eval helper tests
 - 19 ranking metric tests
 - 17 feature extraction tests (+6 category-coverage tests)
 - 11 model scorer / hybrid-ML integration tests

@@ -27,8 +27,10 @@ Design rules
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
+
+import numpy as np
 
 logger = logging.getLogger(__name__)
 
@@ -49,18 +51,27 @@ class ModelNotAvailableError(RuntimeError):
 class MLScorerResult:
     """Outcome of applying the trained classifier to one feature vector."""
 
-    fit_score: float                 # expected-value score, 0..1
-    label: str                       # argmax class name
-    probabilities: dict[str, float]  # per-class probabilities
+    fit_score: float                 # expected-value score, 0..1 (calibrated)
+    label: str                       # argmax class name (calibrated)
+    probabilities: dict[str, float]  # per-class probabilities (calibrated)
     model_version: str               # stamped by the training script
+    raw_probabilities: dict[str, float] = field(default_factory=dict)
+    calibration_method: str | None = None
 
     def to_dict(self) -> dict:
-        return {
+        out = {
             "fit_score": round(self.fit_score, 4),
             "label": self.label,
             "probabilities": {k: round(v, 4) for k, v in self.probabilities.items()},
             "model_version": self.model_version,
         }
+        if self.raw_probabilities:
+            out["raw_probabilities"] = {
+                k: round(v, 4) for k, v in self.raw_probabilities.items()
+            }
+        if self.calibration_method:
+            out["calibration_method"] = self.calibration_method
+        return out
 
 
 _model = None
@@ -137,7 +148,31 @@ def score_features(features: dict[str, float]) -> MLScorerResult | None:
         classes = [_LABEL_NAMES[int(c)] for c in raw_classes]
     else:
         classes = raw_classes
-    probabilities = dict(zip(classes, (float(p) for p in proba), strict=True))
+
+    # --- Prior calibration (Phase 13 finding) ------------------------------
+    # The stratified training table teaches a uniform prior; production
+    # input follows the natural ~50/25/25 distribution. Correct the raw
+    # posteriors to the natural prior (metadata stored in the artifact by
+    # the training script; audited constants as fallback). The corrected
+    # probabilities drive label, fit_score, and ml_details; raw ones are
+    # kept alongside for transparency.
+    calibration_meta = getattr(model, "calibration_", None) or {}
+    natural_prior = calibration_meta.get("natural_prior")
+    training_prior = calibration_meta.get("training_prior")
+    try:
+        from app.ml.calibration import CALIBRATION_METHOD, prior_correct
+
+        corrected = prior_correct(proba, classes, natural_prior, training_prior)
+        applied_method = calibration_meta.get("method", CALIBRATION_METHOD)
+    except (KeyError, TypeError) as exc:
+        # Unknown class names etc. — degrade to raw probabilities rather
+        # than fail a match request over calibration metadata.
+        logger.warning("Prior calibration unavailable (%s); using raw probabilities", exc)
+        corrected = np.asarray(proba, dtype=float)
+        applied_method = None
+
+    probabilities = dict(zip(classes, (float(p) for p in corrected), strict=True))
+    raw_probabilities = dict(zip(classes, (float(p) for p in proba), strict=True))
 
     fit_score = sum(
         probabilities.get(name, 0.0) * value
@@ -162,4 +197,6 @@ def score_features(features: dict[str, float]) -> MLScorerResult | None:
         label=label,
         probabilities=probabilities,
         model_version=version,
+        raw_probabilities=raw_probabilities,
+        calibration_method=applied_method,
     )

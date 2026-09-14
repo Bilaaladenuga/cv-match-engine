@@ -1,6 +1,6 @@
 # Model Card — CV–Job Match Classifier
 
-**Version:** `match-model-v0.3.0-baseline` (trained classifier) · hybrid engine: `match-model-v0.1`
+**Version:** `match-model-v0.3.1-baseline` (trained classifier, prior-calibrated) · hybrid engine: `match-model-v0.1`
 **Status:** baseline (Phase 12–13) — decision-support only, **not** an automated hiring decision tool.
 **Date:** 2026-09-14
 
@@ -87,8 +87,14 @@ comparison.
    class decision as "the verdict".
 2. **Overconfidence on Good Fit** — top calibration bin: predicted ~0.88 vs
    empirical ~0.36. Root cause: uniform training prior vs 50/25/25 world.
-   Prior correction recovers 3–5 accuracy points but does not fix ranking.
-   Raw probabilities must not be surfaced as user-facing confidence.
+   **Mitigation (v0.3.1):** Saerens-style prior correction is applied at
+   serving time (`backend/app/ml/calibration.py`); the artifact carries its
+   own calibration metadata (`calibration_`), the API exposes both
+   calibrated and raw probabilities plus the method name, and the audited
+   natural prior is regression-guarded by a unit test against
+   `data/raw/train.csv`. Prior correction recovers 3–5 accuracy points but
+   does not fix ranking or AUC; calibrated values are compatibility
+   estimates, not probabilities of being hired.
 3. **Volume-proxy shortcut** — candidates overrated into Good Fit list
    ~10.5 skills on average vs ~6.8 for correct Potential rows (real Good
    rows: ~12.4). "Long CV" is being conflated with "good fit". Next feature
@@ -118,7 +124,20 @@ comparison.
   "chance of getting hired". It is decision-support and must not be the
   sole basis for hiring decisions.
 
-## 7. Reproducibility
+## 7. Serving calibration (v0.3.1)
+
+- Artifact metadata: `calibration_ = {method, natural_prior,
+  training_prior}` written by `ml/training/train_baseline.py` at train
+  time — model and calibration are inseparable.
+- Serving: `model_scorer.score_features` corrects raw posteriors to the
+  natural prior; on missing/invalid metadata it degrades to raw
+  probabilities and logs a warning (never fails a match request).
+- API: `ml_details.probabilities` = calibrated, `ml_details
+  .raw_probabilities` = pre-correction, `ml_details.calibration_method` =
+  applied method (`saerens_prior_correction` or `none`).
+- Combined version stamp: `match-model-v0.1+v0.3.1-baseline`.
+
+## 8. Reproducibility
 
 - Training: `ml/training/train_baseline.py` (artifacts are gitignored;
   `ml/models/training_report.json` is committed evidence).

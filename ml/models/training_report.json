@@ -1,194 +1,199 @@
 {
   "logistic_regression": {
-    "accuracy": 0.4567,
-    "macro_f1": 0.452,
+    "accuracy": 0.4042,
+    "macro_f1": 0.3906,
     "per_class_f1": {
-      "No Fit": 0.5156,
-      "Potential Fit": 0.3846,
-      "Good Fit": 0.456
+      "No Fit": 0.4783,
+      "Potential Fit": 0.3348,
+      "Good Fit": 0.3586
     },
     "confusion_matrix": [
       [
-        58,
-        23,
-        19
+        364,
+        214,
+        279
       ],
       [
-        35,
-        35,
-        30
+        140,
+        153,
+        151
       ],
       [
-        32,
-        24,
-        44
+        161,
+        103,
+        194
       ]
     ],
     "classification_report": {
       "No Fit": {
-        "precision": 0.464,
-        "recall": 0.58,
-        "f1-score": 0.5155555555555555,
-        "support": 100.0
+        "precision": 0.5473684210526316,
+        "recall": 0.42473745624270715,
+        "f1-score": 0.4783180026281209,
+        "support": 857.0
       },
       "Potential Fit": {
-        "precision": 0.4268292682926829,
-        "recall": 0.35,
-        "f1-score": 0.38461538461538464,
-        "support": 100.0
+        "precision": 0.32553191489361705,
+        "recall": 0.34459459459459457,
+        "f1-score": 0.3347921225382932,
+        "support": 444.0
       },
       "Good Fit": {
-        "precision": 0.4731182795698925,
-        "recall": 0.44,
-        "f1-score": 0.45595854922279794,
-        "support": 100.0
+        "precision": 0.3108974358974359,
+        "recall": 0.42358078602620086,
+        "f1-score": 0.3585951940850277,
+        "support": 458.0
       },
-      "accuracy": 0.45666666666666667,
+      "accuracy": 0.40420693575895394,
       "macro avg": {
-        "precision": 0.45464918262085846,
-        "recall": 0.4566666666666666,
-        "f1-score": 0.45204316313124604,
-        "support": 300.0
+        "precision": 0.3945992572812282,
+        "recall": 0.39763761228783423,
+        "f1-score": 0.39056843975048067,
+        "support": 1759.0
       },
       "weighted avg": {
-        "precision": 0.4546491826208585,
-        "recall": 0.45666666666666667,
-        "f1-score": 0.45204316313124604,
-        "support": 300.0
+        "precision": 0.4298021220556549,
+        "recall": 0.40420693575895394,
+        "f1-score": 0.4109169013929758,
+        "support": 1759.0
       }
     },
-    "mean_max_probability": 0.5572,
-    "fit_seconds": 0.2,
-    "model_version": "match-model-v0.3.0-baseline"
+    "mean_max_probability": 0.5575,
+    "fit_seconds": 0.3,
+    "model_version": "match-model-v0.3.1-baseline"
   },
   "random_forest": {
-    "accuracy": 0.4533,
-    "macro_f1": 0.4457,
+    "accuracy": 0.4025,
+    "macro_f1": 0.3897,
     "per_class_f1": {
-      "No Fit": 0.521,
-      "Potential Fit": 0.3596,
-      "Good Fit": 0.4565
+      "No Fit": 0.4722,
+      "Potential Fit": 0.3248,
+      "Good Fit": 0.372
     },
     "confusion_matrix": [
       [
-        62,
-        20,
-        18
+        361,
+        258,
+        238
       ],
       [
-        44,
-        32,
-        24
+        155,
+        158,
+        131
       ],
       [
-        32,
-        26,
-        42
+        156,
+        113,
+        189
       ]
     ],
     "classification_report": {
       "No Fit": {
-        "precision": 0.4492753623188406,
-        "recall": 0.62,
-        "f1-score": 0.5210084033613446,
-        "support": 100.0
+        "precision": 0.5372023809523809,
+        "recall": 0.42123687281213534,
+        "f1-score": 0.4722040549378679,
+        "support": 857.0
       },
       "Potential Fit": {
-        "precision": 0.41025641025641024,
-        "recall": 0.32,
-        "f1-score": 0.3595505617977528,
-        "support": 100.0
+        "precision": 0.29867674858223064,
+        "recall": 0.35585585585585583,
+        "f1-score": 0.32476875642343267,
+        "support": 444.0
       },
       "Good Fit": {
-        "precision": 0.5,
-        "recall": 0.42,
-        "f1-score": 0.45652173913043476,
-        "support": 100.0
+        "precision": 0.3387096774193548,
+        "recall": 0.4126637554585153,
+        "f1-score": 0.3720472440944882,
+        "support": 458.0
       },
-      "accuracy": 0.4533333333333333,
+      "accuracy": 0.4025014212620807,
       "macro avg": {
-        "precision": 0.45317725752508364,
-        "recall": 0.4533333333333333,
-        "f1-score": 0.4456935680965107,
-        "support": 300.0
+        "precision": 0.3915296023179888,
+        "recall": 0.3965854947088355,
+        "f1-score": 0.38967335181859625,
+        "support": 1759.0
       },
       "weighted avg": {
-        "precision": 0.4531772575250836,
-        "recall": 0.4533333333333333,
-        "f1-score": 0.44569356809651073,
-        "support": 300.0
+        "precision": 0.425312080218741,
+        "recall": 0.4025014212620807,
+        "f1-score": 0.4089106541950156,
+        "support": 1759.0
       }
     },
-    "mean_max_probability": 0.5266,
-    "fit_seconds": 3.0,
-    "model_version": "match-model-v0.3.0-baseline"
+    "mean_max_probability": 0.5152,
+    "fit_seconds": 2.6,
+    "model_version": "match-model-v0.3.1-baseline"
   },
   "gradient_boosting": {
-    "accuracy": 0.4433,
-    "macro_f1": 0.4335,
+    "accuracy": 0.4036,
+    "macro_f1": 0.388,
     "per_class_f1": {
-      "No Fit": 0.5614,
-      "Potential Fit": 0.339,
-      "Good Fit": 0.4
+      "No Fit": 0.4908,
+      "Potential Fit": 0.3337,
+      "Good Fit": 0.3395
     },
     "confusion_matrix": [
       [
-        64,
-        14,
-        22
+        375,
+        234,
+        248
       ],
       [
-        36,
-        30,
-        34
+        142,
+        162,
+        140
       ],
       [
-        28,
-        33,
-        39
+        154,
+        131,
+        173
       ]
     ],
     "classification_report": {
       "No Fit": {
-        "precision": 0.5,
-        "recall": 0.64,
-        "f1-score": 0.5614035087719298,
-        "support": 100.0
+        "precision": 0.5588673621460507,
+        "recall": 0.43757292882147025,
+        "f1-score": 0.4908376963350785,
+        "support": 857.0
       },
       "Potential Fit": {
-        "precision": 0.38961038961038963,
-        "recall": 0.3,
-        "f1-score": 0.3389830508474576,
-        "support": 100.0
+        "precision": 0.30740037950664134,
+        "recall": 0.36486486486486486,
+        "f1-score": 0.3336766220391349,
+        "support": 444.0
       },
       "Good Fit": {
-        "precision": 0.4105263157894737,
-        "recall": 0.39,
-        "f1-score": 0.4,
-        "support": 100.0
+        "precision": 0.3083778966131907,
+        "recall": 0.3777292576419214,
+        "f1-score": 0.3395485770363101,
+        "support": 458.0
       },
-      "accuracy": 0.44333333333333336,
+      "accuracy": 0.40363843092666285,
       "macro avg": {
-        "precision": 0.4333789017999545,
-        "recall": 0.44333333333333336,
-        "f1-score": 0.4334621865397958,
-        "support": 300.0
+        "precision": 0.3915485460886276,
+        "recall": 0.3933890171094188,
+        "f1-score": 0.38802096513684114,
+        "support": 1759.0
       },
       "weighted avg": {
-        "precision": 0.4333789017999544,
-        "recall": 0.44333333333333336,
-        "f1-score": 0.4334621865397958,
-        "support": 300.0
+        "precision": 0.4301717876685364,
+        "recall": 0.40363843092666285,
+        "f1-score": 0.41177576704216495,
+        "support": 1759.0
       }
     },
-    "mean_max_probability": 0.5827,
-    "fit_seconds": 7.4,
-    "model_version": "match-model-v0.3.0-baseline"
+    "mean_max_probability": 0.5774,
+    "fit_seconds": 7.6,
+    "model_version": "match-model-v0.3.1-baseline"
   },
   "label_mapping": {
     "No Fit": 0,
     "Potential Fit": 1,
     "Good Fit": 2
+  },
+  "natural_prior": {
+    "No Fit": 0.503605191475725,
+    "Potential Fit": 0.2493190193879186,
+    "Good Fit": 0.24707578913635636
   },
   "feature_names": [
     "skill_overlap_ratio",
@@ -227,7 +232,7 @@
   ],
   "dataset": {
     "train_rows": 2100,
-    "test_rows": 300,
+    "test_rows": 1759,
     "source": "cnamuangtoun/resume-job-description-fit (train subsample 700/class, test 100/class; int8-quantized MiniLM embeddings; resume bodies may repeat across the upstream train/test boundary - see docs/ml-methodology.md)"
   }
 }

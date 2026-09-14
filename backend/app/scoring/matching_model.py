@@ -351,6 +351,16 @@ def compute_match_score(
             "weight_share": ML_WEIGHT_SHARE,
             "trained_model_version": trained_version,
         }
+        # Transparency: expose the pre-calibration probabilities and the
+        # correction method (Phase 13) when the scorer provides them.
+        raw_probabilities = getattr(ml, "raw_probabilities", None)
+        if raw_probabilities:
+            ml_details["raw_probabilities"] = {
+                k: round(float(v), 4) for k, v in raw_probabilities.items()
+            }
+        calibration_method = getattr(ml, "calibration_method", None)
+        if calibration_method:
+            ml_details["calibration_method"] = calibration_method
 
     out_weights = dict(engine_weights)
     if ml is not None:

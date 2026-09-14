@@ -91,6 +91,19 @@ class TestModelScorer:
         class StubModel:
             feature_names_in_ = ["f1", "f2"]
             classes_ = [0, 1, 2]
+            calibration_ = {  # suppress fallback calibration for raw assertions
+                "method": "none",
+                "natural_prior": {
+                    "No Fit": 1 / 3,
+                    "Potential Fit": 1 / 3,
+                    "Good Fit": 1 / 3,
+                },
+                "training_prior": {
+                    "No Fit": 1 / 3,
+                    "Potential Fit": 1 / 3,
+                    "Good Fit": 1 / 3,
+                },
+            }
 
             @staticmethod
             def predict_proba(features_frame):
@@ -103,6 +116,7 @@ class TestModelScorer:
         assert result.probabilities["Potential Fit"] == 0.5
         assert abs(result.fit_score - (0.3 + 0.5 * 0.5)) < 1e-9
         assert result.label == "Potential Fit"
+        assert result.calibration_method == "none"
 
     def test_schema_mismatch_raises(self, monkeypatch):
         class StubModel:

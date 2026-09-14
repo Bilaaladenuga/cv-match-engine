@@ -45,7 +45,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 PROCESSED_DIR = REPO_ROOT / "data" / "processed"
 MODELS_DIR = REPO_ROOT / "ml" / "models"
 
-MODEL_VERSION = "match-model-v0.3.0-baseline"  # 33-feature schema (adds per-category coverage)
+MODEL_VERSION = "match-model-v0.3.1-baseline"  # v0.3.1: artifacts carry prior-calibration metadata
 
 LABEL_ORDER = ["No Fit", "Potential Fit", "Good Fit"]
 
@@ -67,6 +67,21 @@ def load_split(split: str) -> tuple[pd.DataFrame, pd.Series, pd.Series]:
 def _feature_names(df: pd.DataFrame) -> list[str]:
     meta = {"label", "label_int", "split_row", "extraction_error"}
     return [c for c in df.columns if c not in meta]
+
+
+def compute_natural_prior() -> dict[str, float]:
+    """Class prior of the unstratified source split (data/raw/train.csv).
+
+    Embedded into artifact calibration_ metadata and the training report.
+    Falls back to None values (no calibration) when the raw CSV is absent,
+    so training on a machine without data/raw still succeeds.
+    """
+    raw = REPO_ROOT / "data" / "raw" / "train.csv"
+    if not raw.exists():
+        print("[warn] data/raw/train.csv not found; calibration metadata omitted")
+        return {}
+    counts = pd.read_csv(raw, usecols=["label"])["label"].value_counts()
+    return {label: float(counts.get(label, 0) / counts.sum()) for label in LABEL_ORDER}
 
 
 def build_models() -> dict[str, Pipeline]:
@@ -147,9 +162,19 @@ def main() -> None:
         print(f"{name}: acc={metrics['accuracy']} macro_f1={metrics['macro_f1']} "
               f"per-class F1={metrics['per_class_f1']} ({fit_s}s)")
 
+        # Calibration metadata (Phase 13): the stratified table teaches a
+        # uniform prior; serving corrects to the natural source prior via
+        # app/ml/calibration.py. Storing it ON the artifact keeps model and
+        # calibration inseparable.
+        model.calibration_ = {
+            "method": "saerens_prior_correction",
+            "natural_prior": compute_natural_prior(),
+            "training_prior": {name: 1.0 / 3.0 for name in LABEL_ORDER},
+        }
         joblib.dump(model, MODELS_DIR / f"baseline_{name}.joblib")
 
     results["label_mapping"] = {name: i for i, name in enumerate(LABEL_ORDER)}
+    results["natural_prior"] = compute_natural_prior()
     results["feature_names"] = list(X_train.columns)
     results["dataset"] = {
         "train_rows": int(len(X_train)),
