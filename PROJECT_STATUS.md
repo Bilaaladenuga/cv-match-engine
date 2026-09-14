@@ -171,10 +171,35 @@ numpy==1.26.4
 - Artifacts re-stamped match-model-v0.3.0-baseline (feature-schema change);
   training_report.json regenerated; model scorer re-verified end-to-end
 
+## Phase 13 (part 1) — Ranking Evaluation (Precision@K / Recall@K / NDCG@K)
+- New ml/evaluation/ranking_metrics.py: graded-gain (0/1/2) metrics with
+  group aggregation, min-group-size exclusion, coverage reporting, and a
+  seeded within-group random-ordering baseline
+- New ml/evaluation/run_ranking_eval.py: scores the 300-row test sample
+  with all three baselines using the SERVING score convention
+  P(Good) + 0.5*P(Potential); groups by JD (recruiter slates, production
+  scenario) and by CV (one candidate x many jobs, exploratory)
+- JD-slate results (40 groups at K=3, 28 at K=5/10, 244 rows):
+  - RandomForest NDCG@3 0.912 / P@3 0.817 (random baseline 0.834)
+  - RandomForest NDCG@5 0.960 / P@5 0.814 (random baseline 0.882)
+  - LogisticRegression NDCG@5 0.941 / P@5 0.800; GradientBoosting 0.937 / 0.800
+  - P@5 ~ 0.80 = 4 of the top-5 shortlisted candidates are relevant
+  - Honest framing: random baseline is high (~0.88 NDCG@5) because slates
+    are large and mostly relevant; the LIFT (+0.05-0.08 NDCG) is the signal
+  - RandomForest wins on ordering despite losing on pointwise accuracy
+    to LogReg — ordering and thresholding are different skills
+- CV-group numbers: only 1-3 usable groups in the sample — reported as
+  NOT statistically meaningful in the report; full-test-set extraction
+  (1,759 rows) deferred until the feature pipeline is faster
+- 19 new ranking-metric tests (hand-computed values), incl. the class-
+  permutation robustness of fit_score_from_proba
+- Findings written into ml/evaluation/ranking_eval.md (committable)
+
 ## Test Summary
 ```
-Total: 372 tests passing
-- 17 feature extraction tests (+6 category-coverage tests, NEW)
+Total: 391 tests passing
+- 19 ranking metric tests (NEW)
+- 17 feature extraction tests (+6 category-coverage tests)
 - 11 model scorer / hybrid-ML integration tests
 - 11 model / 39 parser / 27 extraction / 27 taxonomy / 5 seed skills
 - 38 job parser tests (+4 infinite-loop regressions)

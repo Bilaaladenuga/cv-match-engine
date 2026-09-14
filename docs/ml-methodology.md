@@ -260,7 +260,18 @@ Forest, Gradient Boosting. Metrics:
 
 - **Classification:** Accuracy, Precision, Recall, F1 (macro — not just
   accuracy, because classes are imbalanced), ROC-AUC, confusion matrix.
-- **Ranking:** Precision@K, Recall@K, NDCG@K.
+- **Ranking:** Precision@K, Recall@K, NDCG@K — implemented in
+  `ml/evaluation/ranking_metrics.py` and reported by
+  `ml/evaluation/run_ranking_eval.py` (see `ml/evaluation/ranking_eval.md`).
+  Ranking is evaluated within **JD groups** (recruiter slates — the
+  production Phase 15 scenario) and within **CV groups** (one candidate,
+  many jobs — exploratory only, per the CV-repetition limitation in 6.1).
+  Graded gains: No Fit = 0, Potential Fit = 1, Good Fit = 2; the score used
+  for ordering is the serving convention `P(Good) + 0.5·P(Potential)`.
+  Every metric is reported against a seeded within-group random-ordering
+  baseline; on this sample the baseline is high (~0.88 NDCG@5) because
+  slates are large and mostly relevant, so **lift over random** — not the
+  raw value — is the honest signal (Random Forest: +0.08 NDCG@5).
 - **Calibration:** reliability curves if scores are exposed as probabilities.
 
 An honest evaluation includes error analysis (false positives = candidates
