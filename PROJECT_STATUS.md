@@ -1,7 +1,7 @@
 # PROJECT STATUS
 
 ## Current Phase
-**Phase 12 — Dataset & Feature Engineering** ✅ COMPLETE (model training next)
+**Phases 1–16 complete** — next: Phase 17 (Next.js frontend)
 
 ## Completed Phases
 
@@ -323,10 +323,60 @@ numpy==1.26.4
   Starlette version's dependency machinery failed it with a confusing
   `local_kw` 422. Fixed by wrapping in a generator function.
 
+## History / Retrieval Endpoints
+- GET /api/history — user's analysis history, newest first, with summary
+  fields (scores, matched/missing counts) and pagination
+- GET /api/matches/{match_id} — full stored match report (scores, per-skill
+  breakdown, experience/semantic/education blocks, recommendations)
+- history_service + routes wired in app/main.py; 6 API tests (SQLite)
+
+## Taxonomy Extension — Healthcare + Finance
+- 28 new skills across 2 new categories (healthcare 13, finance 15) —
+  157 skills / 14 categories total; demonstrates the documented
+  add-a-domain process end-to-end (docs/skill-taxonomy.md updated)
+- Fixed a real cross-skill alias collision introduced by the extension:
+  'Financial Analysis' (misplaced in healthcare) claimed the alias
+  'financial modeling', colliding with finance's 'Financial Modeling' —
+  moved to finance with its own aliases; 'financial modelling' (British
+  spelling) now belongs to Financial Modeling
+- Added missing aliases for 'Medical Terminology'; CI alias-collision
+  test gate passes; extraction verified on real domain text (EHR,
+  phlebotomy, triage, QuickBooks, tax prep, credit analysis)
+
+## Phase 16 — CV Improvement Engine (evidence-grounded recommendations)
+- app/scoring/improvement_engine.py: grades the EVIDENCE behind every
+  job-required skill from three signals — skills-section presence,
+  work-history/projects mention, Phase 9 per-skill duration estimates —
+  into strong / moderate / weak / absent
+- Flagship warning: a skill matched but listed only in the skills section
+  gets "X appears in your skills section but there is limited evidence of
+  its use in your work experience" — the padding detector the spec asks for
+- Anti-gaming rule learned from E2E: the Phase 9 estimator's coarse
+  fallback attributes the whole career span to unmentioned skills with a
+  'CV skills section (inferred)' source note. Month estimates only count
+  as evidence when a NAMED ROLE attributed them or the work text mentions
+  the skill; inferred-only months are zeroed (fallback months must not
+  fake strong evidence)
+- build_recommendations(): prioritized, capped list — build missing
+  skills, substantiate weak evidence, strengthen partial matches with
+  quantified outcomes, experience-gap and certification actions, grounded
+  positives for well-evidenced skills
+- PipelineOutput exposes the graded skill_evidence block so the frontend
+  can render a per-skill evidence panel; recommendations flow through the
+  existing MatchReport / API unchanged
+- MatcherInputs gained a cv_evidence field (backward-compatible default)
+- 15 engine tests (evidence grading, alias-in-work-history, flagship
+  warning, cap, graceful legacy inputs). Suite: 468 passing, Ruff clean
+- E2E verified: Jane Okafor CV vs Platform Engineer JD — Kubernetes/AWS/
+  CI-CD correctly flagged as listed-but-not-evidenced, Python/Redis
+  grounded as strong, Terraform given a build action item
+
 ## Test Summary
 ```
-Total: 447 tests passing
-- 8 ranking endpoint tests (NEW)
+Total: 468 tests passing
+- 15 improvement-engine tests (NEW, Phase 16)
+- 6 history endpoint tests (NEW)
+- 8 ranking endpoint tests
 - 27 feature extraction tests (+10 CV-length)
 - 14 explainer tests
 - 15 calibration / serving-integration tests
@@ -343,11 +393,9 @@ Total: 447 tests passing
 ```
 
 ## Next Up
-- Phase 13 COMPLETE — next: Phase 14 (explainability: translate ML
-  features + error-analysis findings into human-readable factors;
-  feature-delta deltas are the template)
-- Feature roadmap: v0.4 (CV-length normalization) DONE — remaining
-  candidates from the error analysis: per-pair interaction features for
-  CV-group ranking (the listwise gap), ordinal-aware training objective
-- Phase 15 — candidate ranking endpoint (use the ranking eval findings:
-  optimize for Good-Fit surfacing, do not promise binary shortlisting)
+- Phase 16 COMPLETE — next: Phase 17 (Next.js frontend: landing, analyze,
+  detailed report with the skill_evidence panel, history, dashboard)
+- Feature roadmap (model side): per-pair interaction features for CV-group
+  ranking (the listwise gap), ordinal-aware training objective
+- Remaining backend phases: 20 (auth/security), 22 (observability),
+  24 (deployment)

@@ -68,6 +68,7 @@ class MatchResponse(BaseModel):
     semantic: dict | None = None
     education: dict | None = None
     certifications: dict | None = None
+    skill_evidence: list[dict] | None = None  # Phase 16 per-skill evidence grades
     ml_details: dict | None = None  # trained-model probabilities when available
 
 

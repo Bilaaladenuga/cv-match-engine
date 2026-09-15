@@ -38,6 +38,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+from app.scoring.improvement_engine import build_recommendations
 from app.scoring.weights import DEFAULT_MATCHING_WEIGHTS, validate_weights
 
 # Bump when scoring behaviour changes in a way that alters results.
@@ -166,6 +167,11 @@ class MatcherInputs:
     # Free-text context used to build recommendations
     job_title: str | None = None
 
+    # Phase 16 — per-skill evidence grades from the improvement engine.
+    # When present, recommendations are evidence-grounded; when absent
+    # (unit tests, legacy callers) the heuristic fallback is used.
+    skill_evidence: list | None = None
+
 
 # ---------------------------------------------------------------------------
 # Core computation
@@ -219,6 +225,23 @@ def _raw(component: str, inputs: MatcherInputs) -> tuple[float, str]:
         return float(getattr(r, "score", 0.0)), evidence
 
     raise ValueError(f"Unknown component: {component}")
+
+
+def _build_recommendations(inputs: MatcherInputs) -> list[str]:
+    """
+    Route recommendation generation through the Phase 16 improvement engine
+    when per-skill evidence is available; fall back to the simpler heuristic
+    for legacy callers that do not supply evidence.
+    """
+    if inputs.skill_evidence:
+        return build_recommendations(
+            inputs.skill_evidence,
+            experience_level=getattr(inputs.experience_match, "experience_level", None),
+            missing_certifications=list(
+                getattr(inputs.certification_match, "missing", []) or []
+            ),
+        )
+    return _recommendations(inputs)
 
 
 def _recommendations(inputs: MatcherInputs) -> list[str]:
@@ -379,6 +402,6 @@ def compute_match_score(
         model_version=version,
         positive_factors=positive,
         negative_factors=negative,
-        recommendations=_recommendations(inputs),
+        recommendations=_build_recommendations(inputs),
         ml_details=ml_details,
     )
