@@ -21,6 +21,17 @@ import {
   MinusCircle,
   XCircle,
 } from "lucide-react";
+import {
+  Bar,
+  BarChart,
+  Cell,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import type { MatchReport, SkillEvidence } from "@/lib/types";
 import {
   BandBadge,
@@ -135,6 +146,173 @@ export interface ReportLists {
   missing: string[];
 }
 
+// ---------------------------------------------------------------------------
+// Charts (Phase 18) — every chart carries information the text lists don't.
+// ---------------------------------------------------------------------------
+
+const COVERAGE_COLORS = {
+  matched: "#16a34a", // green-600
+  partial: "#d97706", // amber-600
+  missing: "#dc2626", // red-500
+  unknown: "#9ca3af", // gray-400
+} as const;
+
+/**
+ * Weighted-contribution chart: the component bars elsewhere show RAW
+ * scores; this shows where the overall score's points actually came from
+ * (raw × weight, sums to ~overall%). Answers "what carried my score".
+ */
+function ScoreContributionChart({
+  components,
+  overallPercent,
+}: {
+  components: MatchReport["components"];
+  overallPercent: number;
+}) {
+  const data = components
+    .map((c) => ({
+      name: capitalize(c.name),
+      contribution: Math.round(c.weighted * 100),
+      detail: `raw ${Math.round(c.raw_score * 100)}/100 × weight ${Math.round(
+        c.weight * 100
+      )}%`,
+    }))
+    .sort((a, b) => b.contribution - a.contribution);
+
+  return (
+    <div>
+      <div className="h-40 w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={data} layout="vertical" margin={{ left: 8, right: 24 }}>
+            <XAxis
+              type="number"
+              domain={[0, Math.max(50, overallPercent)]}
+              tick={{ fontSize: 11, fill: "#9ca3af" }}
+              axisLine={false}
+              tickLine={false}
+            />
+            <YAxis
+              type="category"
+              dataKey="name"
+              width={92}
+              tick={{ fontSize: 12, fill: "#374151" }}
+              axisLine={false}
+              tickLine={false}
+            />
+            <Tooltip
+              cursor={{ fill: "#f9fafb" }}
+              formatter={(value: number) => [`${value} pts`, "contribution"]}
+              labelStyle={{ color: "#111827", fontWeight: 500 }}
+              contentStyle={{
+                borderRadius: 6,
+                border: "1px solid #e5e7eb",
+                fontSize: 12,
+              }}
+            />
+            <Bar dataKey="contribution" fill="#374151" radius={[0, 3, 3, 0]} barSize={18} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+      <p className="mt-1 text-xs text-gray-400">
+        Points contributed to the overall score (sums to ≈{overallPercent}
+        /100). Hover a bar for its raw score × weight.
+      </p>
+    </div>
+  );
+}
+
+/**
+ * Coverage donut: composition of job requirements by match status with
+ * counts. Complements the table by making the size of each group visible
+ * at a glance (12 matched / 2 partial / 1 missing reads instantly).
+ */
+function SkillCoverageDonut({ evidence }: { evidence: SkillEvidence[] }) {
+  const counts = {
+    matched: evidence.filter((e) => e.status === "matched").length,
+    partial: evidence.filter((e) => e.status === "partial").length,
+    missing: evidence.filter((e) => e.status === "missing").length,
+    unknown: evidence.filter((e) => e.status === "unknown").length,
+  };
+  const data = (
+    Object.entries(counts) as [
+      keyof typeof COVERAGE_COLORS,
+      number,
+    ][]
+  )
+    .filter(([, n]) => n > 0)
+    .map(([status, n]) => ({
+      name: status === "unknown" ? "Unknown" : capitalize(status),
+      value: n,
+      color: COVERAGE_COLORS[status],
+    }));
+  const total = evidence.length;
+
+  return (
+    <div className="flex items-center gap-5 px-5 py-4">
+      <div className="relative h-36 w-36 shrink-0">
+        <ResponsiveContainer width="100%" height="100%">
+          <PieChart>
+            <Pie
+              data={data}
+              dataKey="value"
+              nameKey="name"
+              innerRadius={44}
+              outerRadius={66}
+              paddingAngle={2}
+              strokeWidth={0}
+            >
+              {data.map((d) => (
+                <Cell key={d.name} fill={d.color} />
+              ))}
+            </Pie>
+            <Tooltip
+              formatter={(value: number, name: string) => [
+                `${value} of ${total} requirements`,
+                name,
+              ]}
+              contentStyle={{
+                borderRadius: 6,
+                border: "1px solid #e5e7eb",
+                fontSize: 12,
+              }}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+          <span className="text-xl font-semibold text-gray-900">{total}</span>
+          <span className="text-[10px] uppercase tracking-wide text-gray-400">
+            required
+          </span>
+        </div>
+      </div>
+      <ul className="space-y-1.5 text-sm">
+        {(
+          [
+            ["matched", counts.matched],
+            ["partial", counts.partial],
+            ["missing", counts.missing],
+            ["unknown", counts.unknown],
+          ] as [keyof typeof COVERAGE_COLORS, number][]
+        )
+          .filter(([, n]) => n > 0)
+          .map(([status, n]) => (
+            <li key={status} className="flex items-center gap-2 text-gray-700">
+              <span
+                className="h-2.5 w-2.5 rounded-sm"
+                style={{ backgroundColor: COVERAGE_COLORS[status] }}
+              />
+              {capitalize(status)}
+              <span className="font-medium tabular-nums">{n}</span>
+              <span className="text-xs text-gray-400">
+                ({Math.round((n / total) * 100)}%)
+              </span>
+            </li>
+          ))}
+      </ul>
+    </div>
+  );
+}
+
 export function MatchReportView({
   report,
   lists,
@@ -217,6 +395,12 @@ export function MatchReportView({
             />
           ))}
         </div>
+        <div className="border-t border-gray-100 px-2 py-4">
+          <ScoreContributionChart
+            components={report.components}
+            overallPercent={report.overall_percent}
+          />
+        </div>
       </Card>
 
       {/* Skill evidence table */}
@@ -225,6 +409,9 @@ export function MatchReportView({
           title="Required skills"
           subtitle="Match status and the evidence behind it, per job requirement"
         />
+        <div className="border-b border-gray-100">
+          <SkillCoverageDonut evidence={evidence} />
+        </div>
         <div className="overflow-x-auto px-5 py-2">
           <table className="w-full text-left text-sm">
             <thead>

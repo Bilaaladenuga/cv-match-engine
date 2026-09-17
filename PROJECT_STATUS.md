@@ -452,6 +452,22 @@ numpy==1.26.4
 - All 30 taxonomy tests pass including the CI alias-collision gate;
   481 total, Ruff clean
 
+## Frontend Fixes + Visualizations (Phase 18 slice)
+- FIXED user-reported crash: `use(params)` on /history/[match_id] threw
+  "unsupported type passed to use()" — Next 14 passes params to CLIENT
+  components as a plain object (Promise params are Next 15+). Params are
+  now read directly; verified on the dynamic route
+- Recharts visualizations added to MatchReportView, each carrying
+  information the text around it does not:
+  - Score-contribution bar chart: weighted points per component
+    (raw × weight), sorted — answers "where did my score come from";
+    complements (does not duplicate) the raw-score bars above it
+  - Skill-coverage donut: matched/partial/missing composition with
+    counts and % — the at-a-glance size of each group next to the
+    detailed evidence table
+- Dev-server chunk corruption after recharts install ("Cannot find
+  module './359.js'") resolved by clearing .next; production build clean
+
 ## Test Summary
 ```
 Total: 481 tests passing

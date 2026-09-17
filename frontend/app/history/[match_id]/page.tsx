@@ -6,19 +6,21 @@
  * views are identical.
  */
 
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getAnalysis } from "@/lib/history";
 import type { StoredAnalysis } from "@/lib/history";
 import { Loading } from "@/components/ui";
 import { MatchReportView } from "@/components/MatchReportView";
 
+// Next 14 passes params to client components as a plain object
+// (Promise-based params are Next 15+) — do NOT unwrap with use().
 export default function SavedMatchPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }) {
-  const { id } = use(params);
+  const id = params.id;
   const [entry, setEntry] = useState<StoredAnalysis | null>(null);
   const [missing, setMissing] = useState(false);
 
