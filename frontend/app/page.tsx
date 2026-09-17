@@ -1,21 +1,6 @@
 export default function HomePage() {
   return (
     <main className="min-h-screen">
-      {/* Header */}
-      <header className="border-b border-gray-200 bg-white">
-        <div className="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-gray-900">Career Match</h1>
-          <nav className="flex gap-4 text-sm text-gray-600">
-            <a href="/dashboard" className="hover:text-gray-900">
-              Dashboard
-            </a>
-            <a href="/analyze" className="hover:text-gray-900">
-              Analyze
-            </a>
-          </nav>
-        </div>
-      </header>
-
       {/* Hero */}
       <section className="mx-auto max-w-4xl px-6 py-20 text-center">
         <h2 className="text-4xl font-bold text-gray-900 mb-4">

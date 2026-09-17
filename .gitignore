@@ -53,3 +53,7 @@ data/processed/*
 
 # Database
 *.db
+
+# Logs / transient artifacts
+*.log
+*.tsbuildinfo

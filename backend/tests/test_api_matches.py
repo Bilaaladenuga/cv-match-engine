@@ -10,6 +10,7 @@ from __future__ import annotations
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
@@ -203,6 +204,82 @@ def test_invalid_weights_rejected(client):
         },
     )
     assert resp.status_code == 422
+
+
+class DeadSession:
+    """Session stand-in: every DB touch raises OperationalError."""
+
+    def _fail(self, *a, **k):
+        raise OperationalError(
+            "SELECT", {}, Exception("connection refused")
+        )
+
+    query = _fail
+    get = _fail
+    add = _fail
+    flush = _fail
+    commit = _fail
+    refresh = _fail
+    execute = _fail
+
+    def rollback(self):  # must succeed: the route rolls back before degrading
+        pass
+
+    def close(self):
+        pass
+
+
+def test_text_mode_degrades_gracefully_when_db_down(client):
+    """DB unavailable + raw-text mode → stateless report (match_id None).
+
+    Regression test for the Phase 17 discovery: raw-text analysis is
+    self-contained, so an unreachable database must not fail the request.
+    Entity mode still hard-fails (its inputs live in the DB).
+    """
+    http, _ = client
+
+    def _dead_get_db():
+        db = DeadSession()
+        try:
+            yield db
+        finally:
+            db.close()
+
+    app.dependency_overrides[get_db] = _dead_get_db
+    try:
+        resp = http.post(
+            "/api/matches", json={"cv_text": SAMPLE_CV, "job_text": SAMPLE_JD}
+        )
+    finally:
+        app.dependency_overrides.clear()
+
+    assert resp.status_code == 201
+    body = resp.json()
+    assert body["match_id"] is None
+    assert body["overall_percent"] >= 0
+    assert body["disclaimer"]
+    # The pipeline result must be identical in structure to the persisted path.
+    assert isinstance(body["skill_evidence"], list)
+
+
+def test_entity_mode_fails_when_db_down(client):
+    """Entity mode REQUIRES the database: 503, not a silent 500."""
+    http, _ = client
+
+    def _dead_get_db():
+        db = DeadSession()
+        try:
+            yield db
+        finally:
+            db.close()
+
+    app.dependency_overrides[get_db] = _dead_get_db
+    try:
+        resp = http.post("/api/matches", json={"resume_id": 1, "job_id": 1})
+    finally:
+        app.dependency_overrides.clear()
+
+    assert resp.status_code == 503
 
 
 def test_custom_weights_change_score(client):

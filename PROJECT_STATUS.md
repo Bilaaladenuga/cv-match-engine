@@ -1,7 +1,9 @@
 # PROJECT STATUS
 
 ## Current Phase
-**Phases 1–16 complete** — next: Phase 17 (Next.js frontend)
+**Phases 1–17 complete** — next: Phase 20 (auth/security), then
+22 (observability), 24 (deployment), and the remaining model roadmap
+(per-pair interaction features, ordinal-aware training)
 
 ## Completed Phases
 
@@ -371,11 +373,42 @@ numpy==1.26.4
   CI-CD correctly flagged as listed-but-not-evidenced, Python/Redis
   grounded as strong, Terraform given a build action item
 
+## Phase 17 — Next.js Frontend (first full slice)
+- Pages: / (landing), /analyze (CV + JD text input → live report),
+  /history (stored analyses list), /history/[match_id] (full stored
+  report), /dashboard (stats + recent analyses)
+- Shared MatchReportView renders both live and stored reports: score
+  dial, weighted component bars with evidence, the Phase 16 skill-
+  evidence table (status × strength, flagged "listed but not evidenced"
+  rows, per-skill months), positive/negative factors, recommendations,
+  trained-model probabilities with calibration method, and the ethics
+  disclaimer always visible
+- lib/api.ts rewritten against the REAL backend contract (old stub
+  referenced resume/job endpoints that don't exist yet): POST
+  /api/matches (raw-text mode), GET /api/history, GET /api/matches/{id};
+  lib/types.ts mirrors the Pydantic schemas
+- Professional styling per spec: grays, borders, no gradients/glow/
+  emoji; SiteHeader in the layout with active-link highlighting
+- VERIFIED end-to-end on this machine: `next build` clean (5 routes),
+  all pages 200 via `next start`, backend live on :8000 with CORS
+  preflight from :3000 OK, real POST /api/matches over HTTP → 201 with
+  match_id null, 59% Moderate match, ML label Good Fit
+- IMPORTANT fix found during E2E: raw-text /api/matches previously
+  required PostgreSQL (it persists under a demo user) — a DB outage
+  surfaced as a 500. Now: DB down + raw-text mode degrades to a
+  stateless report (match_id=null); DB down + entity mode returns a
+  clear 503. Regression tests with a DeadSession stand-in
+- eslint config: removed a rule referencing the uninstalled
+  @typescript-eslint plugin (broke `next build`)
+- .gitignore: *.log, *.tsbuildinfo; committed package-lock.json for
+  reproducible installs
+
 ## Test Summary
 ```
-Total: 468 tests passing
-- 15 improvement-engine tests (NEW, Phase 16)
-- 6 history endpoint tests (NEW)
+Total: 470 tests passing
+- 11 matches endpoint tests (+2 DB-outage degradation regressions)
+- 15 improvement-engine tests (Phase 16)
+- 6 history endpoint tests
 - 8 ranking endpoint tests
 - 27 feature extraction tests (+10 CV-length)
 - 14 explainer tests
@@ -393,9 +426,11 @@ Total: 468 tests passing
 ```
 
 ## Next Up
-- Phase 16 COMPLETE — next: Phase 17 (Next.js frontend: landing, analyze,
-  detailed report with the skill_evidence panel, history, dashboard)
+- Phase 17 first slice COMPLETE — next frontend steps: file upload
+  (PDF/DOCX) on /analyze once a resume-upload endpoint exists,
+  recruiter ranking UI on top of POST /jobs/{id}/rank-candidates,
+  Recharts visualizations (score breakdown, skill coverage)
+- Remaining backend phases: 20 (auth/security — unblocks persistence
+  in the UI), 22 (observability), 24 (deployment)
 - Feature roadmap (model side): per-pair interaction features for CV-group
   ranking (the listwise gap), ordinal-aware training objective
-- Remaining backend phases: 20 (auth/security), 22 (observability),
-  24 (deployment)

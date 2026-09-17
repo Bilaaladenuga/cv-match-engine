@@ -1,84 +1,76 @@
 /**
  * API client for the Career Match backend.
+ *
+ * Backend contract (backend/app/api/*):
+ *   POST /api/matches        → MatchReport (raw-text mode: no persistence)
+ *   GET  /api/history        → HistoryEntry[]
+ *   GET  /api/matches/{id}   → MatchDetail
+ *   GET  /health             → { status, version }
  */
 
 import axios from "axios";
+import type {
+  HistoryEntry,
+  MatchDetail,
+  MatchReport,
+} from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
 export const api = axios.create({
   baseURL: API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  timeout: 120_000, // embedding inference on first request can be slow
+  headers: { "Content-Type": "application/json" },
 });
 
-// --- Types ---
+// --- Errors -----------------------------------------------------------------
 
-export interface HealthResponse {
-  status: string;
-  version: string;
+export function apiErrorMessage(err: unknown): string {
+  if (axios.isAxiosError(err)) {
+    const detail = (err.response?.data as { detail?: unknown } | undefined)
+      ?.detail;
+    if (typeof detail === "string") return detail;
+    if (detail !== undefined) return JSON.stringify(detail);
+    if (err.code === "ECONNREFUSED")
+      return "Cannot reach the analysis service. Is the backend running on port 8000?";
+    return err.message;
+  }
+  return "An unexpected error occurred.";
 }
 
-export interface ResumeUploadResponse {
-  id: number;
-  filename: string;
-  status: string;
-}
+// --- Health -----------------------------------------------------------------
 
-export interface JobResponse {
-  id: number;
-  title: string;
-  company: string | null;
-}
-
-export interface MatchResult {
-  id: number;
-  overall_score: number;
-  semantic_score: number;
-  skills_score: number;
-  experience_score: number;
-  education_score: number;
-  matched_skills: string[];
-  missing_skills: string[];
-  partial_skills: string[];
-  recommendations: string[];
-}
-
-// --- API Calls ---
-
-export async function healthCheck(): Promise<HealthResponse> {
-  const { data } = await axios.get(`${API_URL.replace("/api", "")}/health`);
+export async function healthCheck(): Promise<{ status: string; version: string }> {
+  const base = API_URL.replace(/\/api\/?$/, "");
+  const { data } = await axios.get(`${base}/health`);
   return data;
 }
 
-export async function uploadResume(file: File): Promise<ResumeUploadResponse> {
-  const formData = new FormData();
-  formData.append("file", file);
-  const { data } = await api.post("/resumes/upload", formData, {
-    headers: { "Content-Type": "multipart/form-data" },
+// --- Matching ---------------------------------------------------------------
+
+export interface MatchRequestBody {
+  cv_text?: string;
+  job_text?: string;
+  resume_id?: number;
+  job_id?: number;
+  weights?: Record<string, number>;
+}
+
+export async function createMatch(body: MatchRequestBody): Promise<MatchReport> {
+  const { data } = await api.post<MatchReport>("/matches", body);
+  return data;
+}
+
+// --- History ----------------------------------------------------------------
+
+export async function getHistory(limit = 50, offset = 0): Promise<HistoryEntry[]> {
+  const { data } = await api.get<HistoryEntry[]>("/history", {
+    params: { limit, offset },
   });
   return data;
 }
 
-export async function createJob(payload: {
-  title: string;
-  description: string;
-  company?: string;
-}): Promise<JobResponse> {
-  const { data } = await api.post("/jobs", payload);
-  return data;
-}
-
-export async function createMatch(payload: {
-  resume_id: number;
-  job_id: number;
-}): Promise<MatchResult> {
-  const { data } = await api.post("/matches", payload);
-  return data;
-}
-
-export async function getMatch(matchId: number): Promise<MatchResult> {
-  const { data } = await api.get(`/matches/${matchId}`);
+export async function getMatchDetail(matchId: number): Promise<MatchDetail> {
+  const { data } = await api.get<MatchDetail>(`/matches/${matchId}`);
   return data;
 }
