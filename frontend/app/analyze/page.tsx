@@ -1,19 +1,22 @@
 "use client";
 
 /**
- * /analyze — paste a CV and a job description, get an explainable
- * compatibility report via POST /api/matches (raw-text mode).
+ * /analyze — upload or paste a CV and a job description, get an
+ * explainable compatibility report via POST /api/matches (raw-text mode).
  *
- * Raw-text mode is stateless: nothing is persisted until auth exists.
- * File upload (PDF/DOCX) is a later slice — the backend parsers are
- * ready but the upload endpoint is not yet wired.
+ * Privacy model (no accounts, by design): the analysis runs statelessly,
+ * and the report is saved to THIS browser's localStorage only. The server
+ * never persists the documents or the result. File uploads are extracted
+ * server-side and immediately discarded — no copy is kept.
  */
 
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import Link from "next/link";
-import { createMatch, apiErrorMessage } from "@/lib/api";
+import { Upload, FileText, X, Check } from "lucide-react";
+import { createMatch, extractResume, apiErrorMessage } from "@/lib/api";
+import { saveAnalysis } from "@/lib/history";
 import type { MatchReport } from "@/lib/types";
-import { ErrorNote, Loading } from "@/components/ui";
+import { Card, ErrorNote, Loading } from "@/components/ui";
 import { MatchReportView } from "@/components/MatchReportView";
 
 const EXAMPLE_CV = `Jane Okafor
@@ -45,12 +48,22 @@ Preferred: Redis, observability tooling.
 Responsibilities: own the Kubernetes platform, build CI/CD pipelines,
 manage AWS infrastructure with Terraform.`;
 
+type UploadState =
+  | { kind: "idle" }
+  | { kind: "uploading"; filename: string }
+  | { kind: "done"; filename: string; chars: number }
+  | { kind: "error"; filename: string; message: string };
+
 export default function AnalyzePage() {
   const [cvText, setCvText] = useState("");
   const [jobText, setJobText] = useState("");
   const [report, setReport] = useState<MatchReport | null>(null);
+  const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [upload, setUpload] = useState<UploadState>({ kind: "idle" });
+  const [dragOver, setDragOver] = useState(false);
+  const fileInput = useRef<HTMLInputElement>(null);
 
   const canSubmit =
     cvText.trim().length > 40 && jobText.trim().length > 40 && !loading;
@@ -61,17 +74,58 @@ export default function AnalyzePage() {
     setLoading(true);
     setError(null);
     setReport(null);
+    setSaved(false);
     try {
       const result = await createMatch({
         cv_text: cvText,
         job_text: jobText,
       });
       setReport(result);
+      saveAnalysis(
+        result,
+        jobText.trim().split("\n", 1)[0]?.slice(0, 80) || undefined
+      );
+      setSaved(true);
     } catch (err) {
       setError(apiErrorMessage(err));
     } finally {
       setLoading(false);
     }
+  }
+
+  const handleFile = useCallback(
+    async (file: File) => {
+      setUpload({ kind: "uploading", filename: file.name });
+      try {
+        const result = await extractResume(file);
+        setCvText(result.text);
+        setUpload({
+          kind: "done",
+          filename: result.filename,
+          chars: result.char_count,
+        });
+      } catch (err) {
+        setUpload({
+          kind: "error",
+          filename: file.name,
+          message: apiErrorMessage(err),
+        });
+      }
+    },
+    []
+  );
+
+  function onDrop(e: React.DragEvent) {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) void handleFile(file);
+  }
+
+  function clearUpload() {
+    setUpload({ kind: "idle" });
+    setCvText("");
+    if (fileInput.current) fileInput.current.value = "";
   }
 
   return (
@@ -95,19 +149,95 @@ export default function AnalyzePage() {
       </div>
 
       <form onSubmit={onSubmit} className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        {/* ----- CV column: upload or paste ----- */}
         <div>
-          <label
-            htmlFor="cv"
-            className="mb-1 block text-sm font-medium text-gray-700"
-          >
-            CV / resume text
-          </label>
+          <div className="mb-1 flex items-center justify-between">
+            <label
+              htmlFor="cv"
+              className="block text-sm font-medium text-gray-700"
+            >
+              CV / resume
+            </label>
+            <span className="text-xs text-gray-400">PDF · DOCX · TXT</span>
+          </div>
+
+          {/* Dropzone — hidden once a document has been extracted */}
+          {upload.kind !== "done" ? (
+            <div
+              onDragOver={(e) => {
+                e.preventDefault();
+                setDragOver(true);
+              }}
+              onDragLeave={() => setDragOver(false)}
+              onDrop={onDrop}
+              onClick={() => fileInput.current?.click()}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  fileInput.current?.click();
+                }
+              }}
+              className={`mb-2 flex cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed px-4 py-6 text-center transition-colors ${
+                dragOver
+                  ? "border-gray-500 bg-gray-50"
+                  : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
+              }`}
+            >
+              <Upload className="mb-1 h-5 w-5 text-gray-400" />
+              <p className="text-sm text-gray-600">
+                {upload.kind === "uploading"
+                  ? `Extracting ${upload.filename}…`
+                  : "Drop a CV here, or click to browse"}
+              </p>
+              <p className="mt-0.5 text-xs text-gray-400">
+                The file is read once and never stored.
+              </p>
+              <input
+                ref={fileInput}
+                type="file"
+                accept=".pdf,.docx,.txt"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) void handleFile(file);
+                }}
+              />
+            </div>
+          ) : (
+            <div className="mb-2 flex items-center justify-between rounded-md border border-gray-200 bg-gray-50 px-3 py-2">
+              <span className="flex items-center gap-2 text-sm text-gray-700">
+                <FileText className="h-4 w-4 text-gray-500" />
+                {upload.filename}
+                <span className="text-xs text-gray-400">
+                  {upload.chars.toLocaleString()} chars
+                </span>
+                <Check className="h-4 w-4 text-green-600" />
+              </span>
+              <button
+                type="button"
+                onClick={clearUpload}
+                className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600"
+              >
+                <X className="h-3.5 w-3.5" /> clear
+              </button>
+            </div>
+          )}
+
+          {upload.kind === "error" ? (
+            <p className="mb-2 text-xs text-red-600">{upload.message}</p>
+          ) : null}
+
           <textarea
             id="cv"
             value={cvText}
-            onChange={(e) => setCvText(e.target.value)}
-            rows={18}
-            placeholder="Paste the full CV text here…"
+            onChange={(e) => {
+              setCvText(e.target.value);
+              if (upload.kind === "done") setUpload({ kind: "idle" });
+            }}
+            rows={14}
+            placeholder="…or paste the full CV text here…"
             className="w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-sm text-gray-800 placeholder:text-gray-400 focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-500"
           />
           <button
@@ -118,6 +248,8 @@ export default function AnalyzePage() {
             Use example CV
           </button>
         </div>
+
+        {/* ----- Job column: paste only ----- */}
         <div>
           <label
             htmlFor="job"
@@ -141,6 +273,7 @@ export default function AnalyzePage() {
             Use example job
           </button>
         </div>
+
         <div className="lg:col-span-2">
           <button
             type="submit"
@@ -151,7 +284,12 @@ export default function AnalyzePage() {
           </button>
           {!loading && !report && cvText.trim().length <= 40 ? (
             <p className="mt-2 text-xs text-gray-400">
-              Paste a CV (at least a few lines) to begin.
+              Upload or paste a CV (at least a few lines) to begin.
+            </p>
+          ) : null}
+          {saved ? (
+            <p className="ml-3 inline text-xs text-gray-500">
+              Saved to this browser&apos;s history.
             </p>
           ) : null}
         </div>
@@ -175,7 +313,7 @@ export default function AnalyzePage() {
                 .map((e) => e.skill),
             }}
             title="Match report"
-            subtitle="Live analysis — not saved (no account system yet)"
+            subtitle="Live analysis — stored only in this browser"
           />
         ) : null}
       </div>

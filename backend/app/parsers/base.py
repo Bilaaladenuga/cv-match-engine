@@ -8,6 +8,22 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 
 
+def normalize_text(text: str) -> str:
+    """Normalize raw extracted text: strip whitespace, fix encoding, collapse spaces."""
+    # Normalize unicode
+    text = unicodedata.normalize("NFKD", text)
+    # Replace tabs with spaces
+    text = text.replace("\t", " ")
+    # Collapse multiple spaces (but preserve newlines)
+    text = re.sub(r"[^\S\n]+", " ", text)
+    # Collapse multiple blank lines
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    # Strip leading/trailing whitespace per line
+    lines = [line.strip() for line in text.split("\n")]
+    text = "\n".join(lines)
+    return text.strip()
+
+
 class BaseParser(ABC):
     """Abstract base class for document parsers."""
 
@@ -18,18 +34,7 @@ class BaseParser(ABC):
 
     def normalize_text(self, text: str) -> str:
         """Normalize extracted text: strip whitespace, fix encoding, collapse spaces."""
-        # Normalize unicode
-        text = unicodedata.normalize("NFKD", text)
-        # Replace tabs with spaces
-        text = text.replace("\t", " ")
-        # Collapse multiple spaces (but preserve newlines)
-        text = re.sub(r"[^\S\n]+", " ", text)
-        # Collapse multiple blank lines
-        text = re.sub(r"\n{3,}", "\n\n", text)
-        # Strip leading/trailing whitespace per line
-        lines = [line.strip() for line in text.split("\n")]
-        text = "\n".join(lines)
-        return text.strip()
+        return normalize_text(text)
 
     def parse(self, file_path: str) -> str:
         """Parse a document and return normalized text."""

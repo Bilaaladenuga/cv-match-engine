@@ -1,18 +1,18 @@
 "use client";
 
 /**
- * /history — previously stored analyses (GET /api/history).
- * Rows link to the full stored report at /history/[match_id].
+ * /history — analyses saved in THIS browser (localStorage; no accounts
+ * by design, the server never stores analyses). Rows link to the full
+ * saved report at /history/[id].
  */
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { getHistory, apiErrorMessage } from "@/lib/api";
-import type { HistoryEntry } from "@/lib/types";
-import { BandBadge, Card, ErrorNote, Loading } from "@/components/ui";
+import { listAnalyses, deleteAnalysis, clearHistory } from "@/lib/history";
+import type { StoredAnalysis } from "@/lib/history";
+import { BandBadge, Card } from "@/components/ui";
 
-function fmtDate(iso: string | null): string {
-  if (!iso) return "—";
+function fmtDate(iso: string): string {
   const d = new Date(iso);
   return isNaN(d.getTime())
     ? iso
@@ -23,18 +23,22 @@ function fmtDate(iso: string | null): string {
 }
 
 function pct(score: number): number {
-  return Math.round(score * 100);
+  return Math.round((score ?? 0) * 100);
 }
 
 export default function HistoryPage() {
-  const [entries, setEntries] = useState<HistoryEntry[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  // null = not hydrated yet (avoids SSR/localStorage mismatch)
+  const [entries, setEntries] = useState<StoredAnalysis[] | null>(null);
+  const [confirmingClear, setConfirmingClear] = useState(false);
 
   useEffect(() => {
-    getHistory()
-      .then(setEntries)
-      .catch((err) => setError(apiErrorMessage(err)));
+    setEntries(listAnalyses());
   }, []);
+
+  function remove(id: string) {
+    deleteAnalysis(id);
+    setEntries(listAnalyses());
+  }
 
   return (
     <main className="mx-auto max-w-5xl px-6 py-10">
@@ -44,7 +48,8 @@ export default function HistoryPage() {
             Analysis history
           </h1>
           <p className="mt-1 text-sm text-gray-500">
-            Stored match reports, newest first.
+            Saved in this browser only — clearing your browser data removes
+            them. The server keeps nothing.
           </p>
         </div>
         <Link
@@ -55,15 +60,11 @@ export default function HistoryPage() {
         </Link>
       </div>
 
-      {error ? <ErrorNote message={error} /> : null}
-      {!error && entries === null ? <Loading label="Loading history…" /> : null}
-
-      {entries && entries.length === 0 ? (
+      {entries === null ? null : entries.length === 0 ? (
         <Card className="px-6 py-10 text-center">
           <p className="text-sm text-gray-500">
-            No stored analyses yet. Analyses created while signed out are not
-            saved — an account system is planned before persistence is
-            enabled in the UI.
+            No saved analyses yet — every analysis you run on this device is
+            saved here automatically.
           </p>
           <Link
             href="/analyze"
@@ -72,47 +73,80 @@ export default function HistoryPage() {
             Run an analysis
           </Link>
         </Card>
-      ) : null}
-
-      {entries && entries.length > 0 ? (
-        <Card className="divide-y divide-gray-100">
-          {entries.map((e) => (
-            <Link
-              key={e.match_id}
-              href={`/history/${e.match_id}`}
-              className="block px-5 py-4 hover:bg-gray-50"
-            >
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <div>
-                  <span className="font-medium text-gray-900">
-                    {e.candidate_name ?? `Candidate #${e.candidate_id}`}
-                  </span>
-                  <span className="text-gray-400"> · </span>
-                  <span className="text-gray-600">
-                    {e.job_title ?? `Job #${e.job_id}`}
-                  </span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <BandBadge band={e.band} />
-                  <span className="text-sm font-semibold tabular-nums text-gray-900">
-                    {pct(e.overall_score)}
-                    <span className="text-xs font-normal text-gray-400">/100</span>
-                  </span>
-                </div>
+      ) : (
+        <>
+          <div className="mb-3 flex justify-end">
+            {confirmingClear ? (
+              <span className="flex items-center gap-3 text-xs text-gray-500">
+                Delete all {entries.length} saved analyses?
+                <button
+                  onClick={() => {
+                    clearHistory();
+                    setEntries([]);
+                    setConfirmingClear(false);
+                  }}
+                  className="font-medium text-red-600 hover:text-red-700"
+                >
+                  Yes, delete
+                </button>
+                <button
+                  onClick={() => setConfirmingClear(false)}
+                  className="hover:text-gray-700"
+                >
+                  Cancel
+                </button>
+              </span>
+            ) : (
+              <button
+                onClick={() => setConfirmingClear(true)}
+                className="text-xs text-gray-400 hover:text-gray-600"
+              >
+                Clear history
+              </button>
+            )}
+          </div>
+          <Card className="divide-y divide-gray-100">
+            {entries.map((e) => (
+              <div
+                key={e.id}
+                className="group flex items-center justify-between px-5 py-4 hover:bg-gray-50"
+              >
+                <Link href={`/history/${e.id}`} className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="truncate font-medium text-gray-900">
+                        {e.title}
+                      </p>
+                      <p className="mt-0.5 text-xs text-gray-400">
+                        {fmtDate(e.created_at)} · model {e.report.model_version}
+                        {e.report.ml_details?.label
+                          ? ` · ML: ${e.report.ml_details.label}`
+                          : ""}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <BandBadge band={e.report.band} />
+                      <span className="text-sm font-semibold tabular-nums text-gray-900">
+                        {e.report.overall_percent ?? pct(e.report.overall_score)}
+                        <span className="text-xs font-normal text-gray-400">
+                          /100
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+                <button
+                  onClick={() => remove(e.id)}
+                  aria-label={`Delete analysis: ${e.title}`}
+                  className="ml-3 flex-shrink-0 text-xs text-gray-300 hover:text-red-600"
+                >
+                  ✕
+                </button>
               </div>
-              <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-400">
-                <span>{fmtDate(e.created_at)}</span>
-                <span>model {e.model_version}</span>
-                {e.ml_label ? <span>ML: {e.ml_label}</span> : null}
-                <span>
-                  {e.matched_skills.length} matched ·{" "}
-                  {e.missing_skills.length} missing
-                </span>
-              </div>
-            </Link>
-          ))}
-        </Card>
-      ) : null}
+            ))}
+          </Card>
+        </>
+      )}
     </main>
   );
 }

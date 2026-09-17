@@ -1,9 +1,11 @@
 # PROJECT STATUS
 
 ## Current Phase
-**Phases 1–17 complete** — next: Phase 20 (auth/security), then
-22 (observability), 24 (deployment), and the remaining model roadmap
-(per-pair interaction features, ordinal-aware training)
+**Phases 1–17 complete + privacy-first product decision: NO user
+accounts.** History lives in the browser (localStorage); raw-text
+/api/matches is fully stateless. File upload (PDF/DOCX/TXT) is live on
+/analyze. Next: recruiter ranking UI, Recharts visualizations,
+22 (observability), 24 (deployment), model roadmap
 
 ## Completed Phases
 
@@ -403,10 +405,38 @@ numpy==1.26.4
 - .gitignore: *.log, *.tsbuildinfo; committed package-lock.json for
   reproducible installs
 
+## No-Accounts Architecture + File Upload (privacy-first slice)
+- PRODUCT DECISION (user): free software, no sign-up — accounts are out.
+  Consequences, all verified:
+  - raw-text POST /api/matches is now PURELY stateless: the demo-user
+    persistence path is deleted. `match_id` is always null in text mode;
+    DB is touched only in entity mode (rankings / stored candidates)
+  - frontend history moved to localStorage (`lib/history.ts`, 100-entry
+    cap, per-entry delete, clear-all with confirm); /history,
+    /history/[id] and /dashboard read it — the server-side history
+    endpoints remain available for API users but the UI no longer calls them
+  - uploads are never persisted: `POST /api/resumes/extract` writes the
+    file to a temp path, parses, deletes it in a `finally` block
+- NEW endpoint `POST /api/resumes/extract` (multipart):
+  - `services/document_service.py` — 4 validation layers: extension
+    whitelist, streaming size cap (cuts off oversized uploads rather than
+    buffering), magic-byte sniffing (a fake .pdf/.docx is rejected on
+    content, not name), empty/textless rejection (scanned PDFs get a
+    clear 422, parse failures map to 422 not 500)
+  - `parsers/base.py`: `normalize_text` extracted to a module function
+  - 11 integration tests incl. the privacy contract (no DB dependency)
+- /analyze: drag-drop zone + file picker (PDF/DOCX/TXT) fills the CV
+  textarea from the extraction response; uploads show a state chip;
+  every completed analysis auto-saves to browser history
+- E2E over real HTTP: txt upload → 311 chars extracted; match on the
+  extracted text → 201, 60% Moderate match, ML Potential Fit, 6 evidence
+  rows; fake.pdf → 415, .exe → 415, empty → 422
+
 ## Test Summary
 ```
-Total: 470 tests passing
-- 11 matches endpoint tests (+2 DB-outage degradation regressions)
+Total: 481 tests passing
+- 11 resume-upload tests (validation ladder + privacy contract)
+- 11 matches endpoint tests (stateless contract + DB-outage regressions)
 - 15 improvement-engine tests (Phase 16)
 - 6 history endpoint tests
 - 8 ranking endpoint tests
@@ -426,11 +456,11 @@ Total: 470 tests passing
 ```
 
 ## Next Up
-- Phase 17 first slice COMPLETE — next frontend steps: file upload
-  (PDF/DOCX) on /analyze once a resume-upload endpoint exists,
-  recruiter ranking UI on top of POST /jobs/{id}/rank-candidates,
-  Recharts visualizations (score breakdown, skill coverage)
-- Remaining backend phases: 20 (auth/security — unblocks persistence
-  in the UI), 22 (observability), 24 (deployment)
+- Recruiter ranking UI on top of POST /jobs/{id}/rank-candidates (the
+  ranking flow persists Matches — needs the PostgreSQL service running)
+- Recharts visualizations (score breakdown, skill coverage)
+- Remaining phases: 22 (observability), 24 (deployment). Phase 20 auth
+  is intentionally DROPPED (no-accounts product decision); file-size and
+  rate-limit hardening can still be added without accounts
 - Feature roadmap (model side): per-pair interaction features for CV-group
   ranking (the listwise gap), ordinal-aware training objective

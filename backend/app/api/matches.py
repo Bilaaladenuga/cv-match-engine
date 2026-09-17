@@ -21,6 +21,11 @@ from app.services.matching_service import (
     run_pipeline,
 )
 
+# The product is privacy-first free software: the primary /api/matches flow
+# is STATELESS (nothing persisted, no accounts). Persistence exists for the
+# recruiter ranking service, which needs stored resumes/jobs.
+_ENABLE_STATELESS_PERSISTENCE = False
+
 router = APIRouter(prefix="/api", tags=["matches"])
 
 
@@ -90,16 +95,24 @@ def create_match(request: MatchRequest, db: Session = Depends(get_db)):
                 db, request.resume_id, request.job_id, weights=request.weights
             )
         else:
-            try:
-                match_row, output = create_match_from_texts(
-                    db, request.cv_text, request.job_text, weights=request.weights
-                )
-            except OperationalError:
-                # Raw-text analysis is self-contained; persistence is a side
-                # effect, not the product. If the database is unavailable,
-                # degrade to a stateless report (match_id=None) instead of
-                # failing the request. Entity mode above still hard-fails.
-                db.rollback()
+            if _ENABLE_STATELESS_PERSISTENCE:
+                # Optional opt-in persistence (self-hosters who want server-
+                # side history). Degrades to stateless if the DB is down.
+                try:
+                    match_row, output = create_match_from_texts(
+                        db, request.cv_text, request.job_text,
+                        weights=request.weights,
+                    )
+                except OperationalError:
+                    db.rollback()
+                    output = run_pipeline(
+                        request.cv_text or "", request.job_text or "",
+                        weights=request.weights,
+                    )
+                    match_row = None
+            else:
+                # Default: fully stateless — the analysis never touches the
+                # database and match_id is always None.
                 output = run_pipeline(
                     request.cv_text or "", request.job_text or "",
                     weights=request.weights,

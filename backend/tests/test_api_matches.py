@@ -17,7 +17,6 @@ from sqlalchemy.pool import StaticPool
 from app.core.database import Base, get_db
 from app.main import app
 from app.models import candidate, job, resume, skill, user  # noqa: F401
-from app.models.candidate import CandidateProfile
 from app.models.job import Job
 from app.models.resume import Resume
 from app.models.user import User
@@ -91,7 +90,8 @@ def test_text_mode_returns_full_result(client):
     )
     assert resp.status_code == 201
     body = resp.json()
-    assert body["match_id"] is not None
+    # Stateless mode: no persistence, no match row.
+    assert body["match_id"] is None
     assert body["model_version"].startswith("match-model-v")
     assert 0 <= body["overall_percent"] <= 100
     assert body["band"]
@@ -140,19 +140,29 @@ def test_entity_mode_persists_and_scores(client):
     db.close()
 
 
-def test_text_mode_creates_demo_user_and_rows(client):
+def test_text_mode_is_stateless(client):
+    """Raw-text mode persists NOTHING (privacy-first, no accounts).
+
+    The demo-user persistence path exists only behind the opt-in flag for
+    self-hosters; the default product stores no CV or report server-side.
+    """
     http, session_factory = client
     resp = http.post(
         "/api/matches", json={"cv_text": SAMPLE_CV, "job_text": SAMPLE_JD}
     )
     assert resp.status_code == 201
-    db = session_factory()
-    from app.models.match import Match
+    body = resp.json()
+    assert body["match_id"] is None
 
-    row = db.get(Match, resp.json()["match_id"])
-    assert row is not None
-    assert db.query(User).filter(User.email == "demo@career-match.local").count() == 1
-    assert db.query(CandidateProfile).count() >= 1
+    db = session_factory()
+    from app.models.job import Job as JobRow
+    from app.models.match import Match
+    from app.models.resume import Resume as ResumeRow
+
+    assert db.query(Match).count() == 0
+    assert db.query(ResumeRow).count() == 0
+    assert db.query(JobRow).count() == 0
+    assert db.query(User).filter(User.email == "demo@career-match.local").count() == 0
     db.close()
 
 
@@ -229,12 +239,11 @@ class DeadSession:
         pass
 
 
-def test_text_mode_degrades_gracefully_when_db_down(client):
-    """DB unavailable + raw-text mode → stateless report (match_id None).
+def test_text_mode_works_when_db_down(client):
+    """Stateless mode never touches the DB: a dead database is irrelevant.
 
-    Regression test for the Phase 17 discovery: raw-text analysis is
-    self-contained, so an unreachable database must not fail the request.
-    Entity mode still hard-fails (its inputs live in the DB).
+    Regression test for the Phase 17 discovery (raw-text analysis used to
+    500 when PostgreSQL was unreachable). The analysis is self-contained.
     """
     http, _ = client
 

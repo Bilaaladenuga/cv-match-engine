@@ -61,7 +61,32 @@ export async function createMatch(body: MatchRequestBody): Promise<MatchReport> 
   return data;
 }
 
-// --- History ----------------------------------------------------------------
+// --- Resume upload (stateless extraction) -----------------------------------
+
+export interface ExtractResult {
+  filename: string;
+  file_type: string;
+  size_bytes: number;
+  char_count: number;
+  text: string;
+}
+
+/**
+ * Upload a CV file for text extraction. Nothing is stored server-side —
+ * the response text is held in the browser only.
+ */
+export async function extractResume(file: File): Promise<ExtractResult> {
+  const form = new FormData();
+  form.append("file", file);
+  // Override the instance's JSON content type: axios then sets the
+  // multipart boundary itself.
+  const { data } = await api.post<ExtractResult>("/resumes/extract", form, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return data;
+}
+
+// --- History (server endpoints; the UI uses browser-local history) ----------
 
 export async function getHistory(limit = 50, offset = 0): Promise<HistoryEntry[]> {
   const { data } = await api.get<HistoryEntry[]>("/history", {

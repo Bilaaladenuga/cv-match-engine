@@ -1,24 +1,16 @@
 "use client";
 
 /**
- * /dashboard — overview for the signed-in workspace.
- *
- * Until auth exists, the dashboard summarizes everything stored so far
- * (the same data /history shows). When users arrive, this becomes
- * per-user. Stats are computed client-side from GET /api/history —
- * a dedicated analytics endpoint can replace this later without UI
- * changes if the volume grows.
+ * /dashboard — overview of analyses saved in THIS browser (localStorage;
+ * no accounts by design). Stats are computed client-side from the local
+ * history — no server round-trip.
  */
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { getHistory, apiErrorMessage } from "@/lib/api";
-import type { HistoryEntry } from "@/lib/types";
-import { BandBadge, Card, CardHeader, ErrorNote, Loading } from "@/components/ui";
-
-function pct(score: number): number {
-  return Math.round(score * 100);
-}
+import { listAnalyses } from "@/lib/history";
+import type { StoredAnalysis } from "@/lib/history";
+import { BandBadge, Card, CardHeader } from "@/components/ui";
 
 function Stat({
   label,
@@ -39,23 +31,20 @@ function Stat({
 }
 
 export default function DashboardPage() {
-  const [entries, setEntries] = useState<HistoryEntry[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [entries, setEntries] = useState<StoredAnalysis[] | null>(null);
 
   useEffect(() => {
-    getHistory(200)
-      .then(setEntries)
-      .catch((err) => setError(apiErrorMessage(err)));
+    setEntries(listAnalyses());
   }, []);
 
   const stats = useMemo(() => {
     if (!entries || entries.length === 0) return null;
-    const scores = entries.map((e) => pct(e.overall_score));
-    const avg = Math.round(
-      scores.reduce((a, b) => a + b, 0) / scores.length
+    const scores = entries.map(
+      (e) => e.report.overall_percent ?? Math.round(e.report.overall_score * 100)
     );
+    const avg = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
     const bands = entries.reduce<Record<string, number>>((acc, e) => {
-      if (e.band) acc[e.band] = (acc[e.band] ?? 0) + 1;
+      if (e.report.band) acc[e.report.band] = (acc[e.report.band] ?? 0) + 1;
       return acc;
     }, {});
     return { count: entries.length, avg, bands };
@@ -67,7 +56,7 @@ export default function DashboardPage() {
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
           <p className="mt-1 text-sm text-gray-500">
-            Overview of stored compatibility analyses.
+            Overview of analyses saved in this browser.
           </p>
         </div>
         <Link
@@ -78,21 +67,18 @@ export default function DashboardPage() {
         </Link>
       </div>
 
-      {error ? <ErrorNote message={error} /> : null}
-      {!error && entries === null ? <Loading label="Loading dashboard…" /> : null}
-
-      {entries && stats ? (
+      {entries === null ? null : stats ? (
         <>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Stat
               label="Analyses"
               value={String(stats.count)}
-              hint="stored match reports"
+              hint="saved in this browser"
             />
             <Stat
               label="Average score"
               value={`${stats.avg}`}
-              hint="across all stored analyses"
+              hint="across saved analyses"
             />
             <Stat
               label="Good or better"
@@ -114,23 +100,25 @@ export default function DashboardPage() {
               <div className="divide-y divide-gray-100">
                 {entries.slice(0, 5).map((e) => (
                   <Link
-                    key={e.match_id}
-                    href={`/history/${e.match_id}`}
+                    key={e.id}
+                    href={`/history/${e.id}`}
                     className="flex items-center justify-between px-5 py-3 hover:bg-gray-50"
                   >
-                    <div>
-                      <span className="text-sm font-medium text-gray-900">
-                        {e.candidate_name ?? `Candidate #${e.candidate_id}`}
-                      </span>
-                      <span className="text-gray-400"> · </span>
-                      <span className="text-sm text-gray-600">
-                        {e.job_title ?? `Job #${e.job_id}`}
-                      </span>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-gray-900">
+                        {e.title}
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        {new Date(e.created_at).toLocaleString(undefined, {
+                          dateStyle: "medium",
+                          timeStyle: "short",
+                        })}
+                      </p>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <BandBadge band={e.band} />
+                    <div className="flex flex-shrink-0 items-center gap-3">
+                      <BandBadge band={e.report.band} />
                       <span className="text-sm font-semibold tabular-nums">
-                        {pct(e.overall_score)}
+                        {e.report.overall_percent}
                       </span>
                     </div>
                   </Link>
@@ -144,7 +132,10 @@ export default function DashboardPage() {
                 {Object.entries(stats.bands)
                   .sort((a, b) => b[1] - a[1])
                   .map(([band, n]) => (
-                    <div key={band} className="flex items-center justify-between">
+                    <div
+                      key={band}
+                      className="flex items-center justify-between"
+                    >
                       <BandBadge band={band} />
                       <span className="text-sm tabular-nums text-gray-600">
                         {n}
@@ -155,9 +146,7 @@ export default function DashboardPage() {
             </Card>
           </div>
         </>
-      ) : null}
-
-      {entries && entries.length === 0 && !error ? (
+      ) : (
         <Card className="px-6 py-10 text-center">
           <p className="text-sm text-gray-500">
             Nothing to summarize yet — run your first analysis.
@@ -169,7 +158,7 @@ export default function DashboardPage() {
             Analyze a CV
           </Link>
         </Card>
-      ) : null}
+      )}
     </main>
   );
 }
