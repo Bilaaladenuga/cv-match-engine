@@ -1,0 +1,315 @@
+{
+  "sample_size": 300,
+  "results": [
+    {
+      "dataset_id": "cnamuangtoun/resume-job-description-fit",
+      "note": "v0.4.0 training data; audited to quantify its field skew",
+      "sampled_rows": 300,
+      "dataset_rows_total": 6241,
+      "string_features": [
+        "resume_text",
+        "job_description_text",
+        "label"
+      ],
+      "label_distribution": {
+        "Good Fit": 300
+      },
+      "field_counts": {
+        "unknown": 246,
+        "finance": 29,
+        "soft_skills": 11,
+        "devops": 1,
+        "tools": 6,
+        "programming": 3,
+        "frontend": 3,
+        "engineering": 1
+      },
+      "field_label_distribution": {
+        "devops": {
+          "Good Fit": 1
+        },
+        "engineering": {
+          "Good Fit": 1
+        },
+        "finance": {
+          "Good Fit": 29
+        },
+        "frontend": {
+          "Good Fit": 3
+        },
+        "programming": {
+          "Good Fit": 3
+        },
+        "soft_skills": {
+          "Good Fit": 11
+        },
+        "tools": {
+          "Good Fit": 6
+        }
+      },
+      "projected_rows_per_field": {
+        "finance": [
+          603,
+          29
+        ],
+        "soft_skills": [
+          229,
+          11
+        ],
+        "devops": [
+          21,
+          1
+        ],
+        "tools": [
+          125,
+          6
+        ],
+        "programming": [
+          62,
+          3
+        ],
+        "frontend": [
+          62,
+          3
+        ],
+        "engineering": [
+          21,
+          1
+        ]
+      },
+      "supported_fields": {
+        "finance": 603
+      },
+      "declared_domain_mapped_fraction": 0.0,
+      "resume_domain_columns": null,
+      "source_distribution": null,
+      "cross_domain_pair_fraction": 0.0,
+      "mean_resume_chars": 5483,
+      "gates": {
+        "rows_available": true,
+        "label_scheme": true,
+        "classified_fraction": false,
+        "field_breadth": false
+      },
+      "verdict": "NO-GO",
+      "missing_gates": [
+        "classified_fraction",
+        "field_breadth"
+      ]
+    },
+    {
+      "dataset_id": "med2425/resume-job-fit-merged-v1",
+      "note": "80k rows, 3-class labels + domain annotations; check provenance",
+      "sampled_rows": 300,
+      "dataset_rows_total": 80017,
+      "string_features": [
+        "resume",
+        "jd",
+        "label",
+        "source",
+        "resume_domain",
+        "jd_domain"
+      ],
+      "label_distribution": {
+        "No Fit": 221,
+        "Potential Fit": 55,
+        "Good Fit": 24
+      },
+      "field_counts": {
+        "programming": 133,
+        "finance": 75,
+        "data_science": 61,
+        "law": 3,
+        "engineering": 19,
+        "sales": 3,
+        "hr": 1,
+        "healthcare": 3,
+        "unknown": 2
+      },
+      "field_label_distribution": {
+        "data_science": {
+          "No Fit": 53,
+          "Potential Fit": 6,
+          "Good Fit": 2
+        },
+        "engineering": {
+          "No Fit": 18,
+          "Potential Fit": 1
+        },
+        "finance": {
+          "Potential Fit": 26,
+          "No Fit": 35,
+          "Good Fit": 14
+        },
+        "healthcare": {
+          "No Fit": 3
+        },
+        "hr": {
+          "No Fit": 1
+        },
+        "law": {
+          "No Fit": 3
+        },
+        "programming": {
+          "No Fit": 104,
+          "Potential Fit": 21,
+          "Good Fit": 8
+        },
+        "sales": {
+          "Potential Fit": 1,
+          "No Fit": 2
+        }
+      },
+      "projected_rows_per_field": {
+        "programming": [
+          35474,
+          133
+        ],
+        "finance": [
+          20004,
+          75
+        ],
+        "data_science": [
+          16270,
+          61
+        ],
+        "law": [
+          800,
+          3
+        ],
+        "engineering": [
+          5068,
+          19
+        ],
+        "sales": [
+          800,
+          3
+        ],
+        "hr": [
+          267,
+          1
+        ],
+        "healthcare": [
+          800,
+          3
+        ]
+      },
+      "supported_fields": {
+        "programming": 35474,
+        "finance": 20004,
+        "data_science": 16270,
+        "law": 800,
+        "engineering": 5068,
+        "sales": 800,
+        "healthcare": 800
+      },
+      "declared_domain_mapped_fraction": 0.993,
+      "resume_domain_columns": {
+        "software": 264,
+        "data": 120,
+        "ai": 7,
+        "finance": 157,
+        "management": 14,
+        "sales": 4,
+        "legal": 4,
+        "hr": 3,
+        "engineering": 24,
+        "healthcare": 3
+      },
+      "source_distribution": {
+        "generated_smart": 300
+      },
+      "cross_domain_pair_fraction": 0.473,
+      "mean_resume_chars": 5994,
+      "gates": {
+        "rows_available": true,
+        "label_scheme": true,
+        "classified_fraction": true,
+        "field_breadth": true
+      },
+      "verdict": "GO",
+      "missing_gates": []
+    },
+    {
+      "dataset_id": "batuhanmtl/job_resume_fit",
+      "note": "category-tagged; continuous score would need banding",
+      "sampled_rows": 300,
+      "dataset_rows_total": 2385,
+      "string_features": [
+        "resume_text",
+        "job_text",
+        "category",
+        "job_required_skills",
+        "resume_skill_list",
+        "ai_matched_skills"
+      ],
+      "label_distribution": {},
+      "field_counts": {
+        "hr": 8,
+        "design": 107,
+        "programming": 120,
+        "unknown": 36,
+        "education": 23,
+        "healthcare": 1,
+        "tools": 4,
+        "soft_skills": 1
+      },
+      "field_label_distribution": {},
+      "projected_rows_per_field": {
+        "hr": [
+          64,
+          8
+        ],
+        "design": [
+          851,
+          107
+        ],
+        "programming": [
+          954,
+          120
+        ],
+        "education": [
+          183,
+          23
+        ],
+        "healthcare": [
+          8,
+          1
+        ],
+        "tools": [
+          32,
+          4
+        ],
+        "soft_skills": [
+          8,
+          1
+        ]
+      },
+      "supported_fields": {
+        "design": 851,
+        "programming": 954
+      },
+      "declared_domain_mapped_fraction": 0.783,
+      "resume_domain_columns": {
+        "HR": 8,
+        "DESIGNER": 107,
+        "INFORMATION-TECHNOLOGY": 120,
+        "TEACHER": 65
+      },
+      "source_distribution": null,
+      "cross_domain_pair_fraction": 0.0,
+      "mean_resume_chars": 6185,
+      "gates": {
+        "rows_available": false,
+        "label_scheme": true,
+        "classified_fraction": true,
+        "field_breadth": false
+      },
+      "verdict": "NO-GO",
+      "missing_gates": [
+        "rows_available",
+        "field_breadth"
+      ]
+    }
+  ]
+}
