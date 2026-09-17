@@ -468,6 +468,14 @@ numpy==1.26.4
 - Dev-server chunk corruption after recharts install ("Cannot find
   module './359.js'") resolved by clearing .next; production build clean
 
+## Model v0.5 Retrain Plan (documented, not yet implemented)
+- `docs/model-v05-plan.md`: decision table (data-first, then schema, then
+  retrain — schema expansion alone is rejected as a no-op on tech-only
+  rows), multi-domain dataset strategy with weak-label fallback + human
+  audit, per-field evaluation harness and fairness gate (best-vs-worst
+  field NDCG@5 gap ≤ 0.15), shadow-mode rollout, explicit out-of-scope
+  list (no LLM scoring, no per-field serving models)
+
 ## Test Summary
 ```
 Total: 481 tests passing
@@ -498,5 +506,7 @@ Total: 481 tests passing
 - Remaining phases: 22 (observability), 24 (deployment). Phase 20 auth
   is intentionally DROPPED (no-accounts product decision); file-size and
   rate-limit hardening can still be added without accounts
-- Feature roadmap (model side): per-pair interaction features for CV-group
-  ranking (the listwise gap), ordinal-aware training objective
+- Feature roadmap (model side): **v0.5 retrain per docs/model-v05-plan.md**
+  (multi-domain data → cov_* schema promotion → per-field gates), then
+  per-pair interaction features for CV-group ranking (the listwise gap),
+  ordinal-aware training objective
