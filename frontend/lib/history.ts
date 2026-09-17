@@ -22,6 +22,10 @@ export interface StoredAnalysis {
   created_at: string;
   /** Free-form label shown in lists (defaults to the job's first line). */
   title: string;
+  /** The original CV text that was submitted. */
+  cv_text?: string;
+  /** The original job description text that was submitted. */
+  job_text?: string;
   report: MatchReport;
 }
 
@@ -45,7 +49,9 @@ function writeAll(entries: StoredAnalysis[]): void {
 
 export function saveAnalysis(
   report: MatchReport,
-  title?: string
+  title?: string,
+  cvText?: string,
+  jobText?: string
 ): StoredAnalysis {
   const entry: StoredAnalysis = {
     id:
@@ -54,6 +60,8 @@ export function saveAnalysis(
         : `local-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     created_at: new Date().toISOString(),
     title: title?.trim() || `Analysis · ${report.overall_percent ?? "?"}%`,
+    cv_text: cvText,
+    job_text: jobText,
     report,
   };
   const entries = readAll();

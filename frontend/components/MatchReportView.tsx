@@ -5,14 +5,8 @@
  * /history/[match_id] (stored GET /api/matches/{id} detail, mapped
  * into the same display shape by the page).
  *
- * Design notes:
- * - Every score is shown with its evidence; the ethics disclaimer is
- *   always visible (Phase 27 requirement, not an afterthought).
- * - The skill table surfaces the Phase 16 evidence grades directly:
- *   status (matched/partial/missing) × strength (strong/moderate/weak),
- *   so "listed but not evidenced" padding is visible at a glance.
- * - ML probabilities are shown with their calibration method, raw and
- *   corrected, per the Phase 14 explainability contract.
+ * Premium design: gradient score dial, animated bars, glassmorphic
+ * sections, rich skill evidence table, and contextual charts.
  */
 
 import {
@@ -20,6 +14,10 @@ import {
   CircleDashed,
   MinusCircle,
   XCircle,
+  TrendingUp,
+  TrendingDown,
+  Lightbulb,
+  Shield,
 } from "lucide-react";
 import {
   Bar,
@@ -42,7 +40,7 @@ import {
 } from "./ui";
 
 const statusIcon = {
-  matched: <CheckCircle2 className="h-4 w-4 text-green-600" />,
+  matched: <CheckCircle2 className="h-4 w-4 text-accent-500" />,
   partial: <CircleDashed className="h-4 w-4 text-amber-500" />,
   missing: <XCircle className="h-4 w-4 text-red-500" />,
   unknown: <MinusCircle className="h-4 w-4 text-gray-400" />,
@@ -56,10 +54,10 @@ const strengthLabel: Record<string, string> = {
 };
 
 const strengthStyle: Record<string, string> = {
-  strong: "text-green-700",
-  moderate: "text-amber-600",
-  weak: "text-orange-600",
-  absent: "text-gray-400",
+  strong: "text-accent-700 bg-accent-50",
+  moderate: "text-amber-700 bg-amber-50",
+  weak: "text-orange-700 bg-orange-50",
+  absent: "text-gray-500 bg-gray-50",
 };
 
 function capitalize(s: string): string {
@@ -72,28 +70,34 @@ function SkillEvidenceRow({ ev }: { ev: SkillEvidence }) {
       ? `${ev.estimated_months} mo${ev.estimated_months === 1 ? "" : "s"}`
       : null;
   return (
-    <tr className="border-b border-gray-50 last:border-0">
-      <td className="py-2 pr-3 align-middle">
-        <div className="flex items-center gap-2">
+    <tr className="border-b border-gray-100/60 transition-colors hover:bg-gray-50/50">
+      <td className="py-3 pr-4 align-middle">
+        <div className="flex items-center gap-2.5">
           {statusIcon[ev.status] ?? statusIcon.unknown}
           <span className="font-medium text-gray-900">{ev.skill}</span>
         </div>
       </td>
-      <td className="py-2 pr-3 text-sm text-gray-600">
-        {capitalize(ev.status)}
+      <td className="py-3 pr-4">
+        <span className="text-sm text-gray-600">{capitalize(ev.status)}</span>
       </td>
-      <td className={`py-2 pr-3 text-sm ${strengthStyle[ev.strength] ?? "text-gray-500"}`}>
-        {strengthLabel[ev.strength] ?? capitalize(ev.strength)}
+      <td className="py-3 pr-4">
+        <span
+          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${strengthStyle[ev.strength] ?? "text-gray-500 bg-gray-50"}`}
+        >
+          {strengthLabel[ev.strength] ?? capitalize(ev.strength)}
+        </span>
         {ev.strength === "weak" && ev.in_skills_section ? (
-          <span className="block text-xs text-orange-500">
+          <span className="mt-1 block text-[11px] text-orange-500">
             Listed in skills section, little work-history evidence
           </span>
         ) : null}
         {months ? (
-          <span className="block text-xs text-gray-400">≈{months} of use</span>
+          <span className="mt-0.5 block text-[11px] text-gray-400">
+            ≈{months} of use
+          </span>
         ) : null}
       </td>
-      <td className="py-2 text-xs text-gray-400">
+      <td className="py-3 text-xs text-gray-400">
         {ev.sources && ev.sources.length > 0 ? ev.sources.join("; ") : "—"}
       </td>
     </tr>
@@ -105,7 +109,6 @@ function fallbackEvidence(
   partial: string[],
   missing: string[]
 ): SkillEvidence[] {
-  // Stored reports (pre-Phase 16) only have the three skill lists.
   return [
     ...matched.map((s) => ({
       skill: s,
@@ -147,21 +150,25 @@ export interface ReportLists {
 }
 
 // ---------------------------------------------------------------------------
-// Charts (Phase 18) — every chart carries information the text lists don't.
+// Charts
 // ---------------------------------------------------------------------------
 
-const COVERAGE_COLORS = {
-  matched: "#16a34a", // green-600
-  partial: "#d97706", // amber-600
-  missing: "#dc2626", // red-500
-  unknown: "#9ca3af", // gray-400
+const CHART_COLORS = {
+  matched: "#059669",
+  partial: "#D97706",
+  missing: "#DC2626",
+  unknown: "#9CA3AF",
 } as const;
 
-/**
- * Weighted-contribution chart: the component bars elsewhere show RAW
- * scores; this shows where the overall score's points actually came from
- * (raw × weight, sums to ~overall%). Answers "what carried my score".
- */
+const COMPONENT_COLORS: Record<string, string> = {
+  skills: "#2563EB",
+  semantic: "#7C3AED",
+  experience: "#059669",
+  education: "#D97706",
+  certifications: "#EC4899",
+  ml_model: "#6366F1",
+};
+
 function ScoreContributionChart({
   components,
   overallPercent,
@@ -176,40 +183,46 @@ function ScoreContributionChart({
       detail: `raw ${Math.round(c.raw_score * 100)}/100 × weight ${Math.round(
         c.weight * 100
       )}%`,
+      fill: COMPONENT_COLORS[c.name] ?? "#6B7280",
     }))
     .sort((a, b) => b.contribution - a.contribution);
 
   return (
     <div>
-      <div className="h-40 w-full">
+      <div className="h-44 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} layout="vertical" margin={{ left: 8, right: 24 }}>
             <XAxis
               type="number"
               domain={[0, Math.max(50, overallPercent)]}
-              tick={{ fontSize: 11, fill: "#9ca3af" }}
+              tick={{ fontSize: 11, fill: "#9CA3AF", fontFamily: "DM Sans" }}
               axisLine={false}
               tickLine={false}
             />
             <YAxis
               type="category"
               dataKey="name"
-              width={92}
-              tick={{ fontSize: 12, fill: "#374151" }}
+              width={100}
+              tick={{ fontSize: 12, fill: "#374151", fontFamily: "Space Grotesk", fontWeight: 500 }}
               axisLine={false}
               tickLine={false}
             />
             <Tooltip
-              cursor={{ fill: "#f9fafb" }}
-              formatter={(value: number) => [`${value} pts`, "contribution"]}
-              labelStyle={{ color: "#111827", fontWeight: 500 }}
+              cursor={{ fill: "rgba(37, 99, 235, 0.04)" }}
               contentStyle={{
-                borderRadius: 6,
-                border: "1px solid #e5e7eb",
+                borderRadius: 12,
+                border: "1px solid #E2E8F0",
                 fontSize: 12,
+                fontFamily: "DM Sans",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
               }}
+              formatter={(value: number) => [`${value} pts`, "contribution"]}
             />
-            <Bar dataKey="contribution" fill="#374151" radius={[0, 3, 3, 0]} barSize={18} />
+            <Bar dataKey="contribution" radius={[0, 6, 6, 0]} barSize={20}>
+              {data.map((entry, i) => (
+                <Cell key={i} fill={entry.fill} />
+              ))}
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -221,11 +234,6 @@ function ScoreContributionChart({
   );
 }
 
-/**
- * Coverage donut: composition of job requirements by match status with
- * counts. Complements the table by making the size of each group visible
- * at a glance (12 matched / 2 partial / 1 missing reads instantly).
- */
 function SkillCoverageDonut({ evidence }: { evidence: SkillEvidence[] }) {
   const counts = {
     matched: evidence.filter((e) => e.status === "matched").length,
@@ -235,7 +243,7 @@ function SkillCoverageDonut({ evidence }: { evidence: SkillEvidence[] }) {
   };
   const data = (
     Object.entries(counts) as [
-      keyof typeof COVERAGE_COLORS,
+      keyof typeof CHART_COLORS,
       number,
     ][]
   )
@@ -243,66 +251,73 @@ function SkillCoverageDonut({ evidence }: { evidence: SkillEvidence[] }) {
     .map(([status, n]) => ({
       name: status === "unknown" ? "Unknown" : capitalize(status),
       value: n,
-      color: COVERAGE_COLORS[status],
+      fill: CHART_COLORS[status],
     }));
   const total = evidence.length;
 
   return (
-    <div className="flex items-center gap-5 px-5 py-4">
-      <div className="relative h-36 w-36 shrink-0">
+    <div className="flex items-center gap-6 px-6 py-5">
+      <div className="relative h-40 w-40 shrink-0">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
               data={data}
               dataKey="value"
               nameKey="name"
-              innerRadius={44}
-              outerRadius={66}
-              paddingAngle={2}
+              innerRadius={48}
+              outerRadius={70}
+              paddingAngle={3}
               strokeWidth={0}
             >
               {data.map((d) => (
-                <Cell key={d.name} fill={d.color} />
+                <Cell key={d.name} fill={d.fill} />
               ))}
             </Pie>
             <Tooltip
+              contentStyle={{
+                borderRadius: 12,
+                border: "1px solid #E2E8F0",
+                fontSize: 12,
+                fontFamily: "DM Sans",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+              }}
               formatter={(value: number, name: string) => [
                 `${value} of ${total} requirements`,
                 name,
               ]}
-              contentStyle={{
-                borderRadius: 6,
-                border: "1px solid #e5e7eb",
-                fontSize: 12,
-              }}
             />
           </PieChart>
         </ResponsiveContainer>
         <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-xl font-semibold text-gray-900">{total}</span>
-          <span className="text-[10px] uppercase tracking-wide text-gray-400">
+          <span className="font-heading text-2xl font-bold text-gray-900">
+            {total}
+          </span>
+          <span className="text-[10px] font-medium uppercase tracking-widest text-gray-400">
             required
           </span>
         </div>
       </div>
-      <ul className="space-y-1.5 text-sm">
+      <ul className="space-y-2">
         {(
           [
             ["matched", counts.matched],
             ["partial", counts.partial],
             ["missing", counts.missing],
             ["unknown", counts.unknown],
-          ] as [keyof typeof COVERAGE_COLORS, number][]
+          ] as [keyof typeof CHART_COLORS, number][]
         )
           .filter(([, n]) => n > 0)
           .map(([status, n]) => (
-            <li key={status} className="flex items-center gap-2 text-gray-700">
+            <li
+              key={status}
+              className="flex items-center gap-2.5 text-sm text-gray-700"
+            >
               <span
-                className="h-2.5 w-2.5 rounded-sm"
-                style={{ backgroundColor: COVERAGE_COLORS[status] }}
+                className="h-3 w-3 rounded-sm"
+                style={{ backgroundColor: CHART_COLORS[status] }}
               />
               {capitalize(status)}
-              <span className="font-medium tabular-nums">{n}</span>
+              <span className="font-semibold tabular-nums">{n}</span>
               <span className="text-xs text-gray-400">
                 ({Math.round((n / total) * 100)}%)
               </span>
@@ -312,6 +327,10 @@ function SkillCoverageDonut({ evidence }: { evidence: SkillEvidence[] }) {
     </div>
   );
 }
+
+// ---------------------------------------------------------------------------
+// Main Component
+// ---------------------------------------------------------------------------
 
 export function MatchReportView({
   report,
@@ -349,25 +368,24 @@ export function MatchReportView({
     <div className="space-y-6">
       {title ? (
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">{title}</h2>
+          <h2 className="font-heading text-xl font-bold tracking-tight text-gray-900">
+            {title}
+          </h2>
           {subtitle ? (
-            <p className="text-sm text-gray-500">{subtitle}</p>
+            <p className="mt-0.5 text-sm text-gray-500">{subtitle}</p>
           ) : null}
         </div>
       ) : null}
 
-      {/* Overall */}
-      <Card>
-        <div className="flex flex-col items-center gap-6 px-6 py-6 sm:flex-row">
+      {/* Overall Score */}
+      <Card className="overflow-hidden">
+        <div className="flex flex-col items-center gap-8 px-8 py-8 sm:flex-row">
           <ScoreDial percent={report.overall_percent} />
           <div className="flex-1 text-center sm:text-left">
-            <div className="flex items-center justify-center gap-2 sm:justify-start">
+            <div className="flex items-center justify-center gap-3 sm:justify-start">
               <BandBadge band={report.band} />
-              <span className="text-xs text-gray-400">
-                model {report.model_version}
-              </span>
             </div>
-            <p className="mt-2 text-sm text-gray-600">
+            <p className="mt-3 text-sm leading-relaxed text-gray-600">
               {report.overall_percent >= 70
                 ? "Strong overlap between the CV and this job's requirements."
                 : report.overall_percent >= 55
@@ -378,13 +396,13 @@ export function MatchReportView({
         </div>
       </Card>
 
-      {/* Component breakdown */}
+      {/* Score Breakdown */}
       <Card>
         <CardHeader
           title="Score breakdown"
           subtitle="Each component's raw score and its weight in the overall score"
         />
-        <div className="space-y-4 px-5 py-4">
+        <div className="space-y-5 px-6 py-5">
           {report.components.map((c) => (
             <ScoreBar
               key={c.name}
@@ -395,7 +413,7 @@ export function MatchReportView({
             />
           ))}
         </div>
-        <div className="border-t border-gray-100 px-2 py-4">
+        <div className="border-t border-gray-100/60 px-4 py-5">
           <ScoreContributionChart
             components={report.components}
             overallPercent={report.overall_percent}
@@ -403,23 +421,23 @@ export function MatchReportView({
         </div>
       </Card>
 
-      {/* Skill evidence table */}
+      {/* Skill Evidence */}
       <Card>
         <CardHeader
           title="Required skills"
           subtitle="Match status and the evidence behind it, per job requirement"
         />
-        <div className="border-b border-gray-100">
+        <div className="border-b border-gray-100/60">
           <SkillCoverageDonut evidence={evidence} />
         </div>
         <div className="overflow-x-auto px-5 py-2">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-gray-200 text-xs uppercase tracking-wide text-gray-400">
-                <th className="py-2 pr-3 font-medium">Skill</th>
-                <th className="py-2 pr-3 font-medium">Status</th>
-                <th className="py-2 pr-3 font-medium">Evidence</th>
-                <th className="py-2 font-medium">Sources</th>
+              <tr className="border-b border-gray-200/60 text-[11px] font-semibold uppercase tracking-widest text-gray-400">
+                <th className="py-2.5 pr-4 font-semibold">Skill</th>
+                <th className="py-2.5 pr-4 font-semibold">Status</th>
+                <th className="py-2.5 pr-4 font-semibold">Evidence</th>
+                <th className="py-2.5 font-semibold">Sources</th>
               </tr>
             </thead>
             <tbody>
@@ -431,17 +449,20 @@ export function MatchReportView({
         </div>
       </Card>
 
-      {/* Factors */}
+      {/* Positive / Negative Factors */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <Card>
           <CardHeader title="Positive factors" />
-          <ul className="space-y-2 px-5 py-4">
+          <ul className="space-y-2.5 px-5 py-4">
             {report.positive_factors.length === 0 ? (
               <li className="text-sm text-gray-400">None recorded.</li>
             ) : (
               report.positive_factors.map((f, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
-                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-green-500" />
+                <li
+                  key={i}
+                  className="flex items-start gap-3 text-sm text-gray-700"
+                >
+                  <TrendingUp className="mt-0.5 h-4 w-4 shrink-0 text-accent-500" />
                   {f}
                 </li>
               ))
@@ -450,13 +471,16 @@ export function MatchReportView({
         </Card>
         <Card>
           <CardHeader title="Negative factors" />
-          <ul className="space-y-2 px-5 py-4">
+          <ul className="space-y-2.5 px-5 py-4">
             {report.negative_factors.length === 0 ? (
               <li className="text-sm text-gray-400">None recorded.</li>
             ) : (
               report.negative_factors.map((f, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
-                  <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-red-400" />
+                <li
+                  key={i}
+                  className="flex items-start gap-3 text-sm text-gray-700"
+                >
+                  <TrendingDown className="mt-0.5 h-4 w-4 shrink-0 text-red-400" />
                   {f}
                 </li>
               ))
@@ -468,16 +492,21 @@ export function MatchReportView({
       {/* Recommendations */}
       <Card>
         <CardHeader
-          title="Recommendations"
-          subtitle="Grounded in what the parser actually found on the CV"
+          title="How to improve your CV"
+          subtitle="Actionable steps to better match this job — based on what the system found"
         />
-        <ul className="space-y-2 px-5 py-4">
+        <ul className="space-y-3 px-5 py-4">
           {report.recommendations.length === 0 ? (
             <li className="text-sm text-gray-400">No actions needed.</li>
           ) : (
             report.recommendations.map((r, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
-                <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-blue-500" />
+              <li
+                key={i}
+                className="flex items-start gap-3 text-sm text-gray-700"
+              >
+                <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary-600/10 text-[10px] font-bold text-primary-700">
+                  {i + 1}
+                </span>
                 {r}
               </li>
             ))
@@ -485,48 +514,126 @@ export function MatchReportView({
         </ul>
       </Card>
 
-      {/* ML model internals (transparency, Phase 14/23) */}
+      {/* AI Fit Prediction — plain language for non-technical users */}
       {ml && ml.label !== undefined ? (
-        <Card>
-          <CardHeader
-            title="Trained model view"
-            subtitle={`Classifier: ${ml.label} · calibration: ${
-              ml.calibration_method ?? "none"
-            }`}
-          />
-          <div className="px-5 py-4">
+        <Card className="overflow-hidden">
+          <div className="bg-gradient-to-r from-primary-700 to-primary-600 px-6 py-4">
+            <h3 className="font-heading text-sm font-semibold text-white">
+              AI Fit Prediction
+            </h3>
+            <p className="mt-0.5 text-xs text-white/70">
+              A trained model that learned from thousands of CV–Job pairs
+            </p>
+          </div>
+          <div className="px-6 py-5">
+            {/* Main prediction in plain language */}
+            <div className="mb-5 flex items-center gap-4 rounded-xl bg-gray-50/80 px-5 py-4">
+              <div
+                className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-lg font-bold text-white ${
+                  ml.label === "Good Fit"
+                    ? "bg-gradient-to-br from-accent-500 to-emerald-600"
+                    : ml.label === "Potential Fit"
+                      ? "bg-gradient-to-br from-amber-500 to-orange-500"
+                      : "bg-gradient-to-br from-red-500 to-red-600"
+                }`}
+              >
+                {ml.label === "Good Fit"
+                  ? "✓"
+                  : ml.label === "Potential Fit"
+                    ? "~"
+                    : "✗"}
+              </div>
+              <div>
+                <p className="font-heading text-base font-semibold text-gray-900">
+                  {ml.label === "Good Fit"
+                    ? "This CV is a strong match for this job"
+                    : ml.label === "Potential Fit"
+                      ? "This CV partially matches — some gaps to address"
+                      : "This CV has significant gaps for this job"}
+                </p>
+                <p className="mt-0.5 text-sm text-gray-500">
+                  {ml.label === "Good Fit"
+                    ? "The model is confident this candidate would be a good fit based on skills, experience, and education."
+                    : ml.label === "Potential Fit"
+                      ? "The model sees some matching elements but also gaps that could be addressed."
+                      : "The model predicts this candidate would need significant development to meet this role's requirements."}
+                </p>
+              </div>
+            </div>
+
+            {/* Confidence breakdown — plain language */}
             {ml.probabilities ? (
-              <div className="space-y-3">
-                {Object.entries(ml.probabilities).map(([cls, p]) => (
-                  <ScoreBar
-                    key={cls}
-                    label={`P(${cls})`}
-                    value={p}
-                  />
-                ))}
+              <div>
+                <p className="mb-3 text-xs font-medium uppercase tracking-wider text-gray-400">
+                  Confidence breakdown
+                </p>
+                <div className="space-y-3">
+                  {Object.entries(ml.probabilities).map(([cls, p]) => {
+                    const label =
+                      cls === "Good Fit"
+                        ? "Strong match"
+                        : cls === "Potential Fit"
+                          ? "Partial match"
+                          : "Not a match";
+                    const desc =
+                      cls === "Good Fit"
+                        ? "How likely this CV is a strong fit"
+                        : cls === "Potential Fit"
+                          ? "How likely this CV has potential with some gaps"
+                          : "How likely this CV doesn't match well";
+                    return (
+                      <div key={cls}>
+                        <div className="flex items-baseline justify-between text-sm">
+                          <span className="font-medium text-gray-700">
+                            {label}
+                          </span>
+                          <span className="tabular-nums font-semibold text-gray-900">
+                            {Math.round(p * 100)}%
+                          </span>
+                        </div>
+                        <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-gray-100">
+                          <div
+                            className={`h-full rounded-full transition-all duration-700 ease-out ${
+                              cls === "Good Fit"
+                                ? "bg-gradient-to-r from-accent-500 to-emerald-500"
+                                : cls === "Potential Fit"
+                                  ? "bg-gradient-to-r from-amber-500 to-orange-400"
+                                  : "bg-gradient-to-r from-red-400 to-red-500"
+                            }`}
+                            style={{ width: `${Math.round(p * 100)}%` }}
+                          />
+                        </div>
+                        <p className="mt-0.5 text-[11px] text-gray-400">{desc}</p>
+                      </div>
+                    );
+                  })}
+                </div>
                 {ml.raw_probabilities &&
                   JSON.stringify(ml.raw_probabilities) !==
                     JSON.stringify(ml.probabilities) && (
-                    <p className="text-xs text-gray-400">
-                      Probabilities prior-corrected for the natural class
-                      distribution; raw values available via the API.
+                    <p className="mt-3 text-[11px] text-gray-400">
+                      These predictions are adjusted for real-world job market
+                      distributions.
                     </p>
                   )}
               </div>
             ) : (
               <p className="text-sm text-gray-500">
-                The trained model was not available for this analysis; scores
-                come from the deterministic hybrid engine.
+                The AI model was not available for this analysis. The score
+                above comes entirely from the rule-based matching engine.
               </p>
             )}
           </div>
         </Card>
       ) : null}
 
-      {/* Ethics disclaimer — always visible */}
-      <p className="rounded-md border border-gray-200 bg-gray-50 px-4 py-3 text-xs leading-relaxed text-gray-500">
-        {report.disclaimer}
-      </p>
+      {/* Ethics Disclaimer */}
+      <div className="flex items-start gap-3 rounded-xl border border-gray-200/60 bg-gray-50/80 px-5 py-4">
+        <Shield className="mt-0.5 h-4 w-4 shrink-0 text-gray-400" />
+        <p className="text-xs leading-relaxed text-gray-500">
+          {report.disclaimer}
+        </p>
+      </div>
     </div>
   );
 }

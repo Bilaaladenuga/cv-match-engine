@@ -12,11 +12,11 @@
 
 import { useCallback, useRef, useState } from "react";
 import Link from "next/link";
-import { Upload, FileText, X, Check } from "lucide-react";
+import { Upload, FileText, X, Check, ArrowRight } from "lucide-react";
 import { createMatch, extractResume, apiErrorMessage } from "@/lib/api";
 import { saveAnalysis } from "@/lib/history";
 import type { MatchReport } from "@/lib/types";
-import { Card, ErrorNote, Loading } from "@/components/ui";
+import { Card, ErrorNote, MatchReportSkeleton } from "@/components/ui";
 import { MatchReportView } from "@/components/MatchReportView";
 
 const EXAMPLE_CV = `Jane Okafor
@@ -83,7 +83,9 @@ export default function AnalyzePage() {
       setReport(result);
       saveAnalysis(
         result,
-        jobText.trim().split("\n", 1)[0]?.slice(0, 80) || undefined
+        jobText.trim().split("\n", 1)[0]?.slice(0, 80) || undefined,
+        cvText,
+        jobText
       );
       setSaved(true);
     } catch (err) {
@@ -132,7 +134,7 @@ export default function AnalyzePage() {
     <main className="mx-auto max-w-6xl px-6 py-10">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">
+          <h1 className="font-heading text-2xl font-bold tracking-tight text-gray-900">
             Analyze a CV against a job
           </h1>
           <p className="mt-1 text-sm text-gray-500">
@@ -142,7 +144,7 @@ export default function AnalyzePage() {
         </div>
         <Link
           href="/history"
-          className="text-sm text-gray-500 hover:text-gray-900"
+          className="text-sm font-medium text-gray-500 transition-colors hover:text-primary-600"
         >
           History →
         </Link>
@@ -151,14 +153,16 @@ export default function AnalyzePage() {
       <form onSubmit={onSubmit} className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* ----- CV column: upload or paste ----- */}
         <div>
-          <div className="mb-1 flex items-center justify-between">
+          <div className="mb-1.5 flex items-center justify-between">
             <label
               htmlFor="cv"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-semibold text-gray-700"
             >
               CV / resume
             </label>
-            <span className="text-xs text-gray-400">PDF · DOCX · TXT</span>
+            <span className="rounded-md bg-gray-100 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-gray-500">
+              PDF · DOCX · TXT
+            </span>
           </div>
 
           {/* Dropzone — hidden once a document has been extracted */}
@@ -179,19 +183,27 @@ export default function AnalyzePage() {
                   fileInput.current?.click();
                 }
               }}
-              className={`mb-2 flex cursor-pointer flex-col items-center justify-center rounded-md border-2 border-dashed px-4 py-6 text-center transition-colors ${
+              className={`mb-3 flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-4 py-8 text-center transition-all duration-200 ${
                 dragOver
-                  ? "border-gray-500 bg-gray-50"
-                  : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
+                  ? "border-primary-500 bg-primary-50/50 shadow-glow-blue"
+                  : "border-gray-200 hover:border-primary-300 hover:bg-primary-50/30 hover:shadow-glow-blue"
               }`}
             >
-              <Upload className="mb-1 h-5 w-5 text-gray-400" />
-              <p className="text-sm text-gray-600">
+              <div
+                className={`mb-3 flex h-12 w-12 items-center justify-center rounded-xl transition-colors duration-200 ${
+                  dragOver
+                    ? "bg-primary-100 text-primary-600"
+                    : "bg-gray-100 text-gray-400"
+                }`}
+              >
+                <Upload className="h-5 w-5" />
+              </div>
+              <p className="text-sm font-medium text-gray-700">
                 {upload.kind === "uploading"
                   ? `Extracting ${upload.filename}…`
                   : "Drop a CV here, or click to browse"}
               </p>
-              <p className="mt-0.5 text-xs text-gray-400">
+              <p className="mt-1 text-xs text-gray-400">
                 The file is read once and never stored.
               </p>
               <input
@@ -206,19 +218,23 @@ export default function AnalyzePage() {
               />
             </div>
           ) : (
-            <div className="mb-2 flex items-center justify-between rounded-md border border-gray-200 bg-gray-50 px-3 py-2">
-              <span className="flex items-center gap-2 text-sm text-gray-700">
-                <FileText className="h-4 w-4 text-gray-500" />
-                {upload.filename}
-                <span className="text-xs text-gray-400">
-                  {upload.chars.toLocaleString()} chars
-                </span>
-                <Check className="h-4 w-4 text-green-600" />
+            <div className="mb-3 flex items-center justify-between rounded-xl border border-accent-200/60 bg-gradient-to-r from-accent-50/80 to-emerald-50/60 px-4 py-3 shadow-sm">
+              <span className="flex items-center gap-2.5 text-sm text-gray-700">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-100">
+                  <FileText className="h-4 w-4 text-accent-600" />
+                </div>
+                <div>
+                  <span className="font-medium">{upload.filename}</span>
+                  <span className="ml-2 text-xs text-gray-400">
+                    {upload.chars.toLocaleString()} chars
+                  </span>
+                </div>
+                <Check className="h-4 w-4 text-accent-500" />
               </span>
               <button
                 type="button"
                 onClick={clearUpload}
-                className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600"
+                className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
               >
                 <X className="h-3.5 w-3.5" /> clear
               </button>
@@ -226,7 +242,9 @@ export default function AnalyzePage() {
           )}
 
           {upload.kind === "error" ? (
-            <p className="mb-2 text-xs text-red-600">{upload.message}</p>
+            <p className="mb-3 text-xs font-medium text-red-600">
+              {upload.message}
+            </p>
           ) : null}
 
           <textarea
@@ -238,12 +256,12 @@ export default function AnalyzePage() {
             }}
             rows={14}
             placeholder="…or paste the full CV text here…"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-sm text-gray-800 placeholder:text-gray-400 focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-500"
+            className="input-premium"
           />
           <button
             type="button"
             onClick={() => setCvText(EXAMPLE_CV)}
-            className="mt-1 text-xs text-gray-500 underline hover:text-gray-700"
+            className="mt-2 text-xs font-medium text-gray-400 underline decoration-gray-300 underline-offset-2 transition-colors hover:text-primary-600 hover:decoration-primary-300"
           >
             Use example CV
           </button>
@@ -253,7 +271,7 @@ export default function AnalyzePage() {
         <div>
           <label
             htmlFor="job"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1.5 block text-sm font-semibold text-gray-700"
           >
             Job description
           </label>
@@ -263,12 +281,12 @@ export default function AnalyzePage() {
             onChange={(e) => setJobText(e.target.value)}
             rows={18}
             placeholder="Paste the job description here…"
-            className="w-full rounded-md border border-gray-300 px-3 py-2 font-mono text-sm text-gray-800 placeholder:text-gray-400 focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-500"
+            className="input-premium"
           />
           <button
             type="button"
             onClick={() => setJobText(EXAMPLE_JOB)}
-            className="mt-1 text-xs text-gray-500 underline hover:text-gray-700"
+            className="mt-2 text-xs font-medium text-gray-400 underline decoration-gray-300 underline-offset-2 transition-colors hover:text-primary-600 hover:decoration-primary-300"
           >
             Use example job
           </button>
@@ -278,9 +296,19 @@ export default function AnalyzePage() {
           <button
             type="submit"
             disabled={!canSubmit}
-            className="rounded-md bg-gray-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:bg-gray-300"
+            className="btn-primary"
           >
-            {loading ? "Analyzing…" : "Analyze match"}
+            {loading ? (
+              <span className="flex items-center gap-2">
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                Analyzing…
+              </span>
+            ) : (
+              <span className="flex items-center gap-2">
+                Analyze match
+                <ArrowRight className="h-4 w-4" />
+              </span>
+            )}
           </button>
           {!loading && !report && cvText.trim().length <= 40 ? (
             <p className="mt-2 text-xs text-gray-400">
@@ -288,16 +316,16 @@ export default function AnalyzePage() {
             </p>
           ) : null}
           {saved ? (
-            <p className="ml-3 inline text-xs text-gray-500">
+            <p className="ml-3 inline text-xs text-accent-600 font-medium">
               Saved to this browser&apos;s history.
             </p>
           ) : null}
         </div>
       </form>
 
-      <div className="mt-10">
+      <div className="mt-12">
         {error ? <ErrorNote message={error} /> : null}
-        {loading ? <Loading /> : null}
+        {loading ? <MatchReportSkeleton /> : null}
         {report ? (
           <MatchReportView
             report={report}
