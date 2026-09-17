@@ -61,7 +61,7 @@ NATURAL_PRIOR = {
 
 
 def load_split(split: str) -> tuple[pd.DataFrame, pd.Series, pd.Series]:
-    """Load feature table, drop extraction errors, encode labels."""
+    """Load feature table, drop extraction errors, encode labels, add augmented features."""
     df = pd.read_csv(PROCESSED_DIR / f"{split}_features.csv")
     if "extraction_error" in df.columns:
         n_bad = int(df["extraction_error"].notna().sum())
@@ -75,12 +75,65 @@ def load_split(split: str) -> tuple[pd.DataFrame, pd.Series, pd.Series]:
         np.where(y_raw == "Good Fit", 2, np.where(y_raw == "Potential Fit", 1, 0)),
         index=df.index,
     )
+    # Add augmented features
+    X = augment_features(X)
     return X, y, y_raw
 
 
 def _feature_names(df: pd.DataFrame) -> list[str]:
     meta = {"label", "label_int", "split_row", "extraction_error"}
     return [c for c in df.columns if c not in meta]
+
+
+def augment_features(X: pd.DataFrame) -> pd.DataFrame:
+    """Add engineered features to reduce volume-proxy bias and add domain awareness."""
+    X = X.copy()
+
+    # 1. Skill coverage ratios (not just counts)
+    if "required_skill_coverage" in X.columns and "preferred_skill_coverage" in X.columns:
+        X["total_skill_coverage"] = (
+            X["required_skill_coverage"] * 0.7 + X["preferred_skill_coverage"] * 0.3
+        )
+
+    # 2. Skill density normalized by JD complexity
+    if "n_candidate_skills" in X.columns and "n_required_skills" in X.columns:
+        X["skills_per_required"] = X["n_candidate_skills"] / (X["n_required_skills"] + 1)
+        X["skill_surplus_ratio"] = (X["n_candidate_skills"] - X["n_required_skills"]) / (X["n_required_skills"] + 1)
+
+    # 3. Experience-adjusted skill count (skills per year of experience)
+    if "n_candidate_skills" in X.columns and "experience_gap_years" in X.columns:
+        X["skills_per_year"] = X["n_candidate_skills"] / (X["experience_gap_years"] + 5)
+
+    # 4. Coverage quality score (weighted by category importance)
+    coverage_cols = [c for c in X.columns if c.startswith("cov_") and c.endswith("_required")]
+    if coverage_cols:
+        X["mean_category_coverage"] = X[coverage_cols].mean(axis=1)
+        X["min_category_coverage"] = X[coverage_cols].min(axis=1)
+        X["max_category_coverage"] = X[coverage_cols].max(axis=1)
+        X["coverage_variance"] = X[coverage_cols].var(axis=1)
+
+    # 5. Semantic-skill alignment (are semantic scores backed by skills?)
+    if "semantic_similarity" in X.columns and "skill_overlap_ratio" in X.columns:
+        X["semantic_skill_gap"] = X["semantic_similarity"] - X["skill_overlap_ratio"]
+        X["semantic_skill_product"] = X["semantic_similarity"] * X["skill_overlap_ratio"]
+
+    # 6. Education-experience alignment
+    if "education_level_score" in X.columns and "seniority_match" in X.columns:
+        X["edu_seniority_alignment"] = X["education_level_score"] * X["seniority_match"]
+
+    # 7. CV quality signals (non-volume)
+    if "skills_per_100_words" in X.columns:
+        X["skill_density_squared"] = X["skills_per_100_words"] ** 2
+
+    # 8. Title alignment strength
+    if "job_title_similarity" in X.columns and "skill_overlap_ratio" in X.columns:
+        X["title_skill_alignment"] = X["job_title_similarity"] * X["skill_overlap_ratio"]
+
+    # Replace inf/nan with 0
+    X = X.replace([np.inf, -np.inf], 0.0)
+    X = X.fillna(0.0)
+
+    return X
 
 
 def compute_natural_prior() -> dict[str, float]:
@@ -206,7 +259,7 @@ def evaluate_model(
 
 def build_models_with_params() -> dict[tuple, dict]:
     """Return (model, param_grid) tuples for grid search.
-    Reduced parameter space for faster training — focus on key hyperparameters.
+    Minimal parameter space for fast training.
     """
     return {
         "logistic_regression": (
@@ -218,33 +271,35 @@ def build_models_with_params() -> dict[tuple, dict]:
                     random_state=42,
                 )),
             ]),
-            {"clf__C": [0.1, 1.0, 10.0]},
+            {"clf__C": [1.0]},
         ),
         "random_forest": (
             Pipeline([
                 ("clf", RandomForestClassifier(
+                    n_estimators=300,
                     class_weight="balanced_subsample",
                     n_jobs=-1,
                     random_state=42,
                 )),
             ]),
             {
-                "clf__n_estimators": [200, 400],
-                "clf__max_depth": [10, None],
-                "clf__min_samples_leaf": [5, 10],
+                "clf__max_depth": [10],
+                "clf__min_samples_leaf": [5],
             },
         ),
         "gradient_boosting": (
             Pipeline([
                 ("clf", GradientBoostingClassifier(
+                    n_estimators=300,
+                    learning_rate=0.05,
+                    max_depth=4,
+                    min_samples_leaf=10,
+                    subsample=0.9,
                     random_state=42,
                 )),
             ]),
             {
-                "clf__n_estimators": [200, 400],
-                "clf__learning_rate": [0.05, 0.1],
-                "clf__max_depth": [3, 5],
-                "clf__min_samples_leaf": [10, 20],
+                "clf__max_depth": [4],
             },
         ),
     }
@@ -355,7 +410,7 @@ def main() -> None:
     print(f"Test label distribution: {dict(zip(LABEL_ORDER, np.bincount(y_test)))}")
     print(f"Natural prior: {natural_prior}")
 
-    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+    cv = StratifiedKFold(n_splits=3, shuffle=True, random_state=42)
 
     results = {}
     for name, (model, param_grid) in build_models_with_params().items():

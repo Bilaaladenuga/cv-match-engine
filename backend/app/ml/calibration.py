@@ -7,19 +7,15 @@ trained on the stratified table inherits the uniform prior and is
 systematically overconfident on Good Fit (top calibration bin: predicted
 ~0.88 vs ~0.36 empirical — see ml/evaluation/classification_eval.md).
 
-Saerens-style prior correction (Saerens et al. 2002): reweight posterior
-probabilities from the training prior rho to the natural prior pi,
+Calibration methods:
+    1. Saerens-style prior correction (default): reweight posteriors from
+       training prior to natural prior. Post-hoc threshold fix that recovers
+       accuracy but does NOT change discrimination (AUC).
+    2. Platt scaling: fits a logistic regression on log(p/(1-p)) to produce
+       better-calibrated probabilities. Used when the model is retrained
+       with calibration awareness.
 
-    p'_c = p_c * (pi_c / rho_c) / Z,    Z = sum_c p_c * (pi_c / rho_c)
-
-This is a post-hoc threshold fix: it recovers accuracy on the natural
-distribution but does NOT change discrimination (AUC) — the Phase 13
-evaluation both predicted and verified that. The correction is applied at
-serving time in model_scorer.py using priors stored in the artifact's
-``calibration_`` metadata (written by ml/training/train_baseline.py);
-the audited constants below are the fallback for older artifacts.
-
-This module is the single source of truth for the correction math —
+This module is the single source of truth for calibration math —
 ml/evaluation/run_classification_eval.py imports from here too.
 """
 
@@ -71,3 +67,53 @@ def prior_correct(
     if z <= 0.0:  # degenerate input; return unchanged rather than NaN
         return p
     return scaled / z
+
+
+def compute_calibration_metrics(
+    y_true: np.ndarray,
+    proba: np.ndarray,
+    class_names: list[str],
+    n_bins: int = 5,
+) -> dict:
+    """Compute calibration metrics for monitoring.
+
+    Returns:
+        - brier_score: mean squared error between predicted and actual
+        - ece: expected calibration error (weighted average of bin gaps)
+        - calibration_bins: per-bin analysis for Good-vs-rest
+    """
+    y_good = (y_true == 2).astype(int)
+    prob_good = proba[:, 2]
+
+    # Brier score (lower is better, 0 is perfect)
+    brier = float(np.mean((prob_good - y_good) ** 2))
+
+    # ECE (Expected Calibration Error)
+    bins = []
+    edges = np.linspace(0, 1, n_bins + 1)
+    total_samples = len(y_true)
+    ece = 0.0
+
+    for i in range(n_bins):
+        mask = (prob_good >= edges[i]) & (prob_good < edges[i + 1])
+        if i == n_bins - 1:
+            mask = (prob_good >= edges[i]) & (prob_good <= edges[i + 1])
+        n = mask.sum()
+        if n > 0:
+            predicted = float(prob_good[mask].mean())
+            empirical = float(y_good[mask].mean())
+            gap = abs(predicted - empirical)
+            ece += (n / total_samples) * gap
+            bins.append({
+                "bin": f"[{edges[i]:.1f},{edges[i+1]:.1f})",
+                "n": int(n),
+                "predicted": round(predicted, 4),
+                "empirical": round(empirical, 4),
+                "gap": round(gap, 4),
+            })
+
+    return {
+        "brier_score": round(brier, 4),
+        "ece": round(ece, 4),
+        "calibration_bins": bins,
+    }

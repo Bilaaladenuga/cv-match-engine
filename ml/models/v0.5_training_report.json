@@ -1,623 +1,619 @@
 {
   "logistic_regression": {
     "best_params": {
-      "clf__C": 0.1
+      "clf__C": 1.0
     },
-    "best_cv_f1": 0.5236,
-    "fit_time": 14.1,
+    "best_cv_f1": 0.5139,
+    "fit_time": 12.1,
     "test_metrics": {
       "as_trained": {
-        "accuracy": 0.4031,
-        "macro_f1": 0.3882,
+        "accuracy": 0.3968,
+        "macro_f1": 0.3853,
         "per_class_f1": {
-          "No Fit": 0.4829,
-          "Potential Fit": 0.3271,
-          "Good Fit": 0.3546
+          "No Fit": 0.4667,
+          "Potential Fit": 0.3412,
+          "Good Fit": 0.3481
         },
         "confusion_matrix": [
           [
-            368,
-            212,
-            277
+            350,
+            223,
+            284
           ],
           [
-            139,
-            149,
-            156
-          ],
-          [
+            134,
             160,
-            106,
-            192
+            150
+          ],
+          [
+            159,
+            111,
+            188
           ]
         ],
         "classification_report": {
           "No Fit": {
-            "precision": 0.5517241379310345,
-            "recall": 0.4294049008168028,
-            "f1-score": 0.48293963254593175,
+            "precision": 0.5443234836702955,
+            "recall": 0.40840140023337224,
+            "f1-score": 0.4666666666666667,
             "support": 857.0
           },
           "Potential Fit": {
-            "precision": 0.31905781584582443,
-            "recall": 0.3355855855855856,
-            "f1-score": 0.32711306256860595,
+            "precision": 0.32388663967611336,
+            "recall": 0.36036036036036034,
+            "f1-score": 0.3411513859275053,
             "support": 444.0
           },
           "Good Fit": {
-            "precision": 0.3072,
-            "recall": 0.4192139737991266,
-            "f1-score": 0.3545706371191136,
+            "precision": 0.3022508038585209,
+            "recall": 0.4104803493449782,
+            "f1-score": 0.34814814814814815,
             "support": 458.0
           },
-          "accuracy": 0.4030699260943718,
+          "accuracy": 0.39681637293917,
           "macro avg": {
-            "precision": 0.39266065125895294,
-            "recall": 0.39473482006717164,
-            "f1-score": 0.3882077774112171,
+            "precision": 0.3901536424016432,
+            "recall": 0.39308070331290357,
+            "f1-score": 0.3853220669141067,
             "support": 1759.0
           },
           "weighted avg": {
-            "precision": 0.42932737717023456,
-            "recall": 0.4030699260943718,
-            "f1-score": 0.41018238582881095,
+            "precision": 0.4256519395615919,
+            "recall": 0.39681637293917,
+            "f1-score": 0.4041252987703227,
             "support": 1759.0
           }
         },
-        "log_loss": 1.2319
+        "log_loss": 1.2621
       },
       "prior_corrected": {
-        "accuracy": 0.4372,
-        "macro_f1": 0.3803,
+        "accuracy": 0.4326,
+        "macro_f1": 0.3822,
         "per_class_f1": {
-          "No Fit": 0.5629,
-          "Potential Fit": 0.2451,
-          "Good Fit": 0.333
+          "No Fit": 0.5595,
+          "Potential Fit": 0.2684,
+          "Good Fit": 0.3187
         },
         "confusion_matrix": [
           [
-            526,
-            123,
-            208
+            510,
+            134,
+            213
           ],
           [
-            246,
-            88,
-            110
+            227,
+            102,
+            115
           ],
           [
-            240,
-            63,
-            155
+            229,
+            80,
+            149
           ]
         ]
       },
-      "good_vs_rest_auc": 0.5892,
+      "good_vs_rest_auc": 0.5855,
       "ordinal_errors": {
-        "adjacent_errors": 613,
-        "distant_errors": 437,
-        "overrated": 645,
-        "underrated": 405
+        "adjacent_errors": 618,
+        "distant_errors": 443,
+        "overrated": 657,
+        "underrated": 404
       },
       "ordinal_errors_corrected": {
-        "adjacent_errors": 542,
-        "distant_errors": 448,
-        "overrated": 441,
-        "underrated": 549
+        "adjacent_errors": 556,
+        "distant_errors": 442,
+        "overrated": 462,
+        "underrated": 536
       },
       "calibration": [
         {
           "bin": "[0.0,0.2)",
-          "n": 372,
-          "predicted": 0.1312,
-          "empirical": 0.1694
+          "n": 400,
+          "predicted": 0.1291,
+          "empirical": 0.1675
         },
         {
           "bin": "[0.2,0.4)",
-          "n": 777,
-          "predicted": 0.2978,
-          "empirical": 0.2638
+          "n": 718,
+          "predicted": 0.2921,
+          "empirical": 0.266
         },
         {
           "bin": "[0.4,0.6)",
-          "n": 346,
-          "predicted": 0.4909,
-          "empirical": 0.2659
+          "n": 366,
+          "predicted": 0.4836,
+          "empirical": 0.2814
         },
         {
           "bin": "[0.6,0.8)",
-          "n": 214,
-          "predicted": 0.692,
-          "empirical": 0.3551
+          "n": 207,
+          "predicted": 0.7072,
+          "empirical": 0.3188
         },
         {
           "bin": "[0.8,1.0)",
-          "n": 50,
-          "predicted": 0.8879,
-          "empirical": 0.44
+          "n": 68,
+          "predicted": 0.8737,
+          "empirical": 0.4559
         }
       ],
       "fit_score_stats": {
-        "mean": 0.5209,
-        "std": 0.1986,
-        "mean_corrected": 0.4245
+        "mean": 0.5248,
+        "std": 0.2064,
+        "mean_corrected": 0.4324
       }
     },
     "feature_importance": [
       {
+        "feature": "skills_per_required",
+        "importance": 0.856
+      },
+      {
+        "feature": "skill_surplus_ratio",
+        "importance": 0.7373
+      },
+      {
         "feature": "semantic_similarity",
-        "importance": 0.4197
-      },
-      {
-        "feature": "n_preferred_skills",
-        "importance": 0.2531
-      },
-      {
-        "feature": "n_required_skills",
-        "importance": 0.2204
+        "importance": 0.3853
       },
       {
         "feature": "skills_per_100_words",
-        "importance": 0.2166
+        "importance": 0.35
+      },
+      {
+        "feature": "n_candidate_skills",
+        "importance": 0.2827
+      },
+      {
+        "feature": "n_required_skills",
+        "importance": 0.2622
+      },
+      {
+        "feature": "n_preferred_skills",
+        "importance": 0.2485
+      },
+      {
+        "feature": "coverage_variance",
+        "importance": 0.2422
       },
       {
         "feature": "required_plus_partial",
-        "importance": 0.213
+        "importance": 0.2037
       },
       {
-        "feature": "skill_overlap_ratio",
-        "importance": 0.2016
+        "feature": "cov_other_required",
+        "importance": 0.1869
       },
       {
         "feature": "cov_devops_required",
-        "importance": 0.1836
+        "importance": 0.161
       },
       {
-        "feature": "cov_programming_required",
-        "importance": 0.1661
-      },
-      {
-        "feature": "experience_gap_years",
-        "importance": 0.145
-      },
-      {
-        "feature": "cov_data_science_n",
-        "importance": 0.1257
-      },
-      {
-        "feature": "cov_frontend_n",
-        "importance": 0.1223
+        "feature": "semantic_skill_gap",
+        "importance": 0.158
       },
       {
         "feature": "cov_backend_n",
-        "importance": 0.1207
+        "importance": 0.1578
       },
       {
-        "feature": "job_title_similarity",
-        "importance": 0.115
+        "feature": "cov_programming_required",
+        "importance": 0.1562
       },
       {
-        "feature": "cov_devops_n",
-        "importance": 0.1081
-      },
-      {
-        "feature": "cov_data_science_required",
-        "importance": 0.0959
+        "feature": "experience_gap_years",
+        "importance": 0.1488
       }
     ],
     "model_version": "match-model-v0.5.0-improved"
   },
   "random_forest": {
     "best_params": {
-      "clf__max_depth": null,
-      "clf__min_samples_leaf": 5,
-      "clf__n_estimators": 400
+      "clf__max_depth": 10,
+      "clf__min_samples_leaf": 5
     },
-    "best_cv_f1": 0.637,
-    "fit_time": 64.0,
+    "best_cv_f1": 0.6008,
+    "fit_time": 15.0,
     "test_metrics": {
       "as_trained": {
-        "accuracy": 0.3968,
-        "macro_f1": 0.3813,
+        "accuracy": 0.3866,
+        "macro_f1": 0.3714,
         "per_class_f1": {
-          "No Fit": 0.4766,
-          "Potential Fit": 0.3033,
-          "Good Fit": 0.3641
+          "No Fit": 0.4652,
+          "Potential Fit": 0.2801,
+          "Good Fit": 0.3688
         },
         "confusion_matrix": [
           [
-            361,
-            223,
+            348,
+            236,
             273
           ],
           [
-            143,
-            138,
-            163
+            148,
+            129,
+            167
           ],
           [
-            154,
-            105,
-            199
+            143,
+            112,
+            203
           ]
         ],
         "classification_report": {
           "No Fit": {
-            "precision": 0.5486322188449848,
-            "recall": 0.42123687281213534,
-            "f1-score": 0.4765676567656766,
+            "precision": 0.5446009389671361,
+            "recall": 0.40606767794632437,
+            "f1-score": 0.46524064171123,
             "support": 857.0
           },
           "Potential Fit": {
-            "precision": 0.296137339055794,
-            "recall": 0.3108108108108108,
-            "f1-score": 0.3032967032967033,
+            "precision": 0.27044025157232704,
+            "recall": 0.2905405405405405,
+            "f1-score": 0.28013029315960913,
             "support": 444.0
           },
           "Good Fit": {
-            "precision": 0.31338582677165355,
-            "recall": 0.4344978165938865,
-            "f1-score": 0.36413540713632203,
+            "precision": 0.3157076205287714,
+            "recall": 0.4432314410480349,
+            "f1-score": 0.368755676657584,
             "support": 458.0
           },
-          "accuracy": 0.39681637293917,
+          "accuracy": 0.3865832859579306,
           "macro avg": {
-            "precision": 0.3860517948908108,
-            "recall": 0.3888485000722775,
-            "f1-score": 0.3813332557329006,
+            "precision": 0.3769162703560782,
+            "recall": 0.37994655317829995,
+            "f1-score": 0.3713755371761411,
             "support": 1759.0
           },
           "weighted avg": {
-            "precision": 0.4236461050325991,
-            "recall": 0.39681637293917,
-            "f1-score": 0.40355669959087925,
+            "precision": 0.4158002084111007,
+            "recall": 0.3865832859579306,
+            "f1-score": 0.393393507685369,
             "support": 1759.0
           }
         },
-        "log_loss": 1.1632
+        "log_loss": 1.1687
       },
       "prior_corrected": {
-        "accuracy": 0.4474,
-        "macro_f1": 0.362,
+        "accuracy": 0.4497,
+        "macro_f1": 0.3614,
         "per_class_f1": {
-          "No Fit": 0.5944,
-          "Potential Fit": 0.2161,
-          "Good Fit": 0.2755
+          "No Fit": 0.5986,
+          "Potential Fit": 0.1933,
+          "Good Fit": 0.2925
         },
         "confusion_matrix": [
           [
-            600,
-            92,
-            165
+            604,
+            91,
+            162
           ],
           [
-            270,
-            71,
-            103
+            277,
+            63,
+            104
           ],
           [
-            292,
-            50,
-            116
+            280,
+            54,
+            124
           ]
         ]
       },
-      "good_vs_rest_auc": 0.5624,
+      "good_vs_rest_auc": 0.5659,
       "ordinal_errors": {
-        "adjacent_errors": 634,
-        "distant_errors": 427,
-        "overrated": 659,
-        "underrated": 402
+        "adjacent_errors": 663,
+        "distant_errors": 416,
+        "overrated": 676,
+        "underrated": 403
       },
       "ordinal_errors_corrected": {
-        "adjacent_errors": 515,
-        "distant_errors": 457,
-        "overrated": 360,
-        "underrated": 612
+        "adjacent_errors": 526,
+        "distant_errors": 442,
+        "overrated": 357,
+        "underrated": 611
       },
       "calibration": [
         {
           "bin": "[0.0,0.2)",
-          "n": 393,
-          "predicted": 0.1481,
-          "empirical": 0.1883
+          "n": 357,
+          "predicted": 0.1514,
+          "empirical": 0.1961
         },
         {
           "bin": "[0.2,0.4)",
-          "n": 792,
-          "predicted": 0.2988,
-          "empirical": 0.2551
+          "n": 846,
+          "predicted": 0.2993,
+          "empirical": 0.2423
         },
         {
           "bin": "[0.4,0.6)",
-          "n": 522,
-          "predicted": 0.4771,
-          "empirical": 0.3352
+          "n": 490,
+          "predicted": 0.478,
+          "empirical": 0.3388
         },
         {
           "bin": "[0.6,0.8)",
-          "n": 52,
-          "predicted": 0.6338,
-          "empirical": 0.1346
+          "n": 66,
+          "predicted": 0.6426,
+          "empirical": 0.2576
         }
       ],
       "fit_score_stats": {
-        "mean": 0.4996,
-        "std": 0.1515,
-        "mean_corrected": 0.394
+        "mean": 0.504,
+        "std": 0.1537,
+        "mean_corrected": 0.3997
       }
     },
     "feature_importance": [
       {
         "feature": "semantic_similarity",
-        "importance": 0.181
+        "importance": 0.1324
       },
       {
-        "feature": "skills_per_100_words",
-        "importance": 0.0893
-      },
-      {
-        "feature": "cv_word_count",
-        "importance": 0.0687
-      },
-      {
-        "feature": "n_required_skills",
-        "importance": 0.066
-      },
-      {
-        "feature": "n_candidate_skills",
-        "importance": 0.0604
+        "feature": "semantic_skill_gap",
+        "importance": 0.075
       },
       {
         "feature": "job_title_similarity",
-        "importance": 0.0566
+        "importance": 0.0458
       },
       {
-        "feature": "skill_overlap_ratio",
-        "importance": 0.0428
+        "feature": "skill_density_squared",
+        "importance": 0.0452
+      },
+      {
+        "feature": "skills_per_100_words",
+        "importance": 0.045
+      },
+      {
+        "feature": "skill_surplus_ratio",
+        "importance": 0.0433
+      },
+      {
+        "feature": "skills_per_year",
+        "importance": 0.0409
+      },
+      {
+        "feature": "n_required_skills",
+        "importance": 0.0384
+      },
+      {
+        "feature": "cv_word_count",
+        "importance": 0.0354
+      },
+      {
+        "feature": "skills_per_required",
+        "importance": 0.035
+      },
+      {
+        "feature": "semantic_skill_product",
+        "importance": 0.035
       },
       {
         "feature": "cov_frontend_n",
-        "importance": 0.0338
+        "importance": 0.0289
+      },
+      {
+        "feature": "n_candidate_skills",
+        "importance": 0.0268
+      },
+      {
+        "feature": "skill_overlap_ratio",
+        "importance": 0.0218
       },
       {
         "feature": "n_preferred_skills",
-        "importance": 0.0328
-      },
-      {
-        "feature": "required_plus_partial",
-        "importance": 0.0318
-      },
-      {
-        "feature": "cov_programming_n",
-        "importance": 0.0291
-      },
-      {
-        "feature": "required_skill_coverage",
-        "importance": 0.0286
-      },
-      {
-        "feature": "experience_gap_years",
-        "importance": 0.026
-      },
-      {
-        "feature": "education_field_score",
-        "importance": 0.0235
-      },
-      {
-        "feature": "seniority_match",
-        "importance": 0.0218
+        "importance": 0.0215
       }
     ],
     "model_version": "match-model-v0.5.0-improved"
   },
   "gradient_boosting": {
     "best_params": {
-      "clf__learning_rate": 0.05,
-      "clf__max_depth": 5,
-      "clf__min_samples_leaf": 20,
-      "clf__n_estimators": 400
+      "clf__max_depth": 4
     },
-    "best_cv_f1": 0.6437,
-    "fit_time": 424.2,
+    "best_cv_f1": 0.6317,
+    "fit_time": 41.5,
     "test_metrics": {
       "as_trained": {
-        "accuracy": 0.4122,
-        "macro_f1": 0.3986,
+        "accuracy": 0.4014,
+        "macro_f1": 0.388,
         "per_class_f1": {
-          "No Fit": 0.4857,
-          "Potential Fit": 0.3438,
-          "Good Fit": 0.3664
+          "No Fit": 0.4795,
+          "Potential Fit": 0.3148,
+          "Good Fit": 0.3697
         },
         "confusion_matrix": [
           [
-            373,
-            253,
-            231
+            362,
+            267,
+            228
           ],
           [
-            148,
-            169,
-            127
+            145,
+            156,
+            143
           ],
           [
-            158,
-            117,
-            183
+            146,
+            124,
+            188
           ]
         ],
         "classification_report": {
           "No Fit": {
-            "precision": 0.5493372606774669,
-            "recall": 0.4352392065344224,
-            "f1-score": 0.4856770833333333,
+            "precision": 0.554364471669219,
+            "recall": 0.4224037339556593,
+            "f1-score": 0.4794701986754967,
             "support": 857.0
           },
           "Potential Fit": {
-            "precision": 0.313543599257885,
-            "recall": 0.38063063063063063,
-            "f1-score": 0.34384537131230924,
+            "precision": 0.2851919561243144,
+            "recall": 0.35135135135135137,
+            "f1-score": 0.3148335015136226,
             "support": 444.0
           },
           "Good Fit": {
-            "precision": 0.33826247689463956,
-            "recall": 0.39956331877729256,
-            "f1-score": 0.3663663663663664,
+            "precision": 0.3363148479427549,
+            "recall": 0.4104803493449782,
+            "f1-score": 0.3697148475909538,
             "support": 458.0
           },
-          "accuracy": 0.412166003411029,
+          "accuracy": 0.4013644115974986,
           "macro avg": {
-            "precision": 0.40038111227666384,
-            "recall": 0.40514438531411523,
-            "f1-score": 0.39862960700400296,
+            "precision": 0.3919570919120961,
+            "recall": 0.39474514488399626,
+            "f1-score": 0.3880061825933577,
             "support": 1759.0
           },
           "weighted avg": {
-            "precision": 0.4348604916934821,
-            "recall": 0.412166003411029,
-            "f1-score": 0.41881091590399533,
+            "precision": 0.4296462655471848,
+            "recall": 0.4013644115974986,
+            "f1-score": 0.40933566522660936,
             "support": 1759.0
           }
         },
-        "log_loss": 1.3978
+        "log_loss": 1.3046
       },
       "prior_corrected": {
-        "accuracy": 0.4332,
-        "macro_f1": 0.39,
+        "accuracy": 0.4252,
+        "macro_f1": 0.3754,
         "per_class_f1": {
-          "No Fit": 0.5546,
-          "Potential Fit": 0.2967,
-          "Good Fit": 0.3188
+          "No Fit": 0.5542,
+          "Potential Fit": 0.264,
+          "Good Fit": 0.308
         },
         "confusion_matrix": [
           [
-            495,
-            178,
+            504,
+            169,
             184
           ],
           [
-            208,
-            124,
-            112
+            222,
+            106,
+            116
           ],
           [
-            225,
-            90,
-            143
+            236,
+            84,
+            138
           ]
         ]
       },
-      "good_vs_rest_auc": 0.5869,
+      "good_vs_rest_auc": 0.5741,
       "ordinal_errors": {
-        "adjacent_errors": 645,
-        "distant_errors": 389,
-        "overrated": 611,
-        "underrated": 423
+        "adjacent_errors": 679,
+        "distant_errors": 374,
+        "overrated": 638,
+        "underrated": 415
       },
       "ordinal_errors_corrected": {
-        "adjacent_errors": 588,
-        "distant_errors": 409,
-        "overrated": 474,
-        "underrated": 523
+        "adjacent_errors": 591,
+        "distant_errors": 420,
+        "overrated": 469,
+        "underrated": 542
       },
       "calibration": [
         {
           "bin": "[0.0,0.2)",
-          "n": 818,
-          "predicted": 0.0843,
-          "empirical": 0.2213
+          "n": 704,
+          "predicted": 0.1016,
+          "empirical": 0.2145
         },
         {
           "bin": "[0.2,0.4)",
-          "n": 372,
-          "predicted": 0.2947,
-          "empirical": 0.2366
+          "n": 496,
+          "predicted": 0.2908,
+          "empirical": 0.2722
         },
         {
           "bin": "[0.4,0.6)",
-          "n": 234,
-          "predicted": 0.4941,
-          "empirical": 0.3419
+          "n": 314,
+          "predicted": 0.4936,
+          "empirical": 0.2994
         },
         {
           "bin": "[0.6,0.8)",
-          "n": 204,
-          "predicted": 0.6976,
-          "empirical": 0.3431
+          "n": 191,
+          "predicted": 0.6928,
+          "empirical": 0.3508
         },
         {
           "bin": "[0.8,1.0)",
-          "n": 131,
-          "predicted": 0.8627,
-          "empirical": 0.2977
+          "n": 54,
+          "predicted": 0.8399,
+          "empirical": 0.2037
         }
       ],
       "fit_score_stats": {
-        "mean": 0.4733,
-        "std": 0.2538,
-        "mean_corrected": 0.3958
+        "mean": 0.4813,
+        "std": 0.2251,
+        "mean_corrected": 0.3969
       }
     },
     "feature_importance": [
       {
         "feature": "semantic_similarity",
-        "importance": 0.2173
-      },
-      {
-        "feature": "skills_per_100_words",
-        "importance": 0.1099
+        "importance": 0.1723
       },
       {
         "feature": "cv_word_count",
-        "importance": 0.0811
+        "importance": 0.0744
       },
       {
-        "feature": "n_required_skills",
-        "importance": 0.0783
+        "feature": "semantic_skill_gap",
+        "importance": 0.0726
       },
       {
         "feature": "job_title_similarity",
-        "importance": 0.0607
+        "importance": 0.0557
       },
       {
-        "feature": "n_candidate_skills",
-        "importance": 0.0509
+        "feature": "n_required_skills",
+        "importance": 0.0519
+      },
+      {
+        "feature": "skills_per_year",
+        "importance": 0.0473
+      },
+      {
+        "feature": "skill_surplus_ratio",
+        "importance": 0.0427
       },
       {
         "feature": "cov_frontend_n",
-        "importance": 0.0362
+        "importance": 0.0382
+      },
+      {
+        "feature": "skill_density_squared",
+        "importance": 0.0342
+      },
+      {
+        "feature": "skills_per_100_words",
+        "importance": 0.0296
       },
       {
         "feature": "n_preferred_skills",
-        "importance": 0.0359
-      },
-      {
-        "feature": "cov_programming_n",
-        "importance": 0.0271
-      },
-      {
-        "feature": "required_skill_coverage",
         "importance": 0.0262
       },
       {
-        "feature": "skill_overlap_ratio",
-        "importance": 0.0241
+        "feature": "semantic_skill_product",
+        "importance": 0.0255
+      },
+      {
+        "feature": "cov_programming_n",
+        "importance": 0.0234
+      },
+      {
+        "feature": "skills_per_required",
+        "importance": 0.022
       },
       {
         "feature": "experience_gap_years",
-        "importance": 0.0238
-      },
-      {
-        "feature": "education_level_score",
-        "importance": 0.0226
-      },
-      {
-        "feature": "education_field_score",
-        "importance": 0.0203
-      },
-      {
-        "feature": "seniority_match",
-        "importance": 0.0201
+        "importance": 0.0191
       }
     ],
     "model_version": "match-model-v0.5.0-improved"
@@ -668,7 +664,20 @@
     "cov_machine_learning_n",
     "cv_word_count",
     "skills_per_100_words",
-    "cv_length_bucket"
+    "cv_length_bucket",
+    "total_skill_coverage",
+    "skills_per_required",
+    "skill_surplus_ratio",
+    "skills_per_year",
+    "mean_category_coverage",
+    "min_category_coverage",
+    "max_category_coverage",
+    "coverage_variance",
+    "semantic_skill_gap",
+    "semantic_skill_product",
+    "edu_seniority_alignment",
+    "skill_density_squared",
+    "title_skill_alignment"
   ],
   "dataset": {
     "train_rows": 2100,

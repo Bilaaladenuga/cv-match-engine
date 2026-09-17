@@ -26,9 +26,9 @@ import { MatchReportView } from "@/components/MatchReportView";
 export default function SavedMatchPage({
   params,
 }: {
-  params: { id: string };
+  params: { match_id: string };
 }) {
-  const id = params.id;
+  const id = params.match_id;
   const [entry, setEntry] = useState<StoredAnalysis | null>(null);
   const [missing, setMissing] = useState(false);
   const [showDocs, setShowDocs] = useState(false);

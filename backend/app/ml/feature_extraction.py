@@ -64,6 +64,8 @@ from __future__ import annotations
 
 import logging
 
+import numpy as np
+
 from app.ml.embeddings import cosine_similarity, embed_texts
 from app.ml.semantic_matcher import compute_semantic_match
 from app.nlp.candidate_builder import build_candidate_profile
@@ -115,6 +117,20 @@ FEATURE_NAMES: list[str] = [
     "cv_word_count",
     "skills_per_100_words",
     "cv_length_bucket",
+    # Augmented features (v0.5.0) — ratios and alignments
+    "total_skill_coverage",
+    "skills_per_required",
+    "skill_surplus_ratio",
+    "skills_per_year",
+    "mean_category_coverage",
+    "min_category_coverage",
+    "max_category_coverage",
+    "coverage_variance",
+    "semantic_skill_gap",
+    "semantic_skill_product",
+    "edu_seniority_alignment",
+    "skill_density_squared",
+    "title_skill_alignment",
 ]
 
 # Taxonomy categories with their own coverage feature. Everything else
@@ -243,6 +259,23 @@ def build_feature_vector(
     # --- CV-length normalization (v0.4.0) ------------------------------------
     length_features = compute_cv_length_features(cv_text, len(cand_names))
 
+    # --- Augmented features (v0.5.0) ----------------------------------------
+    aug_features = compute_augmented_features(
+        skill_overlap=skill_overlap,
+        required_coverage=skill_match.required_coverage,
+        preferred_cov=preferred_cov,
+        n_candidate=len(cand_names),
+        n_required=len(req_names),
+        n_preferred=len(pref_names),
+        experience_gap=experience_gap,
+        semantic_sim=semantic_match.raw_score,
+        education_level=education_match.level_score,
+        seniority_match=seniority_match,
+        title_sim=title_sim,
+        skills_per_100_words=length_features["skills_per_100_words"],
+        cat_features=cat_features,
+    )
+
     return {
         "skill_overlap_ratio": round(skill_overlap, 6),
         "required_skill_coverage": round(skill_match.required_coverage, 6),
@@ -262,6 +295,7 @@ def build_feature_vector(
         "n_preferred_skills": float(len(pref_names)),
         **cat_features,
         **length_features,
+        **aug_features,
     }
 
 
@@ -296,6 +330,68 @@ def compute_cv_length_features(cv_text: str, n_skills: int) -> dict[str, float]:
         "skills_per_100_words": round(density, 6),
         "cv_length_bucket": bucket,
     }
+
+
+def compute_augmented_features(
+    *,
+    skill_overlap: float,
+    required_coverage: float,
+    preferred_cov: float,
+    n_candidate: int,
+    n_required: int,
+    n_preferred: int,
+    experience_gap: float,
+    semantic_sim: float,
+    education_level: float,
+    seniority_match: float,
+    title_sim: float,
+    skills_per_100_words: float,
+    cat_features: dict[str, float],
+) -> dict[str, float]:
+    """Augmented features (v0.5.0) to reduce volume-proxy bias.
+
+    These engineered features focus on ratios, alignments, and quality
+    signals rather than raw counts, addressing the finding that the model
+    learned 'longer CV = better fit' as a shortcut.
+    """
+    features: dict[str, float] = {}
+
+    # 1. Skill coverage ratios (weighted aggregate)
+    features["total_skill_coverage"] = round(
+        required_coverage * 0.7 + preferred_cov * 0.3, 6
+    )
+
+    # 2. Skill density normalized by JD complexity
+    features["skills_per_required"] = round(n_candidate / (n_required + 1), 6)
+    features["skill_surplus_ratio"] = round(
+        (n_candidate - n_required) / (n_required + 1), 6
+    )
+
+    # 3. Experience-adjusted skill count
+    features["skills_per_year"] = round(n_candidate / (experience_gap + 5), 6)
+
+    # 4. Coverage quality scores (category-level aggregates)
+    coverage_cols = [v for k, v in cat_features.items() if k.startswith("cov_") and k.endswith("_required")]
+    if coverage_cols:
+        features["mean_category_coverage"] = round(float(np.mean(coverage_cols)), 6)
+        features["min_category_coverage"] = round(float(np.min(coverage_cols)), 6)
+        features["max_category_coverage"] = round(float(np.max(coverage_cols)), 6)
+        features["coverage_variance"] = round(float(np.var(coverage_cols)), 6)
+
+    # 5. Semantic-skill alignment
+    features["semantic_skill_gap"] = round(semantic_sim - skill_overlap, 6)
+    features["semantic_skill_product"] = round(semantic_sim * skill_overlap, 6)
+
+    # 6. Education-experience alignment
+    features["edu_seniority_alignment"] = round(education_level * seniority_match, 6)
+
+    # 7. CV quality signal (non-volume)
+    features["skill_density_squared"] = round(skills_per_100_words ** 2, 6)
+
+    # 8. Title alignment strength
+    features["title_skill_alignment"] = round(title_sim * skill_overlap, 6)
+
+    return features
 
 
 def compute_category_coverage(
