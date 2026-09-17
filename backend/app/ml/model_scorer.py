@@ -164,7 +164,19 @@ def score_features(features: dict[str, float]) -> MLScorerResult | None:
     calibration_meta = getattr(model, "calibration_", None) or {}
     natural_prior = calibration_meta.get("natural_prior")
     training_prior = calibration_meta.get("training_prior")
+    # Load Platt params from JSON if not in model artifact
     platt_params = calibration_meta.get("platt_params")
+    if platt_params is None:
+        try:
+            platt_file = REPO_ROOT / "ml" / "models" / "v0.5_platt_params.json"
+            if platt_file.exists():
+                import json as _json
+                platt_data = _json.loads(platt_file.read_text(encoding="utf-8"))
+                # Convert list format [A, B] back to tuple format
+                raw_params = platt_data.get("platt_params", {})
+                platt_params = {k: tuple(v) for k, v in raw_params.items()}
+        except Exception:  # noqa: BLE001
+            pass
     try:
         from app.ml.calibration import CALIBRATION_METHOD, prior_correct, platt_scale
 

@@ -1,0 +1,44 @@
+{
+  "model_version": "match-model-v0.5.0-ensemble",
+  "calibration_method": "platt_scaling",
+  "platt_params": {
+    "No Fit": [
+      0.2298,
+      -0.0122
+    ],
+    "Potential Fit": [
+      0.2539,
+      -0.8074
+    ],
+    "Good Fit": [
+      0.2737,
+      -0.7268
+    ]
+  },
+  "calibration_metrics": {
+    "No Fit": {
+      "brier_before": 0.2761,
+      "brier_after": 0.2447,
+      "brier_improvement": 0.0314,
+      "ece_before": 0.152,
+      "ece_after": 0.0329,
+      "ece_improvement": 0.1191
+    },
+    "Potential Fit": {
+      "brier_before": 0.1992,
+      "brier_after": 0.1874,
+      "brier_improvement": 0.0117,
+      "ece_before": 0.0838,
+      "ece_after": 0.0059,
+      "ece_improvement": 0.0779
+    },
+    "Good Fit": {
+      "brier_before": 0.2073,
+      "brier_after": 0.19,
+      "brier_improvement": 0.0173,
+      "ece_before": 0.0988,
+      "ece_after": 0.0172,
+      "ece_improvement": 0.0816
+    }
+  }
+}
