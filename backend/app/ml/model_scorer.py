@@ -37,7 +37,7 @@ from app.ml.explainer import ModelExplanation  # noqa: F401 (type re-export)
 logger = logging.getLogger(__name__)
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
-MODEL_PATH = REPO_ROOT / "ml" / "models" / "v0.5_gradient_boosting.joblib"
+MODEL_PATH = REPO_ROOT / "ml" / "models" / "v0.5_ensemble.joblib"
 
 # Label index -> (name, value contribution). Mirrors train_baseline.py's
 # LABEL_ORDER = ["No Fit", "Potential Fit", "Good Fit"].
@@ -192,15 +192,15 @@ def score_features(features: dict[str, float]) -> MLScorerResult | None:
     )
     label = max(probabilities, key=probabilities.get) if probabilities else _LABEL_NAMES[0]
 
-    version = "match-model-v0.5.0-improved"
+    version = "match-model-v0.5.0-ensemble"
     try:  # read the authoritative version from the training report
-        report = REPO_ROOT / "ml" / "models" / "v0.5_training_report.json"
+        report = REPO_ROOT / "ml" / "models" / "v0.5_ensemble_report.json"
         if report.exists():
             import json
 
             version = json.loads(report.read_text(encoding="utf-8")).get(
-                "gradient_boosting", {}
-            ).get("model_version", version)
+                "model_version", version
+            )
     except Exception:  # noqa: BLE001 - version stamping must never break scoring
         pass
 
