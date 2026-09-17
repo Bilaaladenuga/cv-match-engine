@@ -31,6 +31,20 @@ export interface MLDetails {
   raw_probabilities?: Record<string, number>;
   calibration_method?: string | null;
   ml_version?: string;
+  explanation?: {
+    method?: string;
+    factors?: Array<{
+      feature: string;
+      label: string;
+      contribution: number;
+      direction: "helps" | "hurts" | "neutral";
+      value: number;
+      reference: number;
+      detail: string;
+    }>;
+    cautions?: string[];
+    disclaimer?: string;
+  };
   [key: string]: unknown;
 }
 

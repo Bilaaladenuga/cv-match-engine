@@ -18,6 +18,7 @@ import {
   TrendingDown,
   Lightbulb,
   Shield,
+  BarChart3,
 } from "lucide-react";
 import {
   Bar,
@@ -168,6 +169,90 @@ const COMPONENT_COLORS: Record<string, string> = {
   certifications: "#EC4899",
   ml_model: "#6366F1",
 };
+
+interface Factor {
+  feature: string;
+  label: string;
+  contribution: number;
+  direction: "helps" | "hurts" | "neutral";
+  value: number;
+  reference: number;
+  detail: string;
+}
+
+function FeatureImportanceChart({ factors }: { factors: Factor[] }) {
+  if (!factors || factors.length === 0) return null;
+
+  // Sort by absolute contribution, take top 10
+  const sorted = [...factors]
+    .filter((f) => f.direction !== "neutral" && Math.abs(f.contribution) > 0.001)
+    .sort((a, b) => Math.abs(b.contribution) - Math.abs(a.contribution))
+    .slice(0, 10);
+
+  if (sorted.length === 0) return null;
+
+  const data = sorted.map((f) => ({
+    name: f.label.length > 25 ? f.label.slice(0, 22) + "..." : f.label,
+    contribution: Math.round(f.contribution * 100),
+    direction: f.direction,
+    fill: f.direction === "helps" ? "#059669" : "#DC2626",
+  }));
+
+  return (
+    <div>
+      <div className="h-64 w-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart data={data} layout="vertical" margin={{ left: 8, right: 24 }}>
+            <XAxis
+              type="number"
+              tick={{ fontSize: 11, fill: "#9CA3AF", fontFamily: "DM Sans" }}
+              axisLine={false}
+              tickLine={false}
+              tickFormatter={(v: number) => `${v > 0 ? "+" : ""}${v}`}
+            />
+            <YAxis
+              type="category"
+              dataKey="name"
+              width={180}
+              tick={{ fontSize: 11, fill: "#374151", fontFamily: "DM Sans" }}
+              axisLine={false}
+              tickLine={false}
+            />
+            <Tooltip
+              cursor={{ fill: "rgba(37, 99, 235, 0.04)" }}
+              contentStyle={{
+                borderRadius: 12,
+                border: "1px solid #E2E8F0",
+                fontSize: 12,
+                fontFamily: "DM Sans",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+              }}
+              formatter={(value: number) => [
+                `${value > 0 ? "+" : ""}${value} pts`,
+                "contribution",
+              ]}
+            />
+            <Bar dataKey="contribution" radius={[0, 6, 6, 0]} barSize={16}>
+              {data.map((entry, i) => (
+                <Cell key={i} fill={entry.fill} />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+      <div className="mt-2 flex items-center gap-4 text-xs text-gray-400">
+        <span className="flex items-center gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-accent-500" />
+          Helped your score
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-red-500" />
+          Hurt your score
+        </span>
+      </div>
+    </div>
+  );
+}
 
 function ScoreContributionChart({
   components,
@@ -623,6 +708,50 @@ export function MatchReportView({
                 above comes entirely from the rule-based matching engine.
               </p>
             )}
+          </div>
+        </Card>
+      ) : null}
+
+      {/* Feature Importance — what helped and what hurt */}
+      {ml?.explanation?.factors && ml.explanation.factors.length > 0 ? (
+        <Card>
+          <CardHeader
+            title="What affected your score"
+            subtitle="The top factors that helped or hurt your match — based on how your CV compares to typical candidates"
+          />
+          <div className="px-6 py-5">
+            <FeatureImportanceChart factors={ml.explanation.factors as Factor[]} />
+          </div>
+          {/* Detail list for mobile / accessibility */}
+          <div className="border-t border-gray-100/60 px-5 py-4">
+            <p className="mb-3 text-xs font-medium uppercase tracking-wider text-gray-400">
+              Detailed breakdown
+            </p>
+            <ul className="space-y-2">
+              {(ml.explanation.factors as Factor[])
+                .filter((f) => f.direction !== "neutral" && Math.abs(f.contribution) > 0.001)
+                .sort((a, b) => Math.abs(b.contribution) - Math.abs(a.contribution))
+                .slice(0, 8)
+                .map((f, i) => (
+                  <li
+                    key={`${f.feature}-${i}`}
+                    className="flex items-start gap-2.5 text-sm text-gray-600"
+                  >
+                    {f.direction === "helps" ? (
+                      <TrendingUp className="mt-0.5 h-3.5 w-3.5 shrink-0 text-accent-500" />
+                    ) : (
+                      <TrendingDown className="mt-0.5 h-3.5 w-3.5 shrink-0 text-red-400" />
+                    )}
+                    <span>
+                      <span className="font-medium text-gray-900">{f.label}</span>
+                      <span className="ml-1 text-gray-500">
+                        ({f.contribution > 0 ? "+" : ""}
+                        {Math.round(f.contribution * 100)} pts)
+                      </span>
+                    </span>
+                  </li>
+                ))}
+            </ul>
           </div>
         </Card>
       ) : null}
