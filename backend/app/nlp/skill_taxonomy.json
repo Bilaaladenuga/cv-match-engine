@@ -1,61 +1,109 @@
 {
   "schema_version": "1.0",
   "categories": {
-    "programming": {
-      "label": "Programming",
-      "description": "Programming languages and core coding skills"
-    },
-    "frontend": {
-      "label": "Frontend",
-      "description": "Web, mobile and UI frameworks and libraries"
-    },
     "backend": {
       "label": "Backend",
       "description": "Server-side frameworks and runtime technology"
-    },
-    "database": {
-      "label": "Database",
-      "description": "SQL and NoSQL databases, query languages"
     },
     "cloud": {
       "label": "Cloud",
       "description": "Cloud providers and platform services"
     },
-    "devops": {
-      "label": "DevOps",
-      "description": "Deployment, infrastructure and delivery tooling"
-    },
     "data_science": {
       "label": "Data Science",
       "description": "Data analysis, statistics and visualization"
     },
-    "machine_learning": {
-      "label": "Machine Learning",
-      "description": "Machine learning, deep learning and AI frameworks"
-    },
-    "gis": {
-      "label": "GIS",
-      "description": "Geographic information systems and geospatial tooling"
+    "database": {
+      "label": "Database",
+      "description": "SQL and NoSQL databases, query languages"
     },
     "design": {
       "label": "Design",
       "description": "UI/UX design and design tooling"
     },
-    "tools": {
-      "label": "Tools",
-      "description": "Productivity, collaboration and development tools"
+    "devops": {
+      "label": "DevOps",
+      "description": "Deployment, infrastructure and delivery tooling"
     },
-    "soft_skills": {
-      "label": "Soft Skills",
-      "description": "Interpersonal and workplace skills"
+    "education": {
+      "label": "Education & Training",
+      "description": "Teaching, curriculum and instructional skills"
+    },
+    "engineering": {
+      "label": "Engineering",
+      "description": "Civil, mechanical, electrical and general engineering skills and CAD/CAE tools"
+    },
+    "finance": {
+      "label": "Finance",
+      "description": "Accounting, financial analysis, risk, compliance, and financial software"
+    },
+    "frontend": {
+      "label": "Frontend",
+      "description": "Web, mobile and UI frameworks and libraries"
+    },
+    "gis": {
+      "label": "GIS",
+      "description": "Geographic information systems and geospatial tooling"
     },
     "healthcare": {
       "label": "Healthcare",
       "description": "Clinical skills, patient care, health informatics, and medical administration"
     },
-    "finance": {
-      "label": "Finance",
-      "description": "Accounting, financial analysis, risk, compliance, and financial software"
+    "hospitality": {
+      "label": "Hospitality & Culinary",
+      "description": "Food service, hotel operations and event skills"
+    },
+    "hr": {
+      "label": "Human Resources",
+      "description": "Recruiting, people operations and HR systems"
+    },
+    "law": {
+      "label": "Law & Legal",
+      "description": "Legal practice, compliance and regulatory skills"
+    },
+    "logistics": {
+      "label": "Logistics & Supply Chain",
+      "description": "Supply chain, warehousing, procurement and fleet skills"
+    },
+    "machine_learning": {
+      "label": "Machine Learning",
+      "description": "Machine learning, deep learning and AI frameworks"
+    },
+    "marketing": {
+      "label": "Marketing",
+      "description": "Digital and traditional marketing, SEO and content skills"
+    },
+    "media": {
+      "label": "Media & Creative",
+      "description": "Video, audio, photography and journalism skills"
+    },
+    "programming": {
+      "label": "Programming",
+      "description": "Programming languages and core coding skills"
+    },
+    "public_sector": {
+      "label": "Public Sector & Nonprofit",
+      "description": "Policy, community programs and public administration skills"
+    },
+    "sales": {
+      "label": "Sales",
+      "description": "Sales, account management and business development skills"
+    },
+    "science": {
+      "label": "Laboratory Science",
+      "description": "Wet-lab and analytical laboratory techniques"
+    },
+    "soft_skills": {
+      "label": "Soft Skills",
+      "description": "Interpersonal and workplace skills"
+    },
+    "tools": {
+      "label": "Tools",
+      "description": "Productivity, collaboration and development tools"
+    },
+    "trades": {
+      "label": "Skilled Trades",
+      "description": "Construction and trades: welding, plumbing, electrical, carpentry, HVAC"
     }
   },
   "skills": [
@@ -1315,6 +1363,1132 @@
       "category": "finance",
       "aliases": [
         "credit risk assessment"
+      ]
+    },
+    {
+      "name": "Civil Engineering",
+      "category": "engineering",
+      "aliases": [
+        "civil engineering",
+        "civil eng",
+        "infrastructure engineering",
+        "civil engineer"
+      ]
+    },
+    {
+      "name": "Mechanical Engineering",
+      "category": "engineering",
+      "aliases": [
+        "mechanical engineering",
+        "mech eng",
+        "mechanical design"
+      ]
+    },
+    {
+      "name": "Electrical Engineering",
+      "category": "engineering",
+      "aliases": [
+        "electrical engineering",
+        "electrical eng",
+        "power systems"
+      ]
+    },
+    {
+      "name": "AutoCAD",
+      "category": "engineering",
+      "aliases": [
+        "autocad",
+        "autodesk autocad",
+        "autocad drafting"
+      ]
+    },
+    {
+      "name": "SolidWorks",
+      "category": "engineering",
+      "aliases": [
+        "solidworks",
+        "solid works",
+        "solidworks cad"
+      ]
+    },
+    {
+      "name": "MATLAB",
+      "category": "engineering",
+      "aliases": [
+        "matlab",
+        "matlab programming",
+        "matlab/simulink"
+      ]
+    },
+    {
+      "name": "Revit",
+      "category": "engineering",
+      "aliases": [
+        "revit",
+        "autodesk revit",
+        "revit bim"
+      ]
+    },
+    {
+      "name": "Structural Analysis",
+      "category": "engineering",
+      "aliases": [
+        "structural analysis",
+        "structural design",
+        "structural engineering analysis"
+      ]
+    },
+    {
+      "name": "Finite Element Analysis",
+      "category": "engineering",
+      "aliases": [
+        "finite element analysis",
+        "fea",
+        "finite element modelling",
+        "finite element modeling"
+      ]
+    },
+    {
+      "name": "PLC Programming",
+      "category": "engineering",
+      "aliases": [
+        "plc programming",
+        "plc",
+        "siemens s7",
+        "industrial automation"
+      ]
+    },
+    {
+      "name": "Engineering Drawing",
+      "category": "engineering",
+      "aliases": [
+        "engineering drawing",
+        "technical drawing",
+        "engineering graphics"
+      ]
+    },
+    {
+      "name": "Thermodynamics",
+      "category": "engineering",
+      "aliases": [
+        "thermodynamics",
+        "heat transfer",
+        "fluid mechanics"
+      ]
+    },
+    {
+      "name": "Legal Research",
+      "category": "law",
+      "aliases": [
+        "legal research",
+        "legal analysis",
+        "westlaw",
+        "lexisnexis"
+      ]
+    },
+    {
+      "name": "Legal Writing",
+      "category": "law",
+      "aliases": [
+        "legal writing",
+        "legal drafting",
+        "brief writing"
+      ]
+    },
+    {
+      "name": "Contract Law",
+      "category": "law",
+      "aliases": [
+        "contract law",
+        "contract drafting",
+        "contracts"
+      ]
+    },
+    {
+      "name": "Litigation",
+      "category": "law",
+      "aliases": [
+        "litigation",
+        "litigator",
+        "court proceedings"
+      ]
+    },
+    {
+      "name": "Compliance",
+      "category": "law",
+      "aliases": [
+        "compliance",
+        "regulatory compliance",
+        "compliance management"
+      ]
+    },
+    {
+      "name": "Due Diligence",
+      "category": "law",
+      "aliases": [
+        "due diligence",
+        "dd review",
+        "transactional due diligence"
+      ]
+    },
+    {
+      "name": "Case Management",
+      "category": "law",
+      "aliases": [
+        "case management",
+        "case management systems",
+        "docketing"
+      ]
+    },
+    {
+      "name": "Corporate Law",
+      "category": "law",
+      "aliases": [
+        "corporate law",
+        "company law",
+        "corporate governance"
+      ]
+    },
+    {
+      "name": "Intellectual Property",
+      "category": "law",
+      "aliases": [
+        "intellectual property",
+        "ip law",
+        "patents",
+        "trademarks"
+      ]
+    },
+    {
+      "name": "Regulatory Affairs",
+      "category": "law",
+      "aliases": [
+        "regulatory affairs",
+        "regulatory submissions",
+        "regulatory strategy"
+      ]
+    },
+    {
+      "name": "Curriculum Development",
+      "category": "education",
+      "aliases": [
+        "curriculum development",
+        "curriculum planning",
+        "curriculum design"
+      ]
+    },
+    {
+      "name": "Lesson Planning",
+      "category": "education",
+      "aliases": [
+        "lesson planning",
+        "lesson plans",
+        "unit planning"
+      ]
+    },
+    {
+      "name": "Classroom Management",
+      "category": "education",
+      "aliases": [
+        "classroom management",
+        "behaviour management",
+        "behavior management"
+      ]
+    },
+    {
+      "name": "Student Assessment",
+      "category": "education",
+      "aliases": [
+        "student assessment",
+        "grading",
+        "formative assessment"
+      ]
+    },
+    {
+      "name": "Teaching",
+      "category": "education",
+      "aliases": [
+        "teaching",
+        "teacher",
+        "lecturing",
+        "instruction"
+      ]
+    },
+    {
+      "name": "Tutoring",
+      "category": "education",
+      "aliases": [
+        "tutoring",
+        "tutor",
+        "one-on-one instruction"
+      ]
+    },
+    {
+      "name": "Educational Technology",
+      "category": "education",
+      "aliases": [
+        "educational technology",
+        "edtech",
+        "google classroom",
+        "moodle"
+      ]
+    },
+    {
+      "name": "Special Education",
+      "category": "education",
+      "aliases": [
+        "special education",
+        "send",
+        "special needs education",
+        "iep"
+      ]
+    },
+    {
+      "name": "Academic Advising",
+      "category": "education",
+      "aliases": [
+        "academic advising",
+        "student advising",
+        "student mentoring"
+      ]
+    },
+    {
+      "name": "Instructional Design",
+      "category": "education",
+      "aliases": [
+        "instructional design",
+        "instructional designer",
+        "e-learning development"
+      ]
+    },
+    {
+      "name": "SEO",
+      "category": "marketing",
+      "aliases": [
+        "seo",
+        "search engine optimization",
+        "search engine optimisation"
+      ]
+    },
+    {
+      "name": "SEM",
+      "category": "marketing",
+      "aliases": [
+        "sem",
+        "search engine marketing",
+        "paid search"
+      ]
+    },
+    {
+      "name": "Google Analytics",
+      "category": "marketing",
+      "aliases": [
+        "google analytics",
+        "ga4",
+        "universal analytics"
+      ]
+    },
+    {
+      "name": "Content Marketing",
+      "category": "marketing",
+      "aliases": [
+        "content marketing",
+        "content strategy",
+        "content creation"
+      ]
+    },
+    {
+      "name": "Social Media Marketing",
+      "category": "marketing",
+      "aliases": [
+        "social media marketing",
+        "social media management",
+        "smm"
+      ]
+    },
+    {
+      "name": "Email Marketing",
+      "category": "marketing",
+      "aliases": [
+        "email marketing",
+        "mailchimp",
+        "email campaigns"
+      ]
+    },
+    {
+      "name": "Copywriting",
+      "category": "marketing",
+      "aliases": [
+        "copywriting",
+        "copy writing",
+        "content writing"
+      ]
+    },
+    {
+      "name": "Brand Management",
+      "category": "marketing",
+      "aliases": [
+        "brand management",
+        "branding",
+        "brand strategy"
+      ]
+    },
+    {
+      "name": "Market Research",
+      "category": "marketing",
+      "aliases": [
+        "market research",
+        "market analysis",
+        "marketing research"
+      ]
+    },
+    {
+      "name": "Digital Advertising",
+      "category": "marketing",
+      "aliases": [
+        "digital advertising",
+        "paid media",
+        "programmatic advertising"
+      ]
+    },
+    {
+      "name": "Google Ads",
+      "category": "marketing",
+      "aliases": [
+        "google ads",
+        "adwords",
+        "google adwords"
+      ]
+    },
+    {
+      "name": "Meta Ads",
+      "category": "marketing",
+      "aliases": [
+        "meta ads",
+        "facebook ads",
+        "instagram ads"
+      ]
+    },
+    {
+      "name": "CRM Software",
+      "category": "sales",
+      "aliases": [
+        "crm software",
+        "crm",
+        "crm systems"
+      ]
+    },
+    {
+      "name": "Salesforce",
+      "category": "sales",
+      "aliases": [
+        "salesforce",
+        "salesforce crm",
+        "sfdc"
+      ]
+    },
+    {
+      "name": "Lead Generation",
+      "category": "sales",
+      "aliases": [
+        "lead generation",
+        "lead gen",
+        "leadgen"
+      ]
+    },
+    {
+      "name": "Negotiation",
+      "category": "sales",
+      "aliases": [
+        "negotiation",
+        "negotiating",
+        "contract negotiation"
+      ]
+    },
+    {
+      "name": "Account Management",
+      "category": "sales",
+      "aliases": [
+        "account management",
+        "key account management",
+        "account manager"
+      ]
+    },
+    {
+      "name": "Sales Forecasting",
+      "category": "sales",
+      "aliases": [
+        "sales forecasting",
+        "pipeline management",
+        "sales projections"
+      ]
+    },
+    {
+      "name": "B2B Sales",
+      "category": "sales",
+      "aliases": [
+        "b2b sales",
+        "business-to-business sales",
+        "b2b"
+      ]
+    },
+    {
+      "name": "Client Relationship Management",
+      "category": "sales",
+      "aliases": [
+        "client relationship management",
+        "client relations",
+        "relationship management"
+      ]
+    },
+    {
+      "name": "Recruiting",
+      "category": "hr",
+      "aliases": [
+        "recruiting",
+        "recruitment",
+        "recruiter",
+        "technical recruiting"
+      ]
+    },
+    {
+      "name": "Talent Acquisition",
+      "category": "hr",
+      "aliases": [
+        "talent acquisition",
+        "talent sourcing",
+        "candidate sourcing"
+      ]
+    },
+    {
+      "name": "Onboarding",
+      "category": "hr",
+      "aliases": [
+        "onboarding",
+        "employee onboarding",
+        "new hire orientation"
+      ]
+    },
+    {
+      "name": "Payroll Administration",
+      "category": "hr",
+      "aliases": [
+        "payroll administration",
+        "payroll",
+        "payroll processing"
+      ]
+    },
+    {
+      "name": "Performance Management",
+      "category": "hr",
+      "aliases": [
+        "performance management",
+        "appraisals",
+        "performance reviews"
+      ]
+    },
+    {
+      "name": "Employee Relations",
+      "category": "hr",
+      "aliases": [
+        "employee relations",
+        "er",
+        "grievance handling"
+      ]
+    },
+    {
+      "name": "HRIS",
+      "category": "hr",
+      "aliases": [
+        "hris",
+        "hr information systems",
+        "workday",
+        "bamboohr"
+      ]
+    },
+    {
+      "name": "Training & Development",
+      "category": "hr",
+      "aliases": [
+        "training & development",
+        "training and development",
+        "staff training"
+      ]
+    },
+    {
+      "name": "Video Editing",
+      "category": "media",
+      "aliases": [
+        "video editing",
+        "video editor",
+        "video post-production"
+      ]
+    },
+    {
+      "name": "Adobe Premiere Pro",
+      "category": "media",
+      "aliases": [
+        "adobe premiere pro",
+        "premiere pro",
+        "premiere"
+      ]
+    },
+    {
+      "name": "Final Cut Pro",
+      "category": "media",
+      "aliases": [
+        "final cut pro",
+        "fcp",
+        "final cut"
+      ]
+    },
+    {
+      "name": "Adobe After Effects",
+      "category": "media",
+      "aliases": [
+        "adobe after effects",
+        "after effects",
+        "ae"
+      ]
+    },
+    {
+      "name": "Photography",
+      "category": "media",
+      "aliases": [
+        "photography",
+        "photographer",
+        "photo shooting"
+      ]
+    },
+    {
+      "name": "Podcast Production",
+      "category": "media",
+      "aliases": [
+        "podcast production",
+        "podcasting",
+        "podcast editing"
+      ]
+    },
+    {
+      "name": "Journalism",
+      "category": "media",
+      "aliases": [
+        "journalism",
+        "journalist",
+        "news writing"
+      ]
+    },
+    {
+      "name": "Screenwriting",
+      "category": "media",
+      "aliases": [
+        "screenwriting",
+        "script writing",
+        "scriptwriting"
+      ]
+    },
+    {
+      "name": "Audio Editing",
+      "category": "media",
+      "aliases": [
+        "audio editing",
+        "audio post-production",
+        "audio mixing"
+      ]
+    },
+    {
+      "name": "Sound Design",
+      "category": "media",
+      "aliases": [
+        "sound design",
+        "sound designer",
+        "audio design"
+      ]
+    },
+    {
+      "name": "Welding",
+      "category": "trades",
+      "aliases": [
+        "welding",
+        "mig welding",
+        "tig welding",
+        "arc welding",
+        "welder",
+        "mig",
+        "tig",
+        "mig/tig"
+      ]
+    },
+    {
+      "name": "Plumbing",
+      "category": "trades",
+      "aliases": [
+        "plumbing",
+        "plumber",
+        "pipefitting"
+      ]
+    },
+    {
+      "name": "Electrical Wiring",
+      "category": "trades",
+      "aliases": [
+        "electrical wiring",
+        "wiring",
+        "electrician"
+      ]
+    },
+    {
+      "name": "Carpentry",
+      "category": "trades",
+      "aliases": [
+        "carpentry",
+        "carpenter",
+        "woodworking"
+      ]
+    },
+    {
+      "name": "Masonry",
+      "category": "trades",
+      "aliases": [
+        "masonry",
+        "bricklaying",
+        "stonemasonry"
+      ]
+    },
+    {
+      "name": "HVAC",
+      "category": "trades",
+      "aliases": [
+        "hvac",
+        "heating, ventilation and air conditioning",
+        "heating and air conditioning",
+        "climate control"
+      ]
+    },
+    {
+      "name": "Construction Management",
+      "category": "trades",
+      "aliases": [
+        "construction management",
+        "construction project management",
+        "site management"
+      ]
+    },
+    {
+      "name": "Blueprint Reading",
+      "category": "trades",
+      "aliases": [
+        "blueprint reading",
+        "blueprints",
+        "reading blueprints"
+      ]
+    },
+    {
+      "name": "Forklift Operation",
+      "category": "trades",
+      "aliases": [
+        "forklift operation",
+        "forklift",
+        "forklift certified"
+      ]
+    },
+    {
+      "name": "Scaffolding",
+      "category": "trades",
+      "aliases": [
+        "scaffolding",
+        "scaffold erection",
+        "scaffolder"
+      ]
+    },
+    {
+      "name": "Supply Chain Management",
+      "category": "logistics",
+      "aliases": [
+        "supply chain management",
+        "supply chain",
+        "scm"
+      ]
+    },
+    {
+      "name": "Warehouse Operations",
+      "category": "logistics",
+      "aliases": [
+        "warehouse operations",
+        "warehouse management",
+        "warehousing"
+      ]
+    },
+    {
+      "name": "Inventory Management",
+      "category": "logistics",
+      "aliases": [
+        "inventory management",
+        "inventory control",
+        "stock control"
+      ]
+    },
+    {
+      "name": "Freight Forwarding",
+      "category": "logistics",
+      "aliases": [
+        "freight forwarding",
+        "freight",
+        "customs brokerage"
+      ]
+    },
+    {
+      "name": "Route Planning",
+      "category": "logistics",
+      "aliases": [
+        "route planning",
+        "route optimization",
+        "route optimisation"
+      ]
+    },
+    {
+      "name": "Procurement",
+      "category": "logistics",
+      "aliases": [
+        "procurement",
+        "purchasing",
+        "vendor management"
+      ]
+    },
+    {
+      "name": "Fleet Management",
+      "category": "logistics",
+      "aliases": [
+        "fleet management",
+        "fleet operations",
+        "vehicle fleet"
+      ]
+    },
+    {
+      "name": "Demand Planning",
+      "category": "logistics",
+      "aliases": [
+        "demand planning",
+        "demand forecasting",
+        "s&op"
+      ]
+    },
+    {
+      "name": "Customs Compliance",
+      "category": "logistics",
+      "aliases": [
+        "customs compliance",
+        "customs",
+        "import/export compliance"
+      ]
+    },
+    {
+      "name": "Laboratory Techniques",
+      "category": "science",
+      "aliases": [
+        "laboratory techniques",
+        "lab techniques",
+        "bench work"
+      ]
+    },
+    {
+      "name": "PCR",
+      "category": "science",
+      "aliases": [
+        "pcr",
+        "polymerase chain reaction",
+        "qpcr"
+      ]
+    },
+    {
+      "name": "Cell Culture",
+      "category": "science",
+      "aliases": [
+        "cell culture",
+        "cell culturing",
+        "mammalian cell culture"
+      ]
+    },
+    {
+      "name": "Chromatography",
+      "category": "science",
+      "aliases": [
+        "chromatography",
+        "hplc",
+        "gc-ms"
+      ]
+    },
+    {
+      "name": "Spectroscopy",
+      "category": "science",
+      "aliases": [
+        "spectroscopy",
+        "nmr",
+        "mass spectrometry"
+      ]
+    },
+    {
+      "name": "Microscopy",
+      "category": "science",
+      "aliases": [
+        "microscopy",
+        "light microscopy",
+        "electron microscopy"
+      ]
+    },
+    {
+      "name": "Experimental Design",
+      "category": "science",
+      "aliases": [
+        "experimental design",
+        "doe",
+        "experiment design"
+      ]
+    },
+    {
+      "name": "Data Collection",
+      "category": "science",
+      "aliases": [
+        "data collection",
+        "field data collection",
+        "survey administration"
+      ]
+    },
+    {
+      "name": "Wet Lab",
+      "category": "science",
+      "aliases": [
+        "wet lab",
+        "wet-lab",
+        "wet laboratory"
+      ]
+    },
+    {
+      "name": "Food Safety",
+      "category": "hospitality",
+      "aliases": [
+        "food safety",
+        "food hygiene",
+        "haccp"
+      ]
+    },
+    {
+      "name": "Culinary Arts",
+      "category": "hospitality",
+      "aliases": [
+        "culinary arts",
+        "cooking",
+        "chef",
+        "culinary"
+      ]
+    },
+    {
+      "name": "Hotel Management",
+      "category": "hospitality",
+      "aliases": [
+        "hotel management",
+        "hospitality management",
+        "front office management"
+      ]
+    },
+    {
+      "name": "Bartending",
+      "category": "hospitality",
+      "aliases": [
+        "bartending",
+        "bartender",
+        "mixology"
+      ]
+    },
+    {
+      "name": "Barista",
+      "category": "hospitality",
+      "aliases": [
+        "barista",
+        "coffee preparation",
+        "espresso"
+      ]
+    },
+    {
+      "name": "Guest Services",
+      "category": "hospitality",
+      "aliases": [
+        "guest services",
+        "guest relations",
+        "front desk"
+      ]
+    },
+    {
+      "name": "Housekeeping Management",
+      "category": "hospitality",
+      "aliases": [
+        "housekeeping management",
+        "housekeeping",
+        "housekeeping operations"
+      ]
+    },
+    {
+      "name": "Event Planning",
+      "category": "hospitality",
+      "aliases": [
+        "event planning",
+        "event management",
+        "event coordination"
+      ]
+    },
+    {
+      "name": "Catering",
+      "category": "hospitality",
+      "aliases": [
+        "catering",
+        "caterer",
+        "banquet service"
+      ]
+    },
+    {
+      "name": "Food & Beverage Service",
+      "category": "hospitality",
+      "aliases": [
+        "food & beverage service",
+        "f&b service",
+        "food and beverage"
+      ]
+    },
+    {
+      "name": "Public Policy",
+      "category": "public_sector",
+      "aliases": [
+        "public policy",
+        "policy analysis",
+        "policy development"
+      ]
+    },
+    {
+      "name": "Grant Writing",
+      "category": "public_sector",
+      "aliases": [
+        "grant writing",
+        "grant proposals",
+        "grantwriting"
+      ]
+    },
+    {
+      "name": "Community Outreach",
+      "category": "public_sector",
+      "aliases": [
+        "community outreach",
+        "community engagement",
+        "outreach programs"
+      ]
+    },
+    {
+      "name": "Case Work",
+      "category": "public_sector",
+      "aliases": [
+        "case work",
+        "casework",
+        "client casework"
+      ]
+    },
+    {
+      "name": "Urban Planning",
+      "category": "public_sector",
+      "aliases": [
+        "urban planning",
+        "town planning",
+        "city planning"
+      ]
+    },
+    {
+      "name": "Emergency Management",
+      "category": "public_sector",
+      "aliases": [
+        "emergency management",
+        "disaster management",
+        "emergency preparedness"
+      ]
+    },
+    {
+      "name": "Legislative Analysis",
+      "category": "public_sector",
+      "aliases": [
+        "legislative analysis",
+        "legislative affairs",
+        "bill analysis"
+      ]
+    },
+    {
+      "name": "Public Administration",
+      "category": "public_sector",
+      "aliases": [
+        "public administration",
+        "public sector administration",
+        "government administration"
+      ]
+    },
+    {
+      "name": "Customer Service",
+      "category": "soft_skills",
+      "aliases": [
+        "customer service",
+        "client service",
+        "customer support",
+        "customer care"
+      ]
+    },
+    {
+      "name": "Public Speaking",
+      "category": "soft_skills",
+      "aliases": [
+        "public speaking",
+        "presentations",
+        "presentation skills"
+      ]
+    },
+    {
+      "name": "Microsoft Excel",
+      "category": "tools",
+      "aliases": [
+        "microsoft excel",
+        "excel",
+        "ms excel",
+        "spreadsheets"
+      ]
+    },
+    {
+      "name": "Microsoft Word",
+      "category": "tools",
+      "aliases": [
+        "microsoft word",
+        "word",
+        "ms word"
+      ]
+    },
+    {
+      "name": "PowerPoint",
+      "category": "tools",
+      "aliases": [
+        "powerpoint",
+        "ms powerpoint",
+        "slides"
+      ]
+    },
+    {
+      "name": "Microsoft Office",
+      "category": "tools",
+      "aliases": [
+        "microsoft office",
+        "ms office",
+        "office suite"
+      ]
+    },
+    {
+      "name": "Google Workspace",
+      "category": "tools",
+      "aliases": [
+        "google workspace",
+        "g suite",
+        "google docs"
       ]
     }
   ]

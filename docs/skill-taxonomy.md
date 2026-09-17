@@ -67,6 +67,18 @@ fail immediately rather than silently creating a bogus category.
 | `soft_skills` | Soft Skills |
 | `healthcare` | Healthcare |
 | `finance` | Finance |
+| `engineering` | Engineering |
+| `law` | Law & Legal |
+| `education` | Education & Training |
+| `marketing` | Marketing |
+| `sales` | Sales |
+| `hr` | Human Resources |
+| `media` | Media & Creative |
+| `trades` | Skilled Trades |
+| `logistics` | Logistics & Supply Chain |
+| `science` | Laboratory Science |
+| `hospitality` | Hospitality & Culinary |
+| `public_sector` | Public Sector & Nonprofit |
 
 ## Adding a skill
 
@@ -87,6 +99,15 @@ Checklist:
    `JS`), `PostgreSQL` (never `postgres`), `Scikit-learn`. Keep it unique:
    two skills may not share a name, even across categories (SQL lives in
    `database` only — it is not also a `programming` skill).
+
+> **Career-field coverage note.** The taxonomy now spans 26 categories
+> covering IT, healthcare, finance, engineering, law, education, marketing,
+> sales, HR, media, skilled trades, logistics, laboratory science,
+> hospitality, and the public sector, plus cross-field tools
+> (Microsoft Office, Google Workspace) and soft skills. New categories
+> extend `cov_other` coverage until a model retrain adds dedicated
+> `cov_<cat>` features — the serving schema is fixed, so expansion never
+> breaks the trained model.
 2. **Category** — pick one of the 12 ids above. Every entry needs one; a
    missing or unknown category raises an error on load.
 3. **Aliases** — include the variants people actually write:

@@ -432,6 +432,26 @@ numpy==1.26.4
   extracted text → 201, 60% Moderate match, ML Potential Fit, 6 evidence
   rows; fake.pdf → 415, .exe → 415, empty → 422
 
+## Multi-Field Taxonomy Expansion (26 career categories)
+- Taxonomy grown 157 → **280 skills across 26 categories**: added
+  engineering, law, education, marketing, sales, HR, media, skilled
+  trades, logistics, laboratory science, hospitality, and public sector,
+  plus cross-field staples (Microsoft Excel/Word/Office, Google
+  Workspace, Customer Service, Public Speaking)
+- Migration preserved as `scripts/expand_taxonomy_fields.py` —
+  collision-safe (refuses to write on any name/alias conflict) and
+  idempotent
+- ML compatibility verified BEFORE expanding: the 17 cov_* features use a
+  FIXED category list; new categories aggregate into `cov_other` until a
+  future retrain adds dedicated features — the v0.4.0 serving artifact
+  is untouched (no retrain needed, no breakage)
+- Extraction smoke-tested across 9 fields (nursing, paralegal, civil
+  engineering, welding, marketing, accounting, teaching, supply chain,
+  office admin) — two alias gaps found and fixed ("civil engineer",
+  "welder"/MIG/TIG)
+- All 30 taxonomy tests pass including the CI alias-collision gate;
+  481 total, Ruff clean
+
 ## Test Summary
 ```
 Total: 481 tests passing
