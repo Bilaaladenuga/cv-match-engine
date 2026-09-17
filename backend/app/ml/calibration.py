@@ -69,6 +69,46 @@ def prior_correct(
     return scaled / z
 
 
+def platt_scale(
+    proba_row: np.ndarray | list[float],
+    class_names: list[str],
+    platt_params: dict[str, tuple[float, float]] | None = None,
+) -> np.ndarray:
+    """Apply Platt scaling to probabilities.
+
+    Platt scaling fits a logistic regression on the log-odds of each class.
+    The parameters (A, B) are learned on a validation set. For each class:
+        p_calibrated = sigmoid(A * log(p/(1-p)) + B)
+
+    ``platt_params`` maps class names to (A, B) tuples. If not provided,
+    returns probabilities unchanged.
+    """
+    if platt_params is None:
+        return np.asarray(proba_row, dtype=float)
+
+    p = np.asarray(proba_row, dtype=float)
+    calibrated = np.zeros_like(p)
+
+    for i, name in enumerate(class_names):
+        if name in platt_params:
+            A, B = platt_params[name]
+            # Avoid log(0) and log(1) by clipping
+            p_clipped = np.clip(p[i], 1e-7, 1 - 1e-7)
+            log_odds = np.log(p_clipped / (1 - p_clipped))
+            calibrated[i] = 1.0 / (1.0 + np.exp(-(A * log_odds + B)))
+        else:
+            calibrated[i] = p[i]
+
+    # Normalize to sum to 1
+    z = calibrated.sum()
+    if z > 0:
+        calibrated = calibrated / z
+    else:
+        calibrated = p
+
+    return calibrated
+
+
 def compute_calibration_metrics(
     y_true: np.ndarray,
     proba: np.ndarray,

@@ -164,11 +164,18 @@ def score_features(features: dict[str, float]) -> MLScorerResult | None:
     calibration_meta = getattr(model, "calibration_", None) or {}
     natural_prior = calibration_meta.get("natural_prior")
     training_prior = calibration_meta.get("training_prior")
+    platt_params = calibration_meta.get("platt_params")
     try:
-        from app.ml.calibration import CALIBRATION_METHOD, prior_correct
+        from app.ml.calibration import CALIBRATION_METHOD, prior_correct, platt_scale
 
+        # Apply prior correction first
         corrected = prior_correct(proba, classes, natural_prior, training_prior)
-        applied_method = calibration_meta.get("method", CALIBRATION_METHOD)
+        # Then apply Platt scaling if available
+        if platt_params:
+            corrected = platt_scale(corrected, classes, platt_params)
+            applied_method = "saerens_prior_correction+platt_scaling"
+        else:
+            applied_method = calibration_meta.get("method", CALIBRATION_METHOD)
     except (KeyError, TypeError) as exc:
         # Unknown class names etc. — degrade to raw probabilities rather
         # than fail a match request over calibration metadata.
