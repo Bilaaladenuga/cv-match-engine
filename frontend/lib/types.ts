@@ -31,6 +31,8 @@ export interface MLDetails {
   raw_probabilities?: Record<string, number>;
   calibration_method?: string | null;
   ml_version?: string;
+  confidence?: number;
+  confidence_note?: "High" | "Moderate" | "Low";
   explanation?: {
     method?: string;
     factors?: Array<{

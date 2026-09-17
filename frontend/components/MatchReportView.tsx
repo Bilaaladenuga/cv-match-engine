@@ -649,9 +649,33 @@ export function MatchReportView({
             {/* Confidence breakdown — plain language */}
             {ml.probabilities ? (
               <div>
-                <p className="mb-3 text-xs font-medium uppercase tracking-wider text-gray-400">
-                  Confidence breakdown
-                </p>
+                <div className="mb-4 flex items-center justify-between">
+                  <p className="text-xs font-medium uppercase tracking-wider text-gray-400">
+                    Confidence breakdown
+                  </p>
+                  {ml.confidence !== undefined && ml.confidence_note && (
+                    <span
+                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                        ml.confidence_note === "High"
+                          ? "bg-accent-50 text-accent-700"
+                          : ml.confidence_note === "Moderate"
+                            ? "bg-amber-50 text-amber-700"
+                            : "bg-red-50 text-red-600"
+                      }`}
+                    >
+                      <span
+                        className={`h-1.5 w-1.5 rounded-full ${
+                          ml.confidence_note === "High"
+                            ? "bg-accent-500"
+                            : ml.confidence_note === "Moderate"
+                              ? "bg-amber-500"
+                              : "bg-red-500"
+                        }`}
+                      />
+                      {ml.confidence_note} confidence
+                    </span>
+                  )}
+                </div>
                 <div className="space-y-3">
                   {Object.entries(ml.probabilities).map(([cls, p]) => {
                     const label =

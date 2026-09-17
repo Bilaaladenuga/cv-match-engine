@@ -388,6 +388,19 @@ def compute_match_score(
         explanation = getattr(ml, "explanation", None)
         if explanation is not None:
             ml_details["explanation"] = explanation.to_dict()
+        # Confidence interval: based on prediction entropy
+        if probabilities:
+            import math
+            probs = list(probabilities.values())
+            entropy = -sum(p * math.log(p + 1e-10) for p in probs)
+            max_entropy = math.log(len(probs))
+            confidence = 1.0 - (entropy / max_entropy) if max_entropy > 0 else 0.5
+            ml_details["confidence"] = round(confidence, 4)
+            ml_details["confidence_note"] = (
+                "High" if confidence > 0.7 else
+                "Moderate" if confidence > 0.4 else
+                "Low"
+            )
 
     out_weights = dict(engine_weights)
     if ml is not None:
