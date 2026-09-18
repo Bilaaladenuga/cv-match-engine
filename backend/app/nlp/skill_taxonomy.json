@@ -111,7 +111,6 @@
       "name": "Python",
       "category": "programming",
       "aliases": [
-        "python",
         "python3",
         "python programming"
       ]
@@ -120,7 +119,6 @@
       "name": "JavaScript",
       "category": "programming",
       "aliases": [
-        "javascript",
         "js",
         "ecmascript",
         "es6",
@@ -132,7 +130,6 @@
       "name": "TypeScript",
       "category": "programming",
       "aliases": [
-        "typescript",
         "ts"
       ]
     },
@@ -140,7 +137,6 @@
       "name": "Java",
       "category": "programming",
       "aliases": [
-        "java",
         "java se",
         "java ee",
         "core java"
@@ -150,7 +146,6 @@
       "name": "C++",
       "category": "programming",
       "aliases": [
-        "c++",
         "cpp",
         "c plus plus"
       ]
@@ -159,7 +154,6 @@
       "name": "C#",
       "category": "programming",
       "aliases": [
-        "c#",
         "csharp",
         "c sharp"
       ]
@@ -168,7 +162,6 @@
       "name": "Go",
       "category": "programming",
       "aliases": [
-        "go",
         "golang"
       ]
     },
@@ -176,44 +169,35 @@
       "name": "Rust",
       "category": "programming",
       "aliases": [
-        "rust",
         "rustlang"
       ]
     },
     {
       "name": "Ruby",
       "category": "programming",
-      "aliases": [
-        "ruby"
-      ]
+      "aliases": []
     },
     {
       "name": "PHP",
       "category": "programming",
-      "aliases": [
-        "php"
-      ]
+      "aliases": []
     },
     {
       "name": "Swift",
       "category": "programming",
       "aliases": [
-        "swift",
         "swiftui"
       ]
     },
     {
       "name": "Kotlin",
       "category": "programming",
-      "aliases": [
-        "kotlin"
-      ]
+      "aliases": []
     },
     {
       "name": "R",
       "category": "programming",
       "aliases": [
-        "r",
         "r programming",
         "r language"
       ]
@@ -221,22 +205,17 @@
     {
       "name": "Scala",
       "category": "programming",
-      "aliases": [
-        "scala"
-      ]
+      "aliases": []
     },
     {
       "name": "Perl",
       "category": "programming",
-      "aliases": [
-        "perl"
-      ]
+      "aliases": []
     },
     {
       "name": "Shell",
       "category": "programming",
       "aliases": [
-        "shell",
         "bash",
         "zsh",
         "shell scripting"
@@ -246,7 +225,6 @@
       "name": "React",
       "category": "frontend",
       "aliases": [
-        "react",
         "reactjs",
         "react.js"
       ]
@@ -255,7 +233,6 @@
       "name": "React Native",
       "category": "frontend",
       "aliases": [
-        "react native",
         "reactnative"
       ]
     },
@@ -264,7 +241,6 @@
       "category": "frontend",
       "aliases": [
         "nextjs",
-        "next.js",
         "next js"
       ]
     },
@@ -273,15 +249,13 @@
       "category": "frontend",
       "aliases": [
         "vue",
-        "vuejs",
-        "vue.js"
+        "vuejs"
       ]
     },
     {
       "name": "Angular",
       "category": "frontend",
       "aliases": [
-        "angular",
         "angularjs"
       ]
     },
@@ -289,22 +263,18 @@
       "name": "Svelte",
       "category": "frontend",
       "aliases": [
-        "svelte",
         "sveltekit"
       ]
     },
     {
       "name": "Flutter",
       "category": "frontend",
-      "aliases": [
-        "flutter"
-      ]
+      "aliases": []
     },
     {
       "name": "HTML",
       "category": "frontend",
       "aliases": [
-        "html",
         "html5"
       ]
     },
@@ -312,7 +282,6 @@
       "name": "CSS",
       "category": "frontend",
       "aliases": [
-        "css",
         "css3",
         "scss",
         "sass",
@@ -324,22 +293,17 @@
     {
       "name": "jQuery",
       "category": "frontend",
-      "aliases": [
-        "jquery"
-      ]
+      "aliases": []
     },
     {
       "name": "Redux",
       "category": "frontend",
-      "aliases": [
-        "redux"
-      ]
+      "aliases": []
     },
     {
       "name": "GraphQL",
       "category": "frontend",
       "aliases": [
-        "graphql",
         "gql"
       ]
     },
@@ -348,7 +312,6 @@
       "category": "backend",
       "aliases": [
         "nodejs",
-        "node.js",
         "node js",
         "node"
       ]
@@ -357,7 +320,6 @@
       "name": "Express",
       "category": "backend",
       "aliases": [
-        "express",
         "expressjs",
         "express.js"
       ]
@@ -366,29 +328,23 @@
       "name": "FastAPI",
       "category": "backend",
       "aliases": [
-        "fastapi",
         "fast api"
       ]
     },
     {
       "name": "Django",
       "category": "backend",
-      "aliases": [
-        "django"
-      ]
+      "aliases": []
     },
     {
       "name": "Flask",
       "category": "backend",
-      "aliases": [
-        "flask"
-      ]
+      "aliases": []
     },
     {
       "name": "Spring",
       "category": "backend",
       "aliases": [
-        "spring",
         "spring boot",
         "springboot",
         "spring framework"
@@ -398,7 +354,6 @@
       "name": "ASP.NET",
       "category": "backend",
       "aliases": [
-        "asp.net",
         "aspnet"
       ]
     },
@@ -406,7 +361,6 @@
       "name": ".NET",
       "category": "backend",
       "aliases": [
-        ".net",
         "dotnet"
       ]
     },
@@ -414,29 +368,23 @@
       "name": "Ruby on Rails",
       "category": "backend",
       "aliases": [
-        "ruby on rails",
         "rails"
       ]
     },
     {
       "name": "Laravel",
       "category": "backend",
-      "aliases": [
-        "laravel"
-      ]
+      "aliases": []
     },
     {
       "name": "Celery",
       "category": "backend",
-      "aliases": [
-        "celery"
-      ]
+      "aliases": []
     },
     {
       "name": "RabbitMQ",
       "category": "backend",
       "aliases": [
-        "rabbitmq",
         "rabbit mq"
       ]
     },
@@ -444,7 +392,6 @@
       "name": "REST API",
       "category": "backend",
       "aliases": [
-        "rest api",
         "rest apis",
         "restful api",
         "restful apis"
@@ -454,7 +401,6 @@
       "name": "WebSocket",
       "category": "backend",
       "aliases": [
-        "websocket",
         "websockets",
         "web socket",
         "web sockets"
@@ -464,7 +410,6 @@
       "name": "PostgreSQL",
       "category": "database",
       "aliases": [
-        "postgresql",
         "postgres",
         "psql"
       ]
@@ -472,15 +417,12 @@
     {
       "name": "MySQL",
       "category": "database",
-      "aliases": [
-        "mysql"
-      ]
+      "aliases": []
     },
     {
       "name": "SQL Server",
       "category": "database",
       "aliases": [
-        "sql server",
         "mssql"
       ]
     },
@@ -488,7 +430,6 @@
       "name": "SQL",
       "category": "database",
       "aliases": [
-        "sql",
         "plsql",
         "relational database",
         "rdbms"
@@ -498,22 +439,18 @@
       "name": "MongoDB",
       "category": "database",
       "aliases": [
-        "mongodb",
         "mongo"
       ]
     },
     {
       "name": "Redis",
       "category": "database",
-      "aliases": [
-        "redis"
-      ]
+      "aliases": []
     },
     {
       "name": "Elasticsearch",
       "category": "database",
       "aliases": [
-        "elasticsearch",
         "elastic search"
       ]
     },
@@ -521,7 +458,6 @@
       "name": "SQLite",
       "category": "database",
       "aliases": [
-        "sqlite",
         "sqlite3"
       ]
     },
@@ -529,22 +465,18 @@
       "name": "DynamoDB",
       "category": "database",
       "aliases": [
-        "dynamodb",
         "dynamo db"
       ]
     },
     {
       "name": "Cassandra",
       "category": "database",
-      "aliases": [
-        "cassandra"
-      ]
+      "aliases": []
     },
     {
       "name": "AWS",
       "category": "cloud",
       "aliases": [
-        "aws",
         "amazon web services",
         "ec2",
         "s3",
@@ -556,7 +488,6 @@
       "name": "Azure",
       "category": "cloud",
       "aliases": [
-        "azure",
         "microsoft azure",
         "azure devops"
       ]
@@ -565,7 +496,6 @@
       "name": "GCP",
       "category": "cloud",
       "aliases": [
-        "gcp",
         "google cloud",
         "google cloud platform"
       ]
@@ -573,29 +503,22 @@
     {
       "name": "Heroku",
       "category": "cloud",
-      "aliases": [
-        "heroku"
-      ]
+      "aliases": []
     },
     {
       "name": "Vercel",
       "category": "cloud",
-      "aliases": [
-        "vercel"
-      ]
+      "aliases": []
     },
     {
       "name": "Netlify",
       "category": "cloud",
-      "aliases": [
-        "netlify"
-      ]
+      "aliases": []
     },
     {
       "name": "AWS Certified Solutions Architect",
       "category": "cloud",
       "aliases": [
-        "aws certified solutions architect",
         "aws solutions architect"
       ]
     },
@@ -603,7 +526,6 @@
       "name": "AWS Certified Developer",
       "category": "cloud",
       "aliases": [
-        "aws certified developer",
         "aws developer associate"
       ]
     },
@@ -611,7 +533,6 @@
       "name": "Google Cloud Certified",
       "category": "cloud",
       "aliases": [
-        "google cloud certified",
         "google professional cloud"
       ]
     },
@@ -619,7 +540,6 @@
       "name": "Docker",
       "category": "devops",
       "aliases": [
-        "docker",
         "dockerfile",
         "docker-compose",
         "docker compose"
@@ -629,7 +549,6 @@
       "name": "Kubernetes",
       "category": "devops",
       "aliases": [
-        "kubernetes",
         "k8s",
         "kubectl"
       ]
@@ -638,7 +557,6 @@
       "name": "CI/CD",
       "category": "devops",
       "aliases": [
-        "ci/cd",
         "cicd",
         "continuous integration",
         "continuous deployment"
@@ -647,43 +565,32 @@
     {
       "name": "Terraform",
       "category": "devops",
-      "aliases": [
-        "terraform"
-      ]
+      "aliases": []
     },
     {
       "name": "Ansible",
       "category": "devops",
-      "aliases": [
-        "ansible"
-      ]
+      "aliases": []
     },
     {
       "name": "Jenkins",
       "category": "devops",
-      "aliases": [
-        "jenkins"
-      ]
+      "aliases": []
     },
     {
       "name": "GitHub Actions",
       "category": "devops",
-      "aliases": [
-        "github actions"
-      ]
+      "aliases": []
     },
     {
       "name": "Nginx",
       "category": "devops",
-      "aliases": [
-        "nginx"
-      ]
+      "aliases": []
     },
     {
       "name": "Linux",
       "category": "devops",
       "aliases": [
-        "linux",
         "ubuntu",
         "debian",
         "centos",
@@ -694,7 +601,6 @@
       "name": "Git",
       "category": "devops",
       "aliases": [
-        "git",
         "github",
         "gitlab",
         "bitbucket"
@@ -703,22 +609,17 @@
     {
       "name": "Pandas",
       "category": "data_science",
-      "aliases": [
-        "pandas"
-      ]
+      "aliases": []
     },
     {
       "name": "NumPy",
       "category": "data_science",
-      "aliases": [
-        "numpy"
-      ]
+      "aliases": []
     },
     {
       "name": "Data Analysis",
       "category": "data_science",
       "aliases": [
-        "data analysis",
         "data analytics",
         "analytics"
       ]
@@ -727,7 +628,6 @@
       "name": "Statistics",
       "category": "data_science",
       "aliases": [
-        "statistics",
         "statistical analysis"
       ]
     },
@@ -735,7 +635,6 @@
       "name": "Data Visualization",
       "category": "data_science",
       "aliases": [
-        "data visualization",
         "data viz"
       ]
     },
@@ -743,7 +642,6 @@
       "name": "Jupyter",
       "category": "data_science",
       "aliases": [
-        "jupyter",
         "jupyter notebook",
         "jupyterlab"
       ]
@@ -751,15 +649,12 @@
     {
       "name": "Tableau",
       "category": "data_science",
-      "aliases": [
-        "tableau"
-      ]
+      "aliases": []
     },
     {
       "name": "Power BI",
       "category": "data_science",
       "aliases": [
-        "power bi",
         "powerbi"
       ]
     },
@@ -767,58 +662,45 @@
       "name": "Machine Learning",
       "category": "machine_learning",
       "aliases": [
-        "machine learning",
         "ml"
       ]
     },
     {
       "name": "Deep Learning",
       "category": "machine_learning",
-      "aliases": [
-        "deep learning"
-      ]
+      "aliases": []
     },
     {
       "name": "TensorFlow",
       "category": "machine_learning",
-      "aliases": [
-        "tensorflow"
-      ]
+      "aliases": []
     },
     {
       "name": "PyTorch",
       "category": "machine_learning",
-      "aliases": [
-        "pytorch"
-      ]
+      "aliases": []
     },
     {
       "name": "Scikit-learn",
       "category": "machine_learning",
       "aliases": [
-        "scikit-learn",
         "sklearn"
       ]
     },
     {
       "name": "Keras",
       "category": "machine_learning",
-      "aliases": [
-        "keras"
-      ]
+      "aliases": []
     },
     {
       "name": "XGBoost",
       "category": "machine_learning",
-      "aliases": [
-        "xgboost"
-      ]
+      "aliases": []
     },
     {
       "name": "Hugging Face",
       "category": "machine_learning",
       "aliases": [
-        "hugging face",
         "huggingface"
       ]
     },
@@ -826,29 +708,23 @@
       "name": "NLP",
       "category": "machine_learning",
       "aliases": [
-        "nlp",
         "natural language processing"
       ]
     },
     {
       "name": "Computer Vision",
       "category": "machine_learning",
-      "aliases": [
-        "computer vision"
-      ]
+      "aliases": []
     },
     {
       "name": "OpenCV",
       "category": "machine_learning",
-      "aliases": [
-        "opencv"
-      ]
+      "aliases": []
     },
     {
       "name": "LLM",
       "category": "machine_learning",
       "aliases": [
-        "llm",
         "large language model",
         "large language models"
       ]
@@ -857,7 +733,6 @@
       "name": "GIS",
       "category": "gis",
       "aliases": [
-        "gis",
         "geographic information system"
       ]
     },
@@ -865,7 +740,6 @@
       "name": "QGIS",
       "category": "gis",
       "aliases": [
-        "qgis",
         "quantum gis"
       ]
     },
@@ -873,95 +747,73 @@
       "name": "ArcGIS",
       "category": "gis",
       "aliases": [
-        "arcgis",
         "arc gis"
       ]
     },
     {
       "name": "GeoPandas",
       "category": "gis",
-      "aliases": [
-        "geopandas"
-      ]
+      "aliases": []
     },
     {
       "name": "PostGIS",
       "category": "gis",
-      "aliases": [
-        "postgis"
-      ]
+      "aliases": []
     },
     {
       "name": "Leaflet",
       "category": "gis",
-      "aliases": [
-        "leaflet"
-      ]
+      "aliases": []
     },
     {
       "name": "Mapbox",
       "category": "gis",
-      "aliases": [
-        "mapbox"
-      ]
+      "aliases": []
     },
     {
       "name": "MapLibre",
       "category": "gis",
-      "aliases": [
-        "maplibre"
-      ]
+      "aliases": []
     },
     {
       "name": "Google Earth Engine",
       "category": "gis",
-      "aliases": [
-        "google earth engine"
-      ]
+      "aliases": []
     },
     {
       "name": "Figma",
       "category": "design",
-      "aliases": [
-        "figma"
-      ]
+      "aliases": []
     },
     {
       "name": "Adobe Photoshop",
       "category": "design",
       "aliases": [
-        "photoshop",
-        "adobe photoshop"
+        "photoshop"
       ]
     },
     {
       "name": "Adobe Illustrator",
       "category": "design",
       "aliases": [
-        "illustrator",
-        "adobe illustrator"
+        "illustrator"
       ]
     },
     {
       "name": "Sketch",
       "category": "design",
-      "aliases": [
-        "sketch"
-      ]
+      "aliases": []
     },
     {
       "name": "Canva",
       "category": "design",
-      "aliases": [
-        "canva"
-      ]
+      "aliases": []
     },
     {
       "name": "UI Design",
       "category": "design",
       "aliases": [
         "ui",
-        "ui design",
         "user interface",
         "user interface design"
       ]
@@ -971,7 +823,6 @@
       "category": "design",
       "aliases": [
         "ux",
-        "ux design",
         "user experience",
         "user experience design"
       ]
@@ -979,36 +830,27 @@
     {
       "name": "Jira",
       "category": "tools",
-      "aliases": [
-        "jira"
-      ]
+      "aliases": []
     },
     {
       "name": "Confluence",
       "category": "tools",
-      "aliases": [
-        "confluence"
-      ]
+      "aliases": []
     },
     {
       "name": "Slack",
       "category": "tools",
-      "aliases": [
-        "slack"
-      ]
+      "aliases": []
     },
     {
       "name": "Notion",
       "category": "tools",
-      "aliases": [
-        "notion"
-      ]
+      "aliases": []
     },
     {
       "name": "VS Code",
       "category": "tools",
       "aliases": [
-        "vs code",
         "visual studio code"
       ]
     },
@@ -1016,54 +858,50 @@
       "name": "pytest",
       "category": "tools",
       "aliases": [
-        "pytest",
         "py.test"
       ]
     },
     {
       "name": "Jest",
       "category": "tools",
-      "aliases": [
-        "jest"
-      ]
+      "aliases": []
     },
     {
       "name": "Playwright",
       "category": "tools",
-      "aliases": [
-        "playwright"
-      ]
+      "aliases": []
     },
     {
       "name": "Cypress",
       "category": "tools",
-      "aliases": [
-        "cypress"
-      ]
+      "aliases": []
     },
     {
       "name": "Leadership",
       "category": "soft_skills",
       "aliases": [
-        "leadership",
-        "leading teams"
+        "leading teams",
+        "team leadership",
+        "leadership skills",
+        "people management",
+        "team management"
       ]
     },
     {
       "name": "Communication",
       "category": "soft_skills",
       "aliases": [
-        "communication",
-        "communications",
         "written communication",
-        "verbal communication"
+        "verbal communication",
+        "communications",
+        "interpersonal communication",
+        "presentation skills"
       ]
     },
     {
       "name": "Teamwork",
       "category": "soft_skills",
       "aliases": [
-        "teamwork",
         "team collaboration"
       ]
     },
@@ -1071,7 +909,6 @@
       "name": "Collaboration",
       "category": "soft_skills",
       "aliases": [
-        "collaboration",
         "cross-functional collaboration"
       ]
     },
@@ -1079,15 +916,16 @@
       "name": "Problem Solving",
       "category": "soft_skills",
       "aliases": [
-        "problem solving",
-        "problem-solving"
+        "troubleshooting",
+        "analytical thinking",
+        "problem-solving",
+        "root cause analysis"
       ]
     },
     {
       "name": "Agile",
       "category": "soft_skills",
       "aliases": [
-        "agile",
         "agile methodology",
         "agile methodologies"
       ]
@@ -1095,36 +933,32 @@
     {
       "name": "Scrum",
       "category": "soft_skills",
-      "aliases": [
-        "scrum"
-      ]
+      "aliases": []
     },
     {
       "name": "Kanban",
       "category": "soft_skills",
-      "aliases": [
-        "kanban"
-      ]
+      "aliases": []
     },
     {
       "name": "Project Management",
       "category": "soft_skills",
       "aliases": [
-        "project management"
+        "project planning",
+        "project coordination",
+        "project delivery",
+        "project leadership"
       ]
     },
     {
       "name": "Time Management",
       "category": "soft_skills",
-      "aliases": [
-        "time management"
-      ]
+      "aliases": []
     },
     {
       "name": "Mentoring",
       "category": "soft_skills",
       "aliases": [
-        "mentoring",
         "mentorship",
         "mentor"
       ]
@@ -1132,15 +966,12 @@
     {
       "name": "Critical Thinking",
       "category": "soft_skills",
-      "aliases": [
-        "critical thinking"
-      ]
+      "aliases": []
     },
     {
       "name": "Adaptability",
       "category": "soft_skills",
       "aliases": [
-        "adaptability",
         "adaptive"
       ]
     },
@@ -1149,52 +980,82 @@
       "category": "healthcare",
       "aliases": [
         "patient assessment",
-        "direct patient care"
+        "direct patient care",
+        "patient intake",
+        "patient interaction",
+        "patient support",
+        "patient assistance",
+        "bedside manner",
+        "patient advocacy",
+        "patient education",
+        "patient comfort"
       ]
     },
     {
       "name": "Clinical Documentation",
       "category": "healthcare",
       "aliases": [
+        "medical records documentation",
         "charting",
-        "medical records documentation"
+        "documentation",
+        "medical notes",
+        "patient records",
+        "clinical notes"
       ]
     },
     {
       "name": "Medical Terminology",
       "category": "healthcare",
       "aliases": [
-        "medical terminology",
         "clinical terminology",
-        "medical vocabulary"
+        "medical vocabulary",
+        "medical terms",
+        "healthcare vocabulary",
+        "clinical language"
       ]
     },
     {
       "name": "Phlebotomy",
       "category": "healthcare",
       "aliases": [
-        "venipuncture"
+        "venipuncture",
+        "blood draw",
+        "blood collection",
+        "specimen collection",
+        "blood sampling"
       ]
     },
     {
       "name": "Medication Administration",
       "category": "healthcare",
       "aliases": [
-        "medication management"
+        "medication management",
+        "medication",
+        "med administration",
+        "drug administration",
+        "pharmaceutical"
       ]
     },
     {
       "name": "Care Planning",
       "category": "healthcare",
       "aliases": [
-        "care plan development"
+        "care plan development",
+        "care plans",
+        "treatment planning",
+        "care coordination",
+        "patient care planning",
+        "discharge planning"
       ]
     },
     {
       "name": "Triage",
       "category": "healthcare",
       "aliases": [
-        "patient triage"
+        "patient triage",
+        "emergency assessment",
+        "acuity assessment",
+        "priority assessment"
       ]
     },
     {
@@ -1202,64 +1063,98 @@
       "category": "healthcare",
       "aliases": [
         "ehr",
-        "emr",
-        "electronic medical records",
         "epic ehr",
-        "cerner"
+        "cerner",
+        "electronic medical records",
+        "emr",
+        "electronic health record",
+        "electronic medical record",
+        "epic",
+        "health information",
+        "medical records"
       ]
     },
     {
       "name": "ICU Care",
       "category": "healthcare",
       "aliases": [
-        "icu",
         "intensive care",
-        "critical care nursing"
+        "critical care nursing",
+        "icu",
+        "critical care",
+        "life support",
+        "ventilator management"
       ]
     },
     {
       "name": "Infection Control",
       "category": "healthcare",
       "aliases": [
-        "ipc"
+        "ipc",
+        "infection prevention",
+        "infection prevention and control",
+        "sterile technique",
+        "aseptic technique"
       ]
     },
     {
       "name": "Clinical Research",
       "category": "healthcare",
       "aliases": [
-        "clinical trials"
+        "clinical trials",
+        "research study",
+        "clinical study",
+        "research protocol"
       ]
     },
     {
       "name": "Medical Coding",
       "category": "healthcare",
       "aliases": [
+        "cpt coding",
         "icd-10",
-        "cpt coding"
+        "cpt",
+        "billing codes",
+        "insurance coding",
+        "diagnosis coding",
+        "procedure coding"
       ]
     },
     {
       "name": "Financial Analysis",
       "category": "finance",
       "aliases": [
-        "financial analysis",
+        "scenario analysis",
         "sensitivity analysis",
-        "scenario analysis"
+        "financial assessment",
+        "financial evaluation",
+        "financial review",
+        "financial planning",
+        "budget analysis",
+        "cost analysis",
+        "variance analysis"
       ]
     },
     {
       "name": "Financial Reporting",
       "category": "finance",
       "aliases": [
-        "management reporting"
+        "management reporting",
+        "financial statements",
+        "reporting",
+        "financial summaries",
+        "board reporting"
       ]
     },
     {
       "name": "Bookkeeping",
       "category": "finance",
       "aliases": [
-        "double-entry bookkeeping"
+        "double-entry bookkeeping",
+        "ledger management",
+        "accounts payable",
+        "accounts receivable",
+        "journal entries"
       ]
     },
     {
@@ -1267,16 +1162,23 @@
       "category": "finance",
       "aliases": [
         "reconciliation",
-        "bank reconciliation"
+        "bank reconciliation",
+        "reconciling",
+        "balance reconciliation"
       ]
     },
     {
       "name": "Budgeting & Forecasting",
       "category": "finance",
       "aliases": [
-        "budgeting",
         "forecasting",
-        "budgeting and forecasting"
+        "budgeting",
+        "budgeting and forecasting",
+        "budget management",
+        "financial forecasting",
+        "budget planning",
+        "budget control",
+        "cost forecasting"
       ]
     },
     {
@@ -1284,7 +1186,11 @@
       "category": "finance",
       "aliases": [
         "tax returns",
-        "taxation"
+        "taxation",
+        "tax filing",
+        "tax compliance",
+        "income tax",
+        "tax planning"
       ]
     },
     {
@@ -1293,47 +1199,60 @@
       "aliases": [
         "internal audit",
         "external audit",
-        "audit"
+        "audit",
+        "audit management",
+        "compliance audit",
+        "financial audit"
       ]
     },
     {
       "name": "Risk Analysis",
       "category": "finance",
       "aliases": [
+        "risk management",
         "risk assessment",
-        "risk management"
+        "risk evaluation",
+        "risk mitigation",
+        "enterprise risk"
       ]
     },
     {
       "name": "Financial Modeling",
       "category": "finance",
       "aliases": [
-        "excel modeling",
-        "dcf",
         "discounted cash flow",
-        "financial modelling"
+        "dcf",
+        "excel modeling",
+        "financial modelling",
+        "valuation modeling"
       ]
     },
     {
       "name": "GAAP",
       "category": "finance",
       "aliases": [
+        "generally accepted accounting principles",
         "us gaap",
-        "generally accepted accounting principles"
+        "gaap compliance",
+        "gaap standards"
       ]
     },
     {
       "name": "IFRS",
       "category": "finance",
       "aliases": [
-        "international financial reporting standards"
+        "international financial reporting standards",
+        "ifrs standards",
+        "ifrs compliance"
       ]
     },
     {
       "name": "QuickBooks",
       "category": "finance",
       "aliases": [
-        "quickbooks online"
+        "quickbooks online",
+        "quickbooks desktop",
+        "quickbooks pro"
       ]
     },
     {
@@ -1355,67 +1274,85 @@
       "name": "Portfolio Management",
       "category": "finance",
       "aliases": [
-        "asset management"
+        "asset management",
+        "investment management",
+        "portfolio allocation",
+        "investment portfolio"
       ]
     },
     {
       "name": "Credit Analysis",
       "category": "finance",
       "aliases": [
-        "credit risk assessment"
+        "credit risk assessment",
+        "credit risk",
+        "credit evaluation",
+        "credit review",
+        "lending analysis"
       ]
     },
     {
       "name": "Civil Engineering",
       "category": "engineering",
       "aliases": [
-        "civil engineering",
         "civil eng",
         "infrastructure engineering",
-        "civil engineer"
+        "civil engineer",
+        "structural engineering",
+        "construction engineering",
+        "transportation engineering",
+        "geotechnical engineering"
       ]
     },
     {
       "name": "Mechanical Engineering",
       "category": "engineering",
       "aliases": [
-        "mechanical engineering",
+        "mechanical design",
         "mech eng",
-        "mechanical design"
+        "machine design",
+        "fluid mechanics",
+        "manufacturing engineering"
       ]
     },
     {
       "name": "Electrical Engineering",
       "category": "engineering",
       "aliases": [
-        "electrical engineering",
+        "power systems",
         "electrical eng",
-        "power systems"
+        "circuit design",
+        "control systems",
+        "electronics engineering"
       ]
     },
     {
       "name": "AutoCAD",
       "category": "engineering",
       "aliases": [
-        "autocad",
+        "autocad drafting",
         "autodesk autocad",
-        "autocad drafting"
+        "cad",
+        "computer-aided design",
+        "technical drawing",
+        "drafting"
       ]
     },
     {
       "name": "SolidWorks",
       "category": "engineering",
       "aliases": [
-        "solidworks",
+        "solidworks cad",
         "solid works",
-        "solidworks cad"
+        "3d modeling",
+        "cad design",
+        "solid modeling"
       ]
     },
     {
       "name": "MATLAB",
       "category": "engineering",
       "aliases": [
-        "matlab",
         "matlab programming",
         "matlab/simulink"
       ]
@@ -1424,7 +1361,6 @@
       "name": "Revit",
       "category": "engineering",
       "aliases": [
-        "revit",
         "autodesk revit",
         "revit bim"
       ]
@@ -1433,7 +1369,6 @@
       "name": "Structural Analysis",
       "category": "engineering",
       "aliases": [
-        "structural analysis",
         "structural design",
         "structural engineering analysis"
       ]
@@ -1442,7 +1377,6 @@
       "name": "Finite Element Analysis",
       "category": "engineering",
       "aliases": [
-        "finite element analysis",
         "fea",
         "finite element modelling",
         "finite element modeling"
@@ -1452,7 +1386,6 @@
       "name": "PLC Programming",
       "category": "engineering",
       "aliases": [
-        "plc programming",
         "plc",
         "siemens s7",
         "industrial automation"
@@ -1462,8 +1395,6 @@
       "name": "Engineering Drawing",
       "category": "engineering",
       "aliases": [
-        "engineering drawing",
-        "technical drawing",
         "engineering graphics"
       ]
     },
@@ -1471,62 +1402,66 @@
       "name": "Thermodynamics",
       "category": "engineering",
       "aliases": [
-        "thermodynamics",
-        "heat transfer",
-        "fluid mechanics"
+        "heat transfer"
       ]
     },
     {
       "name": "Legal Research",
       "category": "law",
       "aliases": [
-        "legal research",
-        "legal analysis",
+        "lexisnexis",
         "westlaw",
-        "lexisnexis"
+        "legal analysis",
+        "case research",
+        "legal investigation",
+        "brief writing"
       ]
     },
     {
       "name": "Legal Writing",
       "category": "law",
       "aliases": [
-        "legal writing",
         "legal drafting",
-        "brief writing"
+        "memo writing",
+        "legal documentation"
       ]
     },
     {
       "name": "Contract Law",
       "category": "law",
       "aliases": [
-        "contract law",
         "contract drafting",
-        "contracts"
+        "contracts",
+        "contract review",
+        "contract management",
+        "agreement review"
       ]
     },
     {
       "name": "Litigation",
       "category": "law",
       "aliases": [
-        "litigation",
         "litigator",
-        "court proceedings"
+        "court proceedings",
+        "trial preparation",
+        "trial advocacy",
+        "dispute resolution"
       ]
     },
     {
       "name": "Compliance",
       "category": "law",
       "aliases": [
-        "compliance",
+        "compliance management",
         "regulatory compliance",
-        "compliance management"
+        "compliance monitoring",
+        "audit compliance"
       ]
     },
     {
       "name": "Due Diligence",
       "category": "law",
       "aliases": [
-        "due diligence",
         "dd review",
         "transactional due diligence"
       ]
@@ -1535,7 +1470,6 @@
       "name": "Case Management",
       "category": "law",
       "aliases": [
-        "case management",
         "case management systems",
         "docketing"
       ]
@@ -1544,7 +1478,6 @@
       "name": "Corporate Law",
       "category": "law",
       "aliases": [
-        "corporate law",
         "company law",
         "corporate governance"
       ]
@@ -1553,7 +1486,6 @@
       "name": "Intellectual Property",
       "category": "law",
       "aliases": [
-        "intellectual property",
         "ip law",
         "patents",
         "trademarks"
@@ -1563,7 +1495,6 @@
       "name": "Regulatory Affairs",
       "category": "law",
       "aliases": [
-        "regulatory affairs",
         "regulatory submissions",
         "regulatory strategy"
       ]
@@ -1572,53 +1503,59 @@
       "name": "Curriculum Development",
       "category": "education",
       "aliases": [
-        "curriculum development",
+        "curriculum design",
         "curriculum planning",
-        "curriculum design"
+        "course development",
+        "syllabus development"
       ]
     },
     {
       "name": "Lesson Planning",
       "category": "education",
       "aliases": [
-        "lesson planning",
         "lesson plans",
-        "unit planning"
+        "unit planning",
+        "instructional planning",
+        "teaching plans"
       ]
     },
     {
       "name": "Classroom Management",
       "category": "education",
       "aliases": [
-        "classroom management",
         "behaviour management",
-        "behavior management"
+        "behavior management",
+        "classroom control",
+        "student management",
+        "classroom discipline"
       ]
     },
     {
       "name": "Student Assessment",
       "category": "education",
       "aliases": [
-        "student assessment",
+        "formative assessment",
         "grading",
-        "formative assessment"
+        "assessment",
+        "evaluation",
+        "test development",
+        "rubric development"
       ]
     },
     {
       "name": "Teaching",
       "category": "education",
       "aliases": [
-        "teaching",
         "teacher",
+        "instruction",
         "lecturing",
-        "instruction"
+        "educating"
       ]
     },
     {
       "name": "Tutoring",
       "category": "education",
       "aliases": [
-        "tutoring",
         "tutor",
         "one-on-one instruction"
       ]
@@ -1627,7 +1564,6 @@
       "name": "Educational Technology",
       "category": "education",
       "aliases": [
-        "educational technology",
         "edtech",
         "google classroom",
         "moodle"
@@ -1637,7 +1573,6 @@
       "name": "Special Education",
       "category": "education",
       "aliases": [
-        "special education",
         "send",
         "special needs education",
         "iep"
@@ -1647,7 +1582,6 @@
       "name": "Academic Advising",
       "category": "education",
       "aliases": [
-        "academic advising",
         "student advising",
         "student mentoring"
       ]
@@ -1656,7 +1590,6 @@
       "name": "Instructional Design",
       "category": "education",
       "aliases": [
-        "instructional design",
         "instructional designer",
         "e-learning development"
       ]
@@ -1665,88 +1598,111 @@
       "name": "SEO",
       "category": "marketing",
       "aliases": [
-        "seo",
         "search engine optimization",
-        "search engine optimisation"
+        "search engine optimisation",
+        "organic search",
+        "keyword research",
+        "on-page seo",
+        "technical seo"
       ]
     },
     {
       "name": "SEM",
       "category": "marketing",
       "aliases": [
-        "sem",
         "search engine marketing",
-        "paid search"
+        "paid search",
+        "ppc",
+        "pay-per-click",
+        "adwords"
       ]
     },
     {
       "name": "Google Analytics",
       "category": "marketing",
       "aliases": [
-        "google analytics",
+        "universal analytics",
         "ga4",
-        "universal analytics"
+        "web analytics",
+        "traffic analysis",
+        "conversion tracking"
       ]
     },
     {
       "name": "Content Marketing",
       "category": "marketing",
       "aliases": [
-        "content marketing",
+        "content creation",
         "content strategy",
-        "content creation"
+        "content planning",
+        "editorial calendar",
+        "blog management"
       ]
     },
     {
       "name": "Social Media Marketing",
       "category": "marketing",
       "aliases": [
-        "social media marketing",
+        "smm",
         "social media management",
-        "smm"
+        "social media",
+        "community management",
+        "social media strategy",
+        "social media ads"
       ]
     },
     {
       "name": "Email Marketing",
       "category": "marketing",
       "aliases": [
-        "email marketing",
+        "email campaigns",
         "mailchimp",
-        "email campaigns"
+        "newsletter management",
+        "email automation",
+        "drip campaigns",
+        "email newsletters"
       ]
     },
     {
       "name": "Copywriting",
       "category": "marketing",
       "aliases": [
-        "copywriting",
         "copy writing",
-        "content writing"
+        "content writing",
+        "advertising copy",
+        "creative writing",
+        "persuasive writing",
+        "marketing copy"
       ]
     },
     {
       "name": "Brand Management",
       "category": "marketing",
       "aliases": [
-        "brand management",
+        "brand strategy",
         "branding",
-        "brand strategy"
+        "brand development",
+        "brand identity",
+        "brand guidelines",
+        "brand positioning"
       ]
     },
     {
       "name": "Market Research",
       "category": "marketing",
       "aliases": [
-        "market research",
         "market analysis",
-        "marketing research"
+        "marketing research",
+        "competitive analysis",
+        "consumer research",
+        "industry analysis",
+        "market intelligence"
       ]
     },
     {
       "name": "Digital Advertising",
       "category": "marketing",
       "aliases": [
-        "digital advertising",
         "paid media",
         "programmatic advertising"
       ]
@@ -1755,16 +1711,16 @@
       "name": "Google Ads",
       "category": "marketing",
       "aliases": [
-        "google ads",
-        "adwords",
-        "google adwords"
+        "google adwords",
+        "ppc campaigns",
+        "paid advertising",
+        "display advertising"
       ]
     },
     {
       "name": "Meta Ads",
       "category": "marketing",
       "aliases": [
-        "meta ads",
         "facebook ads",
         "instagram ads"
       ]
@@ -1773,52 +1729,60 @@
       "name": "CRM Software",
       "category": "sales",
       "aliases": [
-        "crm software",
+        "crm systems",
         "crm",
-        "crm systems"
+        "customer relationship management",
+        "hubspot"
       ]
     },
     {
       "name": "Salesforce",
       "category": "sales",
       "aliases": [
-        "salesforce",
+        "sfdc",
         "salesforce crm",
-        "sfdc"
+        "salesforce administrator",
+        "salesforce platform"
       ]
     },
     {
       "name": "Lead Generation",
       "category": "sales",
       "aliases": [
-        "lead generation",
+        "leadgen",
         "lead gen",
-        "leadgen"
+        "prospecting",
+        "pipeline development",
+        "lead qualification",
+        "lead nurturing"
       ]
     },
     {
       "name": "Negotiation",
       "category": "sales",
       "aliases": [
-        "negotiation",
         "negotiating",
-        "contract negotiation"
+        "contract negotiation",
+        "deal negotiation",
+        "price negotiation",
+        "sales negotiation"
       ]
     },
     {
       "name": "Account Management",
       "category": "sales",
       "aliases": [
-        "account management",
         "key account management",
-        "account manager"
+        "account manager",
+        "client management",
+        "customer success",
+        "account retention"
       ]
     },
     {
       "name": "Sales Forecasting",
       "category": "sales",
       "aliases": [
-        "sales forecasting",
         "pipeline management",
         "sales projections"
       ]
@@ -1827,7 +1791,6 @@
       "name": "B2B Sales",
       "category": "sales",
       "aliases": [
-        "b2b sales",
         "business-to-business sales",
         "b2b"
       ]
@@ -1836,7 +1799,6 @@
       "name": "Client Relationship Management",
       "category": "sales",
       "aliases": [
-        "client relationship management",
         "client relations",
         "relationship management"
       ]
@@ -1845,62 +1807,74 @@
       "name": "Recruiting",
       "category": "hr",
       "aliases": [
-        "recruiting",
-        "recruitment",
         "recruiter",
-        "technical recruiting"
+        "technical recruiting",
+        "recruitment",
+        "hiring",
+        "sourcing",
+        "interviewing",
+        "candidate screening"
       ]
     },
     {
       "name": "Talent Acquisition",
       "category": "hr",
       "aliases": [
-        "talent acquisition",
         "talent sourcing",
-        "candidate sourcing"
+        "candidate sourcing",
+        "talent recruitment",
+        "full-cycle recruiting",
+        "executive recruiting"
       ]
     },
     {
       "name": "Onboarding",
       "category": "hr",
       "aliases": [
-        "onboarding",
+        "new hire orientation",
         "employee onboarding",
-        "new hire orientation"
+        "onboarding programs",
+        "orientation programs"
       ]
     },
     {
       "name": "Payroll Administration",
       "category": "hr",
       "aliases": [
-        "payroll administration",
         "payroll",
-        "payroll processing"
+        "payroll processing",
+        "payroll management",
+        "compensation administration"
       ]
     },
     {
       "name": "Performance Management",
       "category": "hr",
       "aliases": [
-        "performance management",
+        "performance reviews",
         "appraisals",
-        "performance reviews"
+        "performance evaluations",
+        "goal setting",
+        "performance improvement",
+        "kpi management"
       ]
     },
     {
       "name": "Employee Relations",
       "category": "hr",
       "aliases": [
-        "employee relations",
         "er",
-        "grievance handling"
+        "grievance handling",
+        "workplace relations",
+        "conflict resolution",
+        "employee engagement",
+        "employee retention"
       ]
     },
     {
       "name": "HRIS",
       "category": "hr",
       "aliases": [
-        "hris",
         "hr information systems",
         "workday",
         "bamboohr"
@@ -1910,16 +1884,19 @@
       "name": "Training & Development",
       "category": "hr",
       "aliases": [
-        "training & development",
         "training and development",
-        "staff training"
+        "staff training",
+        "training",
+        "learning and development",
+        "employee training",
+        "professional development",
+        "workshop facilitation"
       ]
     },
     {
       "name": "Video Editing",
       "category": "media",
       "aliases": [
-        "video editing",
         "video editor",
         "video post-production"
       ]
@@ -1928,7 +1905,6 @@
       "name": "Adobe Premiere Pro",
       "category": "media",
       "aliases": [
-        "adobe premiere pro",
         "premiere pro",
         "premiere"
       ]
@@ -1937,7 +1913,6 @@
       "name": "Final Cut Pro",
       "category": "media",
       "aliases": [
-        "final cut pro",
         "fcp",
         "final cut"
       ]
@@ -1946,7 +1921,6 @@
       "name": "Adobe After Effects",
       "category": "media",
       "aliases": [
-        "adobe after effects",
         "after effects",
         "ae"
       ]
@@ -1955,7 +1929,6 @@
       "name": "Photography",
       "category": "media",
       "aliases": [
-        "photography",
         "photographer",
         "photo shooting"
       ]
@@ -1964,7 +1937,6 @@
       "name": "Podcast Production",
       "category": "media",
       "aliases": [
-        "podcast production",
         "podcasting",
         "podcast editing"
       ]
@@ -1973,7 +1945,6 @@
       "name": "Journalism",
       "category": "media",
       "aliases": [
-        "journalism",
         "journalist",
         "news writing"
       ]
@@ -1982,7 +1953,6 @@
       "name": "Screenwriting",
       "category": "media",
       "aliases": [
-        "screenwriting",
         "script writing",
         "scriptwriting"
       ]
@@ -1991,7 +1961,6 @@
       "name": "Audio Editing",
       "category": "media",
       "aliases": [
-        "audio editing",
         "audio post-production",
         "audio mixing"
       ]
@@ -2000,7 +1969,6 @@
       "name": "Sound Design",
       "category": "media",
       "aliases": [
-        "sound design",
         "sound designer",
         "audio design"
       ]
@@ -2009,48 +1977,55 @@
       "name": "Welding",
       "category": "trades",
       "aliases": [
-        "welding",
-        "mig welding",
-        "tig welding",
-        "arc welding",
+        "mig/tig",
         "welder",
         "mig",
+        "tig welding",
         "tig",
-        "mig/tig"
+        "mig welding",
+        "arc welding",
+        "certified welder",
+        "welding techniques"
       ]
     },
     {
       "name": "Plumbing",
       "category": "trades",
       "aliases": [
-        "plumbing",
+        "pipefitting",
         "plumber",
-        "pipefitting"
+        "pipe fitting",
+        "pipe installation",
+        "plumbing repair",
+        "plumbing systems"
       ]
     },
     {
       "name": "Electrical Wiring",
       "category": "trades",
       "aliases": [
-        "electrical wiring",
+        "electrician",
         "wiring",
-        "electrician"
+        "electrical installation",
+        "electrical systems",
+        "electrical repair"
       ]
     },
     {
       "name": "Carpentry",
       "category": "trades",
       "aliases": [
-        "carpentry",
+        "woodworking",
         "carpenter",
-        "woodworking"
+        "finish carpentry",
+        "rough carpentry",
+        "cabinet making"
       ]
     },
     {
       "name": "Masonry",
       "category": "trades",
       "aliases": [
-        "masonry",
         "bricklaying",
         "stonemasonry"
       ]
@@ -2059,17 +2034,19 @@
       "name": "HVAC",
       "category": "trades",
       "aliases": [
-        "hvac",
-        "heating, ventilation and air conditioning",
         "heating and air conditioning",
-        "climate control"
+        "climate control",
+        "heating, ventilation and air conditioning",
+        "heating ventilation and air conditioning",
+        "hvac systems",
+        "hvac installation",
+        "hvac maintenance"
       ]
     },
     {
       "name": "Construction Management",
       "category": "trades",
       "aliases": [
-        "construction management",
         "construction project management",
         "site management"
       ]
@@ -2078,7 +2055,6 @@
       "name": "Blueprint Reading",
       "category": "trades",
       "aliases": [
-        "blueprint reading",
         "blueprints",
         "reading blueprints"
       ]
@@ -2087,7 +2063,6 @@
       "name": "Forklift Operation",
       "category": "trades",
       "aliases": [
-        "forklift operation",
         "forklift",
         "forklift certified"
       ]
@@ -2096,7 +2071,6 @@
       "name": "Scaffolding",
       "category": "trades",
       "aliases": [
-        "scaffolding",
         "scaffold erection",
         "scaffolder"
       ]
@@ -2105,34 +2079,36 @@
       "name": "Supply Chain Management",
       "category": "logistics",
       "aliases": [
-        "supply chain management",
+        "scm",
         "supply chain",
-        "scm"
+        "logistics management"
       ]
     },
     {
       "name": "Warehouse Operations",
       "category": "logistics",
       "aliases": [
-        "warehouse operations",
+        "warehousing",
         "warehouse management",
-        "warehousing"
+        "inventory control",
+        "warehouse logistics",
+        "distribution center"
       ]
     },
     {
       "name": "Inventory Management",
       "category": "logistics",
       "aliases": [
-        "inventory management",
-        "inventory control",
-        "stock control"
+        "stock control",
+        "stock management",
+        "inventory planning",
+        "materials management"
       ]
     },
     {
       "name": "Freight Forwarding",
       "category": "logistics",
       "aliases": [
-        "freight forwarding",
         "freight",
         "customs brokerage"
       ]
@@ -2141,16 +2117,16 @@
       "name": "Route Planning",
       "category": "logistics",
       "aliases": [
-        "route planning",
+        "route optimisation",
         "route optimization",
-        "route optimisation"
+        "dispatching",
+        "delivery planning"
       ]
     },
     {
       "name": "Procurement",
       "category": "logistics",
       "aliases": [
-        "procurement",
         "purchasing",
         "vendor management"
       ]
@@ -2159,7 +2135,6 @@
       "name": "Fleet Management",
       "category": "logistics",
       "aliases": [
-        "fleet management",
         "fleet operations",
         "vehicle fleet"
       ]
@@ -2168,7 +2143,6 @@
       "name": "Demand Planning",
       "category": "logistics",
       "aliases": [
-        "demand planning",
         "demand forecasting",
         "s&op"
       ]
@@ -2177,7 +2151,6 @@
       "name": "Customs Compliance",
       "category": "logistics",
       "aliases": [
-        "customs compliance",
         "customs",
         "import/export compliance"
       ]
@@ -2186,34 +2159,36 @@
       "name": "Laboratory Techniques",
       "category": "science",
       "aliases": [
-        "laboratory techniques",
+        "bench work",
         "lab techniques",
-        "bench work"
+        "laboratory skills",
+        "lab procedures"
       ]
     },
     {
       "name": "PCR",
       "category": "science",
       "aliases": [
-        "pcr",
         "polymerase chain reaction",
-        "qpcr"
+        "qpcr",
+        "pcr testing",
+        "molecular diagnostics"
       ]
     },
     {
       "name": "Cell Culture",
       "category": "science",
       "aliases": [
-        "cell culture",
+        "mammalian cell culture",
         "cell culturing",
-        "mammalian cell culture"
+        "tissue culture",
+        "cell biology"
       ]
     },
     {
       "name": "Chromatography",
       "category": "science",
       "aliases": [
-        "chromatography",
         "hplc",
         "gc-ms"
       ]
@@ -2222,7 +2197,6 @@
       "name": "Spectroscopy",
       "category": "science",
       "aliases": [
-        "spectroscopy",
         "nmr",
         "mass spectrometry"
       ]
@@ -2231,7 +2205,6 @@
       "name": "Microscopy",
       "category": "science",
       "aliases": [
-        "microscopy",
         "light microscopy",
         "electron microscopy"
       ]
@@ -2240,7 +2213,6 @@
       "name": "Experimental Design",
       "category": "science",
       "aliases": [
-        "experimental design",
         "doe",
         "experiment design"
       ]
@@ -2249,7 +2221,6 @@
       "name": "Data Collection",
       "category": "science",
       "aliases": [
-        "data collection",
         "field data collection",
         "survey administration"
       ]
@@ -2258,7 +2229,6 @@
       "name": "Wet Lab",
       "category": "science",
       "aliases": [
-        "wet lab",
         "wet-lab",
         "wet laboratory"
       ]
@@ -2267,35 +2237,39 @@
       "name": "Food Safety",
       "category": "hospitality",
       "aliases": [
-        "food safety",
+        "haccp",
         "food hygiene",
-        "haccp"
+        "food handling",
+        "food sanitation",
+        "food safety certification"
       ]
     },
     {
       "name": "Culinary Arts",
       "category": "hospitality",
       "aliases": [
-        "culinary arts",
+        "culinary",
         "cooking",
         "chef",
-        "culinary"
+        "food preparation",
+        "culinary skills",
+        "kitchen management"
       ]
     },
     {
       "name": "Hotel Management",
       "category": "hospitality",
       "aliases": [
-        "hotel management",
         "hospitality management",
-        "front office management"
+        "front office management",
+        "front desk",
+        "hotel operations"
       ]
     },
     {
       "name": "Bartending",
       "category": "hospitality",
       "aliases": [
-        "bartending",
         "bartender",
         "mixology"
       ]
@@ -2304,7 +2278,6 @@
       "name": "Barista",
       "category": "hospitality",
       "aliases": [
-        "barista",
         "coffee preparation",
         "espresso"
       ]
@@ -2313,16 +2286,13 @@
       "name": "Guest Services",
       "category": "hospitality",
       "aliases": [
-        "guest services",
-        "guest relations",
-        "front desk"
+        "guest relations"
       ]
     },
     {
       "name": "Housekeeping Management",
       "category": "hospitality",
       "aliases": [
-        "housekeeping management",
         "housekeeping",
         "housekeeping operations"
       ]
@@ -2331,7 +2301,6 @@
       "name": "Event Planning",
       "category": "hospitality",
       "aliases": [
-        "event planning",
         "event management",
         "event coordination"
       ]
@@ -2340,7 +2309,6 @@
       "name": "Catering",
       "category": "hospitality",
       "aliases": [
-        "catering",
         "caterer",
         "banquet service"
       ]
@@ -2349,7 +2317,6 @@
       "name": "Food & Beverage Service",
       "category": "hospitality",
       "aliases": [
-        "food & beverage service",
         "f&b service",
         "food and beverage"
       ]
@@ -2358,34 +2325,37 @@
       "name": "Public Policy",
       "category": "public_sector",
       "aliases": [
-        "public policy",
         "policy analysis",
-        "policy development"
+        "policy development",
+        "government affairs"
       ]
     },
     {
       "name": "Grant Writing",
       "category": "public_sector",
       "aliases": [
-        "grant writing",
+        "grantwriting",
         "grant proposals",
-        "grantwriting"
+        "grant applications",
+        "funding proposals",
+        "grant management"
       ]
     },
     {
       "name": "Community Outreach",
       "category": "public_sector",
       "aliases": [
-        "community outreach",
+        "outreach programs",
         "community engagement",
-        "outreach programs"
+        "community organizing",
+        "community relations",
+        "public engagement"
       ]
     },
     {
       "name": "Case Work",
       "category": "public_sector",
       "aliases": [
-        "case work",
         "casework",
         "client casework"
       ]
@@ -2394,7 +2364,6 @@
       "name": "Urban Planning",
       "category": "public_sector",
       "aliases": [
-        "urban planning",
         "town planning",
         "city planning"
       ]
@@ -2403,7 +2372,6 @@
       "name": "Emergency Management",
       "category": "public_sector",
       "aliases": [
-        "emergency management",
         "disaster management",
         "emergency preparedness"
       ]
@@ -2412,7 +2380,6 @@
       "name": "Legislative Analysis",
       "category": "public_sector",
       "aliases": [
-        "legislative analysis",
         "legislative affairs",
         "bill analysis"
       ]
@@ -2421,7 +2388,6 @@
       "name": "Public Administration",
       "category": "public_sector",
       "aliases": [
-        "public administration",
         "public sector administration",
         "government administration"
       ]
@@ -2430,7 +2396,6 @@
       "name": "Customer Service",
       "category": "soft_skills",
       "aliases": [
-        "customer service",
         "client service",
         "customer support",
         "customer care"
@@ -2440,16 +2405,13 @@
       "name": "Public Speaking",
       "category": "soft_skills",
       "aliases": [
-        "public speaking",
-        "presentations",
-        "presentation skills"
+        "presentations"
       ]
     },
     {
       "name": "Microsoft Excel",
       "category": "tools",
       "aliases": [
-        "microsoft excel",
         "excel",
         "ms excel",
         "spreadsheets"
@@ -2459,7 +2421,6 @@
       "name": "Microsoft Word",
       "category": "tools",
       "aliases": [
-        "microsoft word",
         "word",
         "ms word"
       ]
@@ -2468,7 +2429,6 @@
       "name": "PowerPoint",
       "category": "tools",
       "aliases": [
-        "powerpoint",
         "ms powerpoint",
         "slides"
       ]
@@ -2477,7 +2437,6 @@
       "name": "Microsoft Office",
       "category": "tools",
       "aliases": [
-        "microsoft office",
         "ms office",
         "office suite"
       ]
@@ -2486,7 +2445,6 @@
       "name": "Google Workspace",
       "category": "tools",
       "aliases": [
-        "google workspace",
         "g suite",
         "google docs"
       ]

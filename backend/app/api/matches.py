@@ -7,6 +7,7 @@ POST /api/matches — run the explainable matching pipeline.
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import Response
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Session
 
@@ -42,6 +43,7 @@ def _build_response(match_row, output) -> MatchResponse:
         positive_factors=result.positive_factors,
         negative_factors=result.negative_factors,
         recommendations=result.recommendations,
+        prioritized_improvements=output.prioritized_improvements,
         disclaimer=result.disclaimer,
         skill_matches=output.skill_matches,
         experience=output.experience,
@@ -135,3 +137,66 @@ def create_match(request: MatchRequest, db: Session = Depends(get_db)):
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc
 
     return _build_response(match_row, output)
+
+
+@router.post(
+    "/matches/export-pdf",
+    status_code=status.HTTP_200_OK,
+    responses={400: {"model": ErrorResponse}, 404: {"model": ErrorResponse}},
+)
+def export_match_pdf(request: MatchRequest, db: Session = Depends(get_db)):
+    """
+    Generate and return a PDF report of the CV-Job match.
+
+    Accepts the same parameters as POST /api/matches.
+    Returns a PDF file.
+    """
+    has_texts = bool((request.cv_text or "").strip()) and bool(
+        (request.job_text or "").strip()
+    )
+
+    if not has_texts:
+        raise HTTPException(
+            400, detail="cv_text and job_text are required for PDF export"
+        )
+
+    try:
+        output = run_pipeline(
+            request.cv_text or "", request.job_text or "",
+            weights=request.weights,
+        )
+    except (MatchInputError, MatchNotFoundError) as exc:
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND if isinstance(exc, MatchNotFoundError) else 400,
+            detail=str(exc),
+        ) from exc
+    except WeightsError as exc:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc)) from exc
+
+    result = output.result
+
+    # Generate PDF
+    from app.services.pdf_generator import generate_match_report_pdf
+
+    # ml_details is already a dict
+    ml_dict = result.ml_details if isinstance(result.ml_details, dict) else None
+
+    pdf_bytes = generate_match_report_pdf(
+        overall_percent=result.overall_percent,
+        band=result.band,
+        ml_label=ml_dict.get("label", "N/A") if ml_dict else "N/A",
+        ml_score=ml_dict.get("fit_score", 0) if ml_dict else 0,
+        skill_matches=output.skill_matches,
+        prioritized_improvements=output.prioritized_improvements,
+        recommendations=result.recommendations,
+        ml_details=ml_dict,
+        disclaimer=result.disclaimer,
+    )
+
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f"attachment; filename=match-report-{result.overall_percent}pct.pdf"
+        },
+    )

@@ -161,12 +161,29 @@ def build_skill_evidence(
     """
     skills_text = ""
     work_text = ""
+    full_text = ""
     sections = getattr(candidate, "sections", None)
     if sections is not None:
         skills_text = (sections.get_section_text("skills") or "").lower()
         work_text = " ".join(
             sections.get_section_text(name) or "" for name in ("experience", "projects")
         ).lower()
+        full_text = (getattr(sections, "full_text", "") or "").lower()
+
+    # Fallback: if work_text is empty, use full CV text to detect skills in work history
+    # This handles CVs where section detection fails
+    search_text = work_text if work_text else full_text
+
+    # Also build text from structured work experience entries
+    work_entries_text = ""
+    for exp in getattr(candidate, "work_experience", []) or []:
+        parts = []
+        if exp.role:
+            parts.append(exp.role)
+        if exp.company:
+            parts.append(exp.company)
+        work_entries_text += " ".join(parts) + " "
+    work_entries_text = work_entries_text.lower()
 
     # Candidate skills observed anywhere on the CV (canonical names)
     cv_skill_names = {s.name.lower() for s in getattr(candidate, "skills", [])}
@@ -184,17 +201,16 @@ def build_skill_evidence(
         in_skills = bool(cand_lower) and (
             cand_lower in cv_skill_names or cand_lower in skills_text
         )
-        in_work = _mentions(work_text, candidate_skill) if candidate_skill else False
+        # Check work history using: section text OR full text OR work entries
+        in_work = (
+            _mentions(search_text, candidate_skill) if candidate_skill else False
+        )
+        if not in_work and candidate_skill and work_entries_text:
+            in_work = _mentions(work_entries_text, candidate_skill)
 
         se = months_by_skill.get(cand_lower)
         months = int(getattr(se, "estimated_months", 0) or 0) if se else 0
         all_sources = list(getattr(se, "sources", []) or []) if se else []
-        # The Phase 9 coarse fallback attaches the whole employment span to
-        # every CV-listed skill it cannot find in a role, marked with an
-        # "(inferred)" source note. Month estimates only corroborate evidence
-        # when a *named role* attributes the skill or the work text mentions
-        # it directly — otherwise the months are an artifact of the fallback,
-        # not evidence of use.
         sources = [s for s in all_sources if _INFERRED_SOURCE_NOTE not in s.lower()]
         if not in_work and not sources:
             months = 0
@@ -295,3 +311,128 @@ def build_recommendations(
         )
 
     return recs[:MAX_RECOMMENDATIONS]
+
+
+# ---------------------------------------------------------------------------
+# ML-powered prioritized recommendations
+# ---------------------------------------------------------------------------
+
+# Weight each scoring component contributes to the final score
+_COMPONENT_WEIGHTS = {
+    "skills": 0.30,
+    "semantic": 0.1875,
+    "experience": 0.15,
+    "education": 0.075,
+    "certifications": 0.0375,
+    "ml_model": 0.25,
+}
+
+
+def build_prioritized_improvements(
+    components: list[dict],
+    skill_evidence: list[SkillEvidence],
+    ml_explanation: dict | None = None,
+    skill_match_result=None,
+) -> list[dict]:
+    """
+    Generate ML-powered prioritized improvement actions.
+
+    Each action has:
+    - priority: "high" | "medium" | "low"
+    - impact: estimated score improvement (0-100 points)
+    - category: "skill" | "experience" | "education" | "semantic"
+    - action: specific instruction
+    - skill: related skill name (if applicable)
+    """
+    actions: list[dict] = []
+
+    # 1. Missing skills (highest priority)
+    for ev in skill_evidence:
+        if ev.status == "missing":
+            # Estimate impact: missing required skills hurt the most
+            skill_weight = _COMPONENT_WEIGHTS["skills"] * 100
+            # A missing skill costs roughly 1/N of the skill score
+            n_required = len([e for e in skill_evidence if e.status in ("missing", "partial", "matched")])
+            impact = round(skill_weight / max(n_required, 1), 1)
+            actions.append({
+                "priority": "high",
+                "impact": impact,
+                "category": "skill",
+                "action": f"Learn {ev.skill} — it's explicitly required. Add a project or certification showing practical experience.",
+                "skill": ev.skill,
+                "gap_type": "missing",
+            })
+
+    # 2. Partial matches (high priority)
+    for ev in skill_evidence:
+        if ev.status == "partial" and ev.strength in (WEAK, ABSENT):
+            skill_weight = _COMPONENT_WEIGHTS["skills"] * 100
+            n_partial = len([e for e in skill_evidence if e.status == "partial"])
+            impact = round(skill_weight * 0.5 / max(n_partial, 1), 1)
+            actions.append({
+                "priority": "high",
+                "impact": impact,
+                "category": "skill",
+                "action": f"Close the gap on {ev.skill} — you have {ev.candidate_skill} but need to show direct {ev.skill} experience.",
+                "skill": ev.skill,
+                "gap_type": "partial",
+            })
+
+    # 3. Weak evidence (medium priority)
+    for ev in skill_evidence:
+        if ev.status == "matched" and ev.strength == WEAK:
+            skill_weight = _COMPONENT_WEIGHTS["skills"] * 100
+            n_weak = len([e for e in skill_evidence if e.status == "matched" and e.strength == WEAK])
+            impact = round(skill_weight * 0.3 / max(n_weak, 1), 1)
+            actions.append({
+                "priority": "medium",
+                "impact": impact,
+                "category": "skill",
+                "action": f"Add work evidence for {ev.candidate_skill} — list it in your skills section but add a project or role description showing real use.",
+                "skill": ev.candidate_skill,
+                "gap_type": "weak_evidence",
+            })
+
+    # 4. Experience gaps
+    for comp in components:
+        if comp["name"] == "experience" and comp["raw_score"] < 0.7:
+            exp_weight = _COMPONENT_WEIGHTS["experience"] * 100
+            gap = 0.7 - comp["raw_score"]
+            impact = round(exp_weight * gap, 1)
+            actions.append({
+                "priority": "medium",
+                "impact": impact,
+                "category": "experience",
+                "action": "Quantify your achievements with metrics (team size, project scope, revenue impact) to strengthen experience evidence.",
+                "skill": None,
+                "gap_type": "experience",
+            })
+
+    # 5. Semantic gaps (from ML explanation)
+    if ml_explanation and ml_explanation.get("factors"):
+        for factor in ml_explanation["factors"]:
+            if factor.get("direction") == "negative" and factor.get("weight", 0) > 0.05:
+                actions.append({
+                    "priority": "medium",
+                    "impact": round(factor["weight"] * 100, 1),
+                    "category": "semantic",
+                    "action": f"Improve alignment on '{factor.get('feature', 'unknown')}' — {factor.get('evidence', 'add relevant keywords from the job description')}.",
+                    "skill": None,
+                    "gap_type": "semantic",
+                })
+
+    # Sort by impact (highest first)
+    actions.sort(key=lambda a: a["impact"], reverse=True)
+
+    # Deduplicate by skill
+    seen_skills = set()
+    deduped = []
+    for action in actions:
+        skill = action.get("skill")
+        if skill and skill in seen_skills:
+            continue
+        if skill:
+            seen_skills.add(skill)
+        deduped.append(action)
+
+    return deduped[:10]  # Top 10 actions

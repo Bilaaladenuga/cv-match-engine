@@ -26,7 +26,7 @@ from app.nlp.job_parser import parse_job_description
 from app.nlp.skill_matcher import match_skills
 from app.scoring.certification_matcher import match_certifications
 from app.scoring.education_matcher import match_education
-from app.scoring.improvement_engine import build_skill_evidence
+from app.scoring.improvement_engine import build_skill_evidence, build_prioritized_improvements
 from app.scoring.matching_model import MatcherInputs, MatchResult, compute_match_score
 
 logger = logging.getLogger(__name__)
@@ -67,6 +67,7 @@ class PipelineOutput:
     certifications: dict
     skill_evidence: list[dict] = field(default_factory=list)
     ml_details: dict | None = None
+    prioritized_improvements: list[dict] = field(default_factory=list)
 
 
 # ---------------------------------------------------------------------------
@@ -143,6 +144,17 @@ def run_pipeline(
         weights=weights,
     )
 
+    # Generate ML-powered prioritized improvements
+    ml_explanation = None
+    if ml_result and hasattr(ml_result, 'explanation') and ml_result.explanation:
+        ml_explanation = ml_result.explanation.to_dict() if hasattr(ml_result.explanation, 'to_dict') else None
+    prioritized_improvements = build_prioritized_improvements(
+        components=[c.to_dict() for c in result.components],
+        skill_evidence=skill_evidence,
+        ml_explanation=ml_explanation,
+        skill_match_result=skill_match,
+    )
+
     return PipelineOutput(
         result=result,
         candidate_name=candidate.name,
@@ -157,6 +169,7 @@ def run_pipeline(
         certifications=certification_match.to_dict(),
         skill_evidence=[ev.to_dict() for ev in skill_evidence],
         ml_details=result.ml_details,
+        prioritized_improvements=prioritized_improvements,
     )
 
 

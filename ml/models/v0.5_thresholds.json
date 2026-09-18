@@ -1,0 +1,12 @@
+{
+  "model_version": "match-model-v0.5.0-improved",
+  "optimization_method": "grid_search_macro_f1",
+  "train_rows": 2100,
+  "test_rows": 1759,
+  "thresholds": {
+    "No Fit": 0.35,
+    "Potential Fit": 0.35,
+    "Good Fit": 0.3
+  },
+  "macro_f1": 0.3846
+}

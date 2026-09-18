@@ -19,28 +19,28 @@ from dataclasses import dataclass, field
 # Common section headings (case-insensitive matching)
 SECTION_PATTERNS: dict[str, list[str]] = {
     "summary": [
-        r"^\s*(summary|professional\s+summary|career\s+summary|objective|profile|about\s+me)\s*$",
+        r"^\s*(summary|professional\s+summary|career\s+summary|objective|profile|about\s+me|overview)\s*$",
     ],
     "skills": [
-        r"^\s*(skills?|technical\s+skills?|competencies|technologies|tools|proficiencies)\s*$",
+        r"^\s*(skills?|technical\s+skills?|competencies|technologies|tools|proficiencies|expertise|core\s+skills?|key\s+skills?)\s*$",
     ],
     "experience": [
-        r"^\s*(experience|work\s+experience|employment|work\s+history|professional\s+experience|career\s+history)\s*$",
+        r"^\s*(experience|work\s+experience|employment|work\s+history|professional\s+experience|career\s+history|professional\s+background|employment\s+history|career\s+summary\s*&?\s*experience|work\s+experience\s*&?\s*education)\s*$",
     ],
     "education": [
-        r"^\s*(education|academic|qualifications?|degree|university|studies)\s*$",
+        r"^\s*(education|academic|qualifications?|degree|university|studies|academic\s+background|education\s*&?\s*qualifications?)\s*$",
     ],
     "certifications": [
-        r"^\s*(certifications?|licenses?|credentials|certificates?)\s*$",
+        r"^\s*(certifications?|licenses?|credentials|certificates?|professional\s+certifications?)\s*$",
     ],
     "projects": [
-        r"^\s*(projects?|portfolio|personal\s+projects?|key\s+projects?)\s*$",
+        r"^\s*(projects?|portfolio|personal\s+projects?|key\s+projects?|notable\s+projects?)\s*$",
     ],
     "languages": [
-        r"^\s*(languages?|foreign\s+languages?)\s*$",
+        r"^\s*(languages?|foreign\s+languages?|language\s+skills?)\s*$",
     ],
     "contact": [
-        r"^\s*(contact|contact\s+info|personal\s+info|reach)\s*$",
+        r"^\s*(contact|contact\s+info|personal\s+info|reach|contact\s+information)\s*$",
     ],
 }
 
@@ -99,20 +99,29 @@ class DetectedSections:
 def _is_heading_line(line: str) -> bool:
     """Heuristic: a heading is a short, possibly ALL CAPS or Title Case line."""
     stripped = line.strip()
-    if not stripped or len(stripped) > 60:
+    if not stripped or len(stripped) > 80:
         return False
     # ALL CAPS
-    if stripped.isupper() and len(stripped.split()) <= 5:
+    if stripped.isupper() and len(stripped.split()) <= 7:
         return True
     # Title Case or single word
-    return stripped.istitle() and len(stripped.split()) <= 5
+    if stripped.istitle() and len(stripped.split()) <= 7:
+        return True
+    # Mixed case with common heading words
+    heading_words = {"experience", "skills", "education", "summary", "projects", "certifications", "contact", "profile", "background", "history", "employment", "qualifications", "expertise", "competencies", "languages", "objectives", "about"}
+    words = set(stripped.lower().replace("&", "").replace(":", "").split())
+    if words & heading_words and len(stripped.split()) <= 7:
+        return True
+    return False
 
 
 def _classify_heading(heading: str) -> str | None:
     """Try to match a heading line against known section patterns."""
+    # Strip trailing punctuation (colons, periods, dashes) for matching
+    cleaned = re.sub(r"[\s:.\-–—]+$", "", heading).strip()
     for section_type, patterns in SECTION_PATTERNS.items():
         for pattern in patterns:
-            if re.match(pattern, heading, re.IGNORECASE):
+            if re.match(pattern, cleaned, re.IGNORECASE):
                 return section_type
     return None
 
