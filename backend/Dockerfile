@@ -1,8 +1,8 @@
 # Backend Dockerfile for Render deployment
-# Multi-stage build for smaller final image
+# Docker context: repo root (.)
 
 # Stage 1: Build dependencies
-FROM python:3.11-slim as builder
+FROM python:3.11-slim AS builder
 
 WORKDIR /app
 
@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first (for Docker layer caching)
-COPY requirements.txt .
+COPY backend/requirements.txt .
 
 # Install Python dependencies
 RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
@@ -26,12 +26,10 @@ WORKDIR /app
 COPY --from=builder /install /usr/local
 
 # Copy application code
-COPY . .
+COPY backend/ ./backend/
 
-# Copy ML models from parent directory (repo root)
-COPY ml/models/v0.5_ensemble.joblib ./ml/models/v0.5_ensemble.joblib
-COPY ml/models/v0.5_platt_params.json ./ml/models/v0.5_platt_params.json
-COPY ml/models/v0.5_thresholds.json ./ml/models/v0.5_thresholds.json
+# Copy ML models (backend references ml/models relative to repo root)
+COPY ml/models/ ./ml/models/
 
 # Create non-root user
 RUN useradd --create-home --shell /bin/bash appuser
@@ -45,4 +43,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" || exit 1
 
 # Run the application
+WORKDIR /app/backend
 CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
