@@ -61,7 +61,7 @@ export default function HistoryPage() {
               Past Analyses
             </h1>
             <p className="text-body text-slate mt-2">
-              Saved in this browser only. Clear your browser data and they're gone.
+              Saved in this browser only. Clear your browser data and they are gone.
             </p>
           </div>
           <Link href="/analyze" className="btn-primary">

@@ -55,7 +55,7 @@ export default function HomePage() {
               Do
             </h1>
             <p className="text-body text-slate mb-8 max-w-md leading-relaxed">
-              Drop in your CV and a job description. You'll get a score
+              Drop in your CV and a job description. You will get a score
               with clear feedback on what to fix and why.
             </p>
             <div className="flex items-center gap-4">
