@@ -11,7 +11,7 @@ services:
           name: career-match-db
           property: connectionString
       - key: SECRET_KEY
-        generateValue: true
+        value: uEC6dodPtE7F9Cu0SLn4CWhKlLRDcsb60DonlhAaUGo
       - key: DEBUG
         value: false
       - key: CORS_ORIGINS
