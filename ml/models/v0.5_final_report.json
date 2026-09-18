@@ -1,0 +1,122 @@
+{
+  "model_version": "match-model-v0.5.0-final",
+  "results": {
+    "accuracy": 0.4173,
+    "macro_f1": 0.3831,
+    "per_class_f1": {
+      "No Fit": 0.5335,
+      "Potential Fit": 0.2972,
+      "Good Fit": 0.3186
+    },
+    "confusion_matrix": [
+      [
+        454,
+        187,
+        216
+      ],
+      [
+        192,
+        129,
+        123
+      ],
+      [
+        199,
+        108,
+        151
+      ]
+    ],
+    "good_vs_rest_auc": 0.5366,
+    "calibration": [
+      {
+        "bin": "[0.0,0.2)",
+        "n": 925,
+        "predicted": 0.0325,
+        "empirical": 0.2335
+      },
+      {
+        "bin": "[0.2,0.4)",
+        "n": 339,
+        "predicted": 0.3024,
+        "empirical": 0.2861
+      },
+      {
+        "bin": "[0.4,0.6)",
+        "n": 292,
+        "predicted": 0.4888,
+        "empirical": 0.2979
+      },
+      {
+        "bin": "[0.6,0.8)",
+        "n": 195,
+        "predicted": 0.6829,
+        "empirical": 0.2821
+      },
+      {
+        "bin": "[0.8,1.0)",
+        "n": 8,
+        "predicted": 0.8255,
+        "empirical": 0.375
+      }
+    ],
+    "ordinal_errors": {
+      "adjacent_errors": 610,
+      "distant_errors": 415,
+      "overrated": 526,
+      "underrated": 499
+    }
+  },
+  "feature_names": [
+    "skill_overlap_ratio",
+    "required_skill_coverage",
+    "required_plus_partial",
+    "preferred_skill_coverage",
+    "semantic_similarity",
+    "experience_gap_years",
+    "experience_score",
+    "experience_data_available",
+    "seniority_match",
+    "education_level_score",
+    "education_field_score",
+    "certification_match_ratio",
+    "job_title_similarity",
+    "n_candidate_skills",
+    "n_required_skills",
+    "n_preferred_skills",
+    "cov_programming_required",
+    "cov_frontend_required",
+    "cov_backend_required",
+    "cov_database_required",
+    "cov_cloud_required",
+    "cov_devops_required",
+    "cov_data_science_required",
+    "cov_machine_learning_required",
+    "cov_other_required",
+    "cov_programming_n",
+    "cov_frontend_n",
+    "cov_backend_n",
+    "cov_database_n",
+    "cov_cloud_n",
+    "cov_devops_n",
+    "cov_data_science_n",
+    "cov_machine_learning_n",
+    "cv_word_count",
+    "skills_per_100_words",
+    "cv_length_bucket",
+    "total_skill_coverage",
+    "skills_per_required",
+    "skill_surplus_ratio",
+    "skills_per_year",
+    "mean_category_coverage",
+    "min_category_coverage",
+    "max_category_coverage",
+    "coverage_variance",
+    "semantic_skill_gap",
+    "semantic_skill_product",
+    "edu_seniority_alignment",
+    "skill_density_squared",
+    "title_skill_alignment"
+  ],
+  "n_original_features": 36,
+  "n_augmented_features": 49,
+  "n_augmented_samples": 2400
+}
