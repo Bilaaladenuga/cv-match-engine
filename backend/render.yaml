@@ -3,7 +3,7 @@ services:
     name: career-match-api
     runtime: docker
     plan: free
-    dockerfilePath: ./Dockerfile
+    dockerfilePath: ./backend/Dockerfile
     dockerContext: .
     envVars:
       - key: DATABASE_URL

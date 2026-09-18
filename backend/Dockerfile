@@ -28,6 +28,11 @@ COPY --from=builder /install /usr/local
 # Copy application code
 COPY . .
 
+# Copy ML models from parent directory (repo root)
+# This requires Docker context to be set to repo root
+COPY ml/models/ ./ml/models/
+COPY ml/datasets/ ./ml/datasets/
+
 # Create non-root user
 RUN useradd --create-home --shell /bin/bash appuser
 USER appuser
@@ -36,7 +41,7 @@ USER appuser
 EXPOSE 8000
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" || exit 1
 
 # Run the application
