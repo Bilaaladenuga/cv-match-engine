@@ -47,11 +47,24 @@ app.add_middleware(RequestTrackingMiddleware)
 
 # CORS
 import json
+import logging
+
+raw_cors = settings.CORS_ORIGINS
+logging.getLogger(__name__).info(f"CORS_ORIGINS raw value: {raw_cors!r}")
 
 try:
-    cors_origins = json.loads(settings.CORS_ORIGINS)
+    cors_origins = json.loads(raw_cors)
+    if isinstance(cors_origins, str):
+        cors_origins = [cors_origins]
 except (json.JSONDecodeError, TypeError):
-    cors_origins = [o.strip() for o in settings.CORS_ORIGINS.split(",") if o.strip()]
+    cors_origins = [o.strip().strip('"').strip("'") for o in raw_cors.split(",") if o.strip()]
+
+# Always include these fallbacks
+for origin in ["https://cv-match-engine-rho.vercel.app", "https://*.onrender.com"]:
+    if origin not in cors_origins:
+        cors_origins.append(origin)
+
+logging.getLogger(__name__).info(f"CORS_ORIGINS parsed: {cors_origins}")
 
 app.add_middleware(
     CORSMiddleware,
