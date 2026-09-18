@@ -41,6 +41,7 @@ coverage/
 *.pth
 ml/models/*.pkl
 ml/models/*.joblib
+!ml/models/v0.5_ensemble.joblib
 
 # Data (keep sample, ignore large files)
 data/raw/*

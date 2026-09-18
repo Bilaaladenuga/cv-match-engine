@@ -29,9 +29,9 @@ COPY --from=builder /install /usr/local
 COPY . .
 
 # Copy ML models from parent directory (repo root)
-# This requires Docker context to be set to repo root
-COPY ml/models/ ./ml/models/
-COPY ml/datasets/ ./ml/datasets/
+COPY ml/models/v0.5_ensemble.joblib ./ml/models/v0.5_ensemble.joblib
+COPY ml/models/v0.5_platt_params.json ./ml/models/v0.5_platt_params.json
+COPY ml/models/v0.5_thresholds.json ./ml/models/v0.5_thresholds.json
 
 # Create non-root user
 RUN useradd --create-home --shell /bin/bash appuser
