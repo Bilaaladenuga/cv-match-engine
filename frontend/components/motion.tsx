@@ -133,7 +133,6 @@ export function CountUp({
   useEffect(() => {
     if (!isInView) return;
 
-    let start = 0;
     const end = target;
     const stepTime = (duration * 1000) / end;
     const minStep = 16;
