@@ -21,6 +21,13 @@ import {
 } from "recharts";
 import type { MatchReport, SkillEvidence } from "@/lib/types";
 import { BandBadge, Card, CardHeader } from "./ui";
+import {
+  AnimatedScore,
+  AnimatedBar,
+  StaggerContainer,
+  StaggerItem,
+  ScrollReveal,
+} from "./motion";
 
 const statusIcon = {
   matched: <CheckCircle2 className="h-4 w-4 text-carbon" />,
@@ -361,41 +368,7 @@ function SkillCoverageDonut({ evidence }: { evidence: SkillEvidence[] }) {
 }
 
 function ScoreDial({ percent }: { percent: number }) {
-  const size = 120;
-  const radius = (size - 12) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (percent / 100) * circumference;
-
-  return (
-    <div className="relative" style={{ width: size, height: size }}>
-      <svg width={size} height={size} className="rotate-[-90deg]">
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          stroke="#c6c6c6"
-          strokeWidth="6"
-        />
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          stroke="#000000"
-          strokeWidth="6"
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          strokeLinecap="round"
-          className="transition-all duration-700"
-        />
-      </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="font-display text-heading text-carbon">{percent}</span>
-        <span className="label-mono text-smoke">/100</span>
-      </div>
-    </div>
-  );
+  return <AnimatedScore percent={percent} />;
 }
 
 export function MatchReportView({
@@ -467,7 +440,7 @@ export function MatchReportView({
           subtitle="Each component's raw score and its weight"
         />
         <div className="space-y-5 px-6 py-5">
-          {report.components.map((c) => (
+          {report.components.map((c, i) => (
             <div key={c.name}>
               <div className="flex items-center justify-between mb-1">
                 <span className="label-mono text-smoke">
@@ -477,12 +450,10 @@ export function MatchReportView({
                   {Math.round(c.raw_score * 100)}%
                 </span>
               </div>
-              <div className="h-1.5 rounded-full bg-ash/30 overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-carbon transition-all"
-                  style={{ width: `${Math.round(c.raw_score * 100)}%` }}
-                />
-              </div>
+              <AnimatedBar
+                value={Math.round(c.raw_score * 100)}
+                delay={i * 0.1}
+              />
               {c.evidence ? (
                 <p className="mt-1 label-mono text-smoke">{c.evidence}</p>
               ) : null}
@@ -516,11 +487,13 @@ export function MatchReportView({
                 <th className="py-2.5">Sources</th>
               </tr>
             </thead>
-            <tbody>
+            <StaggerContainer>
               {evidence.map((ev, i) => (
-                <SkillEvidenceRow key={`${ev.skill}-${i}`} ev={ev} />
+                <StaggerItem key={`${ev.skill}-${i}`}>
+                  <SkillEvidenceRow ev={ev} />
+                </StaggerItem>
               ))}
-            </tbody>
+            </StaggerContainer>
           </table>
         </div>
       </Card>
@@ -592,7 +565,8 @@ export function MatchReportView({
 
       {/* AI Fit Prediction */}
       {ml && ml.label !== undefined ? (
-        <Card className="overflow-hidden">
+        <ScrollReveal>
+          <Card className="overflow-hidden">
           <div className="bg-carbon px-6 py-4">
             <h3 className="font-body text-sub font-medium uppercase text-paper">
               AI Fit Prediction
@@ -680,11 +654,13 @@ export function MatchReportView({
             )}
           </div>
         </Card>
+        </ScrollReveal>
       ) : null}
 
       {/* Feature Importance */}
       {ml?.explanation?.factors && ml.explanation.factors.length > 0 ? (
-        <Card>
+        <ScrollReveal>
+          <Card>
           <CardHeader
             title="What affected your score"
             subtitle="Top factors that helped or hurt your match"
@@ -721,6 +697,7 @@ export function MatchReportView({
             </ul>
           </div>
         </Card>
+        </ScrollReveal>
       ) : null}
 
       {/* Disclaimer */}
