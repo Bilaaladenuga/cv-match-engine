@@ -60,7 +60,7 @@ h1, h2, h3, h4, h5, h6 {
 
   /* Card - White on Canvas */
   .card {
-    @apply rounded-card bg-paper p-card;
+    @apply rounded-card bg-paper p-6;
   }
 
   .card-hover {
@@ -73,7 +73,7 @@ h1, h2, h3, h4, h5, h6 {
 
   /* Inverted Card - Dark */
   .card-inverted {
-    @apply rounded-card-lg bg-carbon p-card text-paper;
+    @apply rounded-card-lg bg-carbon p-6 text-paper;
   }
 
   /* Tag - Mint */

@@ -253,7 +253,7 @@ function FeatureCard({
   description: string;
 }) {
   return (
-    <div className="bg-graphite rounded-card p-card">
+    <div className="bg-graphite rounded-card p-6">
       <div className="h-12 w-12 rounded-lg bg-mint text-carbon flex items-center justify-center mb-4">
         {icon}
       </div>
