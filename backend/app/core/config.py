@@ -33,7 +33,7 @@ class Settings(BaseSettings):
     MODEL_VERSION: str = "match-model-v1.0"
 
     # CORS
-    CORS_ORIGINS: list[str] = ["http://localhost:3000"]
+    CORS_ORIGINS: str = "http://localhost:3000"
 
     model_config = {
         "env_file": ".env",

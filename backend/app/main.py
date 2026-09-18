@@ -46,9 +46,16 @@ app = FastAPI(
 app.add_middleware(RequestTrackingMiddleware)
 
 # CORS
+import json
+
+try:
+    cors_origins = json.loads(settings.CORS_ORIGINS)
+except (json.JSONDecodeError, TypeError):
+    cors_origins = [o.strip() for o in settings.CORS_ORIGINS.split(",") if o.strip()]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.CORS_ORIGINS,
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
