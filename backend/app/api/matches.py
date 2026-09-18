@@ -44,6 +44,7 @@ def _build_response(match_row, output) -> MatchResponse:
         negative_factors=result.negative_factors,
         recommendations=result.recommendations,
         prioritized_improvements=output.prioritized_improvements,
+        ats_details=output.ats_details,
         disclaimer=result.disclaimer,
         skill_matches=output.skill_matches,
         experience=output.experience,
@@ -190,6 +191,7 @@ def export_match_pdf(request: MatchRequest, db: Session = Depends(get_db)):
         prioritized_improvements=output.prioritized_improvements,
         recommendations=result.recommendations,
         ml_details=ml_dict,
+        ats_details=output.ats_details,
         disclaimer=result.disclaimer,
     )
 

@@ -28,6 +28,7 @@ from app.scoring.certification_matcher import match_certifications
 from app.scoring.education_matcher import match_education
 from app.scoring.improvement_engine import build_skill_evidence, build_prioritized_improvements
 from app.scoring.matching_model import MatcherInputs, MatchResult, compute_match_score
+from app.ml.ats_checker import check_ats_friendliness
 
 logger = logging.getLogger(__name__)
 
@@ -68,6 +69,7 @@ class PipelineOutput:
     skill_evidence: list[dict] = field(default_factory=list)
     ml_details: dict | None = None
     prioritized_improvements: list[dict] = field(default_factory=list)
+    ats_details: dict | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -155,6 +157,19 @@ def run_pipeline(
         skill_match_result=skill_match,
     )
 
+    # ATS friendliness check
+    sections_found = []
+    has_skills = False
+    if candidate.sections:
+        sections_found = [s.name for s in candidate.sections.sections]
+        has_skills = "skills" in sections_found
+    ats_result = check_ats_friendliness(
+        cv_text=cv_text,
+        job_text=job_text,
+        sections_found=sections_found,
+        has_skills_section=has_skills,
+    )
+
     return PipelineOutput(
         result=result,
         candidate_name=candidate.name,
@@ -170,6 +185,7 @@ def run_pipeline(
         skill_evidence=[ev.to_dict() for ev in skill_evidence],
         ml_details=result.ml_details,
         prioritized_improvements=prioritized_improvements,
+        ats_details=ats_result.to_dict(),
     )
 
 

@@ -214,6 +214,51 @@ class MatchReportPDF(FPDF):
             self.multi_cell(175, 6, _safe(f" {rec}"))
             self.ln(1)
 
+    def add_ats_details(self, ats_details: dict):
+        """Add ATS friendliness section."""
+        if not ats_details:
+            return
+
+        self.section_title("ATS Friendliness")
+
+        score = ats_details.get("overall_score", 0)
+        pass_est = ats_details.get("pass_estimate", "unknown")
+
+        # Score box
+        self.set_fill_color(*LIGHT_GRAY)
+        self.rect(10, self.get_y(), 190, 15, style="F")
+
+        self.set_font("Helvetica", "B", 14)
+        if score >= 75:
+            self.set_text_color(*GREEN)
+            status = "LIKELY TO PASS"
+        elif score >= 50:
+            self.set_text_color(*YELLOW)
+            status = "BORDERLINE"
+        else:
+            self.set_text_color(*RED)
+            status = "LIKELY TO FAIL"
+
+        self.set_xy(15, self.get_y() + 2)
+        self.cell(40, 10, f"{score}/100", align="C")
+        self.set_font("Helvetica", "", 10)
+        self.cell(140, 10, status, align="C")
+        self.ln(15)
+
+        # Suggestions
+        suggestions = ats_details.get("suggestions", [])
+        if suggestions:
+            self.set_font("Helvetica", "B", 9)
+            self.set_text_color(*NAVY)
+            self.cell(0, 6, "ATS Improvements:", new_x="LMARGIN", new_y="NEXT")
+            self.set_font("Helvetica", "", 8)
+            for sug in suggestions[:5]:
+                if self.get_y() > 260:
+                    self.add_page()
+                self.set_text_color(*BLACK)
+                self.multi_cell(0, 5, _safe(f"  * {sug}"))
+                self.ln(1)
+
     def add_ml_details(self, ml_details: dict):
         """Add ML model details."""
         if not ml_details:
@@ -277,6 +322,7 @@ def generate_match_report_pdf(
     prioritized_improvements: list[dict],
     recommendations: list[str],
     ml_details: dict | None = None,
+    ats_details: dict | None = None,
     disclaimer: str = "",
 ) -> bytes:
     """
@@ -297,6 +343,10 @@ def generate_match_report_pdf(
 
     # Score summary
     pdf.add_score_summary(overall_percent, band, ml_label, ml_score)
+
+    # ATS details
+    if ats_details:
+        pdf.add_ats_details(ats_details)
 
     # Skill matches
     if skill_matches:

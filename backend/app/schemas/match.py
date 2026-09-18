@@ -63,6 +63,7 @@ class MatchResponse(BaseModel):
     negative_factors: list[str]
     recommendations: list[str]
     prioritized_improvements: list[dict] | None = None  # ML-powered prioritized actions
+    ats_details: dict | None = None  # ATS friendliness analysis
     disclaimer: str
     skill_matches: list[dict] | None = None
     experience: dict | None = None
