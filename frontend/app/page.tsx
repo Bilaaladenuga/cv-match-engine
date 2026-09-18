@@ -2,175 +2,248 @@ import Link from "next/link";
 import {
   FileText,
   Brain,
-  BarChart3,
-  ArrowRight,
-  CheckCircle2,
   Shield,
+  CheckCircle2,
+  ArrowRight,
+  Upload,
+  BarChart3,
+  Lightbulb,
   Zap,
 } from "lucide-react";
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen">
-      {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-hero">
-        {/* Dot overlay */}
-        <div className="absolute inset-0 dot-pattern-bg opacity-40" />
-        {/* Gradient orbs */}
-        <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full bg-primary-600/20 blur-3xl" />
-        <div className="absolute -bottom-32 -right-32 h-96 w-96 rounded-full bg-accent-500/15 blur-3xl" />
-
-        <div className="relative mx-auto max-w-5xl px-6 py-24 text-center">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium text-white/70 backdrop-blur-sm">
-            <Zap className="h-3 w-3 text-accent-400" />
-            Explainable ML-powered analysis
-          </div>
-
-          <h1 className="font-heading text-5xl font-bold leading-tight tracking-tight text-white md:text-6xl">
-            Understand how well
-            <br />
-            <span className="bg-gradient-to-r from-blue-300 via-accent-300 to-emerald-300 bg-clip-text text-transparent">
-              your CV matches
-            </span>{" "}
-            the job
-          </h1>
-
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-white/60">
-            Upload your CV and a job description to receive an explainable
-            compatibility analysis with matched skills, skill gaps, and
-            actionable recommendations.
-          </p>
-
-          <div className="mt-10 flex items-center justify-center gap-4">
+    <main className="bg-canvas min-h-screen">
+      {/* Navigation */}
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center py-6">
+        <div className="flex items-center gap-8 rounded-pill bg-paper px-8 py-3">
+          <span className="font-display text-xl uppercase tracking-tight text-carbon">
+            CV Match
+          </span>
+          <div className="flex items-center gap-6">
             <Link
               href="/analyze"
-              className="group inline-flex items-center gap-2 rounded-xl bg-white px-7 py-3.5 font-heading text-sm font-semibold text-primary-700 shadow-lg shadow-black/10 transition-all duration-200 hover:bg-white/95 hover:shadow-xl hover:shadow-black/15 hover:-translate-y-0.5"
+              className="text-body font-medium text-slate hover:text-carbon transition-colors"
             >
-              Get Started
-              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+              Analyze
             </Link>
             <Link
-              href="/dashboard"
-              className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-7 py-3.5 font-heading text-sm font-semibold text-white/80 backdrop-blur-sm transition-all duration-200 hover:bg-white/10 hover:text-white hover:border-white/25"
+              href="/history"
+              className="text-body font-medium text-slate hover:text-carbon transition-colors"
             >
-              View Dashboard
+              History
+            </Link>
+            <Link href="/analyze" className="btn-primary text-sm">
+              Get Started
             </Link>
           </div>
         </div>
-      </section>
+      </nav>
 
-      {/* Features */}
-      <section className="bg-gradient-surface">
-        <div className="mx-auto max-w-6xl px-6 py-20">
-          <div className="mb-12 text-center">
-            <h2 className="font-heading text-3xl font-bold tracking-tight text-gray-900">
-              How It Works
-            </h2>
-            <p className="mt-3 text-gray-500">
-              Three steps to an explainable compatibility report
+      {/* Hero Section */}
+      <section className="px-8 pt-40 pb-section max-w-page mx-auto">
+        <div className="grid grid-cols-2 gap-16 items-center">
+          <div>
+            <div className="tag mb-6">AI-Powered Analysis</div>
+            <h1 className="heading-display text-display-xl text-carbon mb-6">
+              Know Your
+              <br />
+              CV Score
+              <br />
+              Before They
+              <br />
+              Do
+            </h1>
+            <p className="text-body text-slate mb-8 max-w-md leading-relaxed">
+              Drop in your CV and a job description. You'll get a score
+              with clear feedback on what to fix and why.
             </p>
+            <div className="flex items-center gap-4">
+              <Link href="/analyze" className="btn-primary">
+                Start Analyzing
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+              <Link href="#how-it-works" className="btn-ghost">
+                How It Works
+              </Link>
+            </div>
           </div>
+          <div className="relative">
+            <div className="card-inverted p-12">
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <span className="label-mono">COMPATIBILITY</span>
+                  <span className="tag">87%</span>
+                </div>
+                <div className="h-2 rounded-full bg-graphite overflow-hidden">
+                  <div className="h-full w-[87%] bg-mint rounded-full" />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-graphite rounded-card p-4">
+                    <span className="label-mono block mb-1">SKILLS</span>
+                    <span className="font-display text-heading-lg text-paper">92%</span>
+                  </div>
+                  <div className="bg-graphite rounded-card p-4">
+                    <span className="label-mono block mb-1">EXPERIENCE</span>
+                    <span className="font-display text-heading-lg text-paper">85%</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 text-smoke text-body-sm">
+                  <CheckCircle2 className="h-4 w-4 text-mint" />
+                  <span>Strong match for Senior Backend Engineer</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+      {/* Stats Bar */}
+      <section className="bg-carbon py-12">
+        <div className="max-w-page mx-auto px-8 grid grid-cols-4 gap-8">
+          <div>
+            <span className="font-display text-display text-paper">280+</span>
+            <p className="label-mono text-smoke mt-1">Skills Tracked</p>
+          </div>
+          <div>
+            <span className="font-display text-display text-paper">26</span>
+            <p className="label-mono text-smoke mt-1">Career Domains</p>
+          </div>
+          <div>
+            <span className="font-display text-display text-paper">49</span>
+            <p className="label-mono text-smoke mt-1">ML Features</p>
+          </div>
+          <div>
+            <span className="font-display text-display text-paper">100%</span>
+            <p className="label-mono text-smoke mt-1">Private & Local</p>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section id="how-it-works" className="py-section max-w-page mx-auto px-8">
+        <div className="mb-12">
+          <span className="label-mono block mb-2">PROCESS</span>
+          <h2 className="heading-display text-display text-carbon">
+            How It Works
+          </h2>
+        </div>
+        <div className="grid grid-cols-3 gap-8">
+          <StepCard
+            number="01"
+            icon={<Upload className="h-6 w-6" />}
+            title="Upload Documents"
+            description="Paste your CV and the job description. We never store your files. Analysis happens on the fly."
+          />
+          <StepCard
+            number="02"
+            icon={<Brain className="h-6 w-6" />}
+            title="AI Analysis"
+            description="49 machine learning features scan for skill gaps, experience fit, and how well you match the role."
+          />
+          <StepCard
+            number="03"
+            icon={<Lightbulb className="h-6 w-6" />}
+            title="Get Evidence"
+            description="A scored breakdown with specific improvements, ranked by how much each one moves the needle."
+          />
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section className="bg-carbon py-section">
+        <div className="max-w-page mx-auto px-8">
+          <div className="mb-12">
+            <span className="label-mono block mb-2 text-smoke">FEATURES</span>
+            <h2 className="heading-display text-display text-paper">
+              Built For Accuracy
+            </h2>
+          </div>
+          <div className="grid grid-cols-2 gap-8">
             <FeatureCard
-              step="1"
-              icon={<FileText className="h-5 w-5" />}
-              title="Upload CV"
-              description="Upload your PDF, DOCX, or TXT resume for structured parsing and skill extraction."
-              color="blue"
+              icon={<BarChart3 className="h-6 w-6" />}
+              title="Ensemble ML Model"
+              description="Three models work together: Gradient Boosting, Random Forest, and Logistic Regression, trained on real job postings."
             />
             <FeatureCard
-              step="2"
-              icon={<Brain className="h-5 w-5" />}
-              title="Paste Job Description"
-              description="Provide a job posting and the system extracts requirements, skills, and experience needs."
-              color="emerald"
+              icon={<FileText className="h-6 w-6" />}
+              title="ATS Friendliness"
+              description="8-point check on section headings, contact info, skills, date format, length, formatting, keywords, and bullet points."
             />
             <FeatureCard
-              step="3"
-              icon={<BarChart3 className="h-5 w-5" />}
-              title="Get Analysis"
-              description="Receive a compatibility score, skill match breakdown, and clear recommendations."
-              color="violet"
+              icon={<Shield className="h-6 w-6" />}
+              title="Privacy First"
+              description="No sign-ups. No file storage. Your documents are processed and gone. Nothing leaves your browser."
+            />
+            <FeatureCard
+              icon={<Zap className="h-6 w-6" />}
+              title="Calibrated Scores"
+              description="Platt scaling keeps predictions accurate. Error rate dropped from 15% down to 3%."
             />
           </div>
         </div>
       </section>
 
-      {/* Trust bar */}
-      <section className="border-t border-gray-200/60 bg-white/60 backdrop-blur-sm">
-        <div className="mx-auto max-w-5xl px-6 py-12">
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            <TrustItem
-              icon={<Shield className="h-5 w-5" />}
-              title="Privacy-First"
-              description="No accounts needed. Your documents never leave your browser."
-            />
-            <TrustItem
-              icon={<Brain className="h-5 w-5" />}
-              title="Explainable AI"
-              description="Every score comes with evidence. Understand why, not just what."
-            />
-            <TrustItem
-              icon={<CheckCircle2 className="h-5 w-5" />}
-              title="280+ Skills"
-              description="Taxonomy across 26 career domains with semantic matching."
-            />
-          </div>
+      {/* CTA Section */}
+      <section className="py-section max-w-page mx-auto px-8">
+        <div className="card-inverted p-16 text-center">
+          <h2 className="heading-display text-heading-lg text-paper mb-4">
+            Stop Guessing.<br />Start Matching.
+          </h2>
+          <p className="text-body text-smoke mb-8 max-w-lg mx-auto">
+            Get a scored breakdown in seconds. Know exactly what to fix
+            before you hit apply.
+          </p>
+          <Link href="/analyze" className="btn-primary bg-paper text-carbon hover:bg-mint">
+            Analyze Your CV
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Link>
         </div>
       </section>
+
+      {/* Footer */}
+      <footer className="bg-carbon py-12">
+        <div className="max-w-page mx-auto px-8 flex items-center justify-between">
+          <span className="font-display text-lg uppercase text-paper">
+            CV Match Engine
+          </span>
+          <div className="flex items-center gap-6">
+            <span className="label-mono text-smoke">
+              Privacy-first. No accounts needed.
+            </span>
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }
 
-function FeatureCard({
-  step,
+function StepCard({
+  number,
   icon,
   title,
   description,
-  color,
 }: {
-  step: string;
+  number: string;
   icon: React.ReactNode;
   title: string;
   description: string;
-  color: "blue" | "emerald" | "violet";
 }) {
-  const colorMap = {
-    blue: "from-blue-500 to-primary-600",
-    emerald: "from-accent-500 to-emerald-600",
-    violet: "from-violet-500 to-purple-600",
-  };
-
-  const bgColorMap = {
-    blue: "bg-blue-50",
-    emerald: "bg-emerald-50",
-    violet: "bg-violet-50",
-  };
-
   return (
-    <div className="card-premium-hover group p-6">
-      <div className="mb-4 flex items-center gap-3">
-        <div
-          className={`flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${colorMap[color]} text-white shadow-lg transition-transform duration-300 group-hover:scale-105`}
-        >
-          {icon}
-        </div>
-        <span className="text-xs font-semibold uppercase tracking-widest text-gray-400">
-          Step {step}
-        </span>
+    <div className="card card-hover">
+      <span className="label-mono text-ash block mb-4">STEP {number}</span>
+      <div className="h-12 w-12 rounded-lg bg-carbon text-paper flex items-center justify-center mb-4">
+        {icon}
       </div>
-      <h4 className="font-heading text-lg font-semibold text-gray-900">
+      <h3 className="font-body text-heading-sm font-medium uppercase text-carbon mb-2">
         {title}
-      </h4>
-      <p className="mt-2 text-sm leading-relaxed text-gray-500">
-        {description}
-      </p>
+      </h3>
+      <p className="text-body text-slate leading-relaxed">{description}</p>
     </div>
   );
 }
 
-function TrustItem({
+function FeatureCard({
   icon,
   title,
   description,
@@ -180,16 +253,14 @@ function TrustItem({
   description: string;
 }) {
   return (
-    <div className="flex items-start gap-4">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-700/8 text-primary-700">
+    <div className="bg-graphite rounded-card p-card">
+      <div className="h-12 w-12 rounded-lg bg-mint text-carbon flex items-center justify-center mb-4">
         {icon}
       </div>
-      <div>
-        <h4 className="font-heading text-sm font-semibold text-gray-900">
-          {title}
-        </h4>
-        <p className="mt-0.5 text-sm text-gray-500">{description}</p>
-      </div>
+      <h3 className="font-body text-sub-lg font-medium uppercase text-paper mb-2">
+        {title}
+      </h3>
+      <p className="text-body text-smoke leading-relaxed">{description}</p>
     </div>
   );
 }
