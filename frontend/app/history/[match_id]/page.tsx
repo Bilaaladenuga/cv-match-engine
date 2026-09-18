@@ -1,12 +1,5 @@
 "use client";
 
-/**
- * /history/[id] — full saved report from browser-localStorage history.
- * Renders the exact MatchReport the live /analyze page shows, so both
- * views are identical. Also shows the original CV and JD texts that
- * were submitted, so users can review what they analyzed.
- */
-
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
@@ -18,11 +11,9 @@ import {
 } from "lucide-react";
 import { getAnalysis } from "@/lib/history";
 import type { StoredAnalysis } from "@/lib/history";
-import { Card, Loading } from "@/components/ui";
+import { Loading } from "@/components/ui";
 import { MatchReportView } from "@/components/MatchReportView";
 
-// Next 14 passes params to client components as a plain object
-// (Promise-based params are Next 15+) — do NOT unwrap with use().
 export default function SavedMatchPage({
   params,
 }: {
@@ -41,32 +32,46 @@ export default function SavedMatchPage({
 
   if (missing) {
     return (
-      <main className="mx-auto max-w-4xl px-6 py-10">
-        <Card className="px-8 py-14 text-center">
-          <p className="font-heading text-base font-semibold text-gray-900">
-            Analysis not found
-          </p>
-          <p className="mt-1 text-sm text-gray-500">
-            This analysis isn&apos;t in this browser&apos;s saved history — it
-            may have been deleted, run on another device, or the link is stale.
-          </p>
-          <Link
-            href="/history"
-            className="btn-ghost mt-6 inline-flex items-center gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to history
-          </Link>
-        </Card>
+      <main className="bg-canvas min-h-screen">
+        <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center py-6">
+          <div className="flex items-center gap-8 rounded-pill bg-paper px-8 py-3">
+            <Link href="/" className="font-display text-xl uppercase tracking-tight text-carbon">
+              CV Match
+            </Link>
+          </div>
+        </nav>
+        <div className="max-w-page mx-auto px-8 pt-32 pb-section">
+          <div className="card p-16 text-center">
+            <p className="font-body text-sub font-medium uppercase text-carbon">
+              Analysis not found
+            </p>
+            <p className="text-body text-slate mt-2 mb-6">
+              This analysis might have been deleted, run on another device, or the link is old.
+            </p>
+            <Link href="/history" className="btn-ghost inline-flex items-center gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              Back to history
+            </Link>
+          </div>
+        </div>
       </main>
     );
   }
 
   if (!entry) {
     return (
-      <main className="mx-auto max-w-4xl px-6 py-10">
-        <div className="card-premium p-8">
-          <Loading label="Loading saved report…" />
+      <main className="bg-canvas min-h-screen">
+        <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center py-6">
+          <div className="flex items-center gap-8 rounded-pill bg-paper px-8 py-3">
+            <Link href="/" className="font-display text-xl uppercase tracking-tight text-carbon">
+              CV Match
+            </Link>
+          </div>
+        </nav>
+        <div className="max-w-page mx-auto px-8 pt-32 pb-section">
+          <div className="card p-8">
+            <Loading label="Loading saved report..." />
+          </div>
         </div>
       </main>
     );
@@ -75,98 +80,112 @@ export default function SavedMatchPage({
   const hasDocs = entry.cv_text || entry.job_text;
 
   return (
-    <main className="mx-auto max-w-4xl px-6 py-10">
-      <Link
-        href="/history"
-        className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 transition-colors hover:text-primary-600"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Back to history
-      </Link>
+    <main className="bg-canvas min-h-screen">
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center py-6">
+        <div className="flex items-center gap-8 rounded-pill bg-paper px-8 py-3">
+          <Link href="/" className="font-display text-xl uppercase tracking-tight text-carbon">
+            CV Match
+          </Link>
+          <div className="flex items-center gap-6">
+            <Link href="/analyze" className="text-body font-medium text-slate hover:text-carbon transition-colors">
+              Analyze
+            </Link>
+            <Link href="/history" className="text-body font-medium text-slate hover:text-carbon transition-colors">
+              History
+            </Link>
+          </div>
+        </div>
+      </nav>
 
-      {/* Original documents — expandable */}
-      {hasDocs ? (
-        <Card className="mb-6 overflow-hidden">
-          <button
-            onClick={() => setShowDocs(!showDocs)}
-            className="flex w-full items-center justify-between px-6 py-4 text-left transition-colors hover:bg-gray-50/50"
-          >
-            <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600/8 text-primary-700">
-                <FileText className="h-4 w-4" />
+      <div className="max-w-page mx-auto px-8 pt-32 pb-section">
+        <Link
+          href="/history"
+          className="mb-8 inline-flex items-center gap-2 label-mono text-smoke hover:text-carbon transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to history
+        </Link>
+
+        {/* Original documents */}
+        {hasDocs ? (
+          <div className="card mb-8 overflow-hidden">
+            <button
+              onClick={() => setShowDocs(!showDocs)}
+              className="flex w-full items-center justify-between px-6 py-4 text-left transition-colors hover:bg-mist"
+            >
+              <div className="flex items-center gap-3">
+                <div className="h-8 w-8 rounded-lg bg-carbon text-paper flex items-center justify-center">
+                  <FileText className="h-4 w-4" />
+                </div>
+                <div>
+                  <p className="font-body text-sub font-medium uppercase text-carbon">
+                    Original documents
+                  </p>
+                  <p className="label-mono text-smoke">
+                    The CV and job description from this analysis
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="font-heading text-sm font-semibold text-gray-900">
-                  View original documents
-                </p>
-                <p className="text-xs text-gray-400">
-                  The CV and job description you submitted for this analysis
-                </p>
-              </div>
-            </div>
+              {showDocs ? (
+                <ChevronUp className="h-4 w-4 text-smoke" />
+              ) : (
+                <ChevronDown className="h-4 w-4 text-smoke" />
+              )}
+            </button>
+
             {showDocs ? (
-              <ChevronUp className="h-4 w-4 text-gray-400" />
-            ) : (
-              <ChevronDown className="h-4 w-4 text-gray-400" />
-            )}
-          </button>
+              <div className="grid grid-cols-1 gap-4 border-t border-ash/30 px-6 py-5 sm:grid-cols-2">
+                {entry.cv_text ? (
+                  <div>
+                    <div className="mb-2 flex items-center gap-2">
+                      <FileText className="h-3.5 w-3.5 text-carbon" />
+                      <span className="label-mono">CV / RESUME</span>
+                    </div>
+                    <div className="max-h-64 overflow-y-auto rounded-card bg-mist p-4">
+                      <pre className="whitespace-pre-wrap font-mono text-caption leading-relaxed text-slate">
+                        {entry.cv_text}
+                      </pre>
+                    </div>
+                  </div>
+                ) : null}
+                {entry.job_text ? (
+                  <div>
+                    <div className="mb-2 flex items-center gap-2">
+                      <Briefcase className="h-3.5 w-3.5 text-carbon" />
+                      <span className="label-mono">JOB DESCRIPTION</span>
+                    </div>
+                    <div className="max-h-64 overflow-y-auto rounded-card bg-mist p-4">
+                      <pre className="whitespace-pre-wrap font-mono text-caption leading-relaxed text-slate">
+                        {entry.job_text}
+                      </pre>
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            ) : null}
+          </div>
+        ) : null}
 
-          {showDocs ? (
-            <div className="grid grid-cols-1 gap-4 border-t border-gray-100/60 px-6 py-5 sm:grid-cols-2">
-              {entry.cv_text ? (
-                <div>
-                  <div className="mb-2 flex items-center gap-2">
-                    <FileText className="h-3.5 w-3.5 text-primary-600" />
-                    <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
-                      CV / Resume
-                    </span>
-                  </div>
-                  <div className="max-h-64 overflow-y-auto rounded-lg border border-gray-200/60 bg-gray-50/80 p-4">
-                    <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-gray-700">
-                      {entry.cv_text}
-                    </pre>
-                  </div>
-                </div>
-              ) : null}
-              {entry.job_text ? (
-                <div>
-                  <div className="mb-2 flex items-center gap-2">
-                    <Briefcase className="h-3.5 w-3.5 text-accent-600" />
-                    <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
-                      Job Description
-                    </span>
-                  </div>
-                  <div className="max-h-64 overflow-y-auto rounded-lg border border-gray-200/60 bg-gray-50/80 p-4">
-                    <pre className="whitespace-pre-wrap font-mono text-xs leading-relaxed text-gray-700">
-                      {entry.job_text}
-                    </pre>
-                  </div>
-                </div>
-              ) : null}
-            </div>
-          ) : null}
-        </Card>
-      ) : null}
-
-      <MatchReportView
-        report={entry.report}
-        lists={{
-          matched: (entry.report.skill_evidence ?? [])
-            .filter((e) => e.status === "matched")
-            .map((e) => e.skill),
-          partial: (entry.report.skill_evidence ?? [])
-            .filter((e) => e.status === "partial")
-            .map((e) => e.skill),
-          missing: (entry.report.skill_evidence ?? [])
-            .filter((e) => e.status === "missing")
-            .map((e) => e.skill),
-        }}
-        title={entry.title}
-        subtitle={`Saved ${new Date(entry.created_at).toLocaleString(undefined, {
-          dateStyle: "medium",
-          timeStyle: "short",
-        })} · stored in this browser only`}
-      />
+        <MatchReportView
+          report={entry.report}
+          lists={{
+            matched: (entry.report.skill_evidence ?? [])
+              .filter((e) => e.status === "matched")
+              .map((e) => e.skill),
+            partial: (entry.report.skill_evidence ?? [])
+              .filter((e) => e.status === "partial")
+              .map((e) => e.skill),
+            missing: (entry.report.skill_evidence ?? [])
+              .filter((e) => e.status === "missing")
+              .map((e) => e.skill),
+          }}
+          title={entry.title}
+          subtitle={`Saved ${new Date(entry.created_at).toLocaleString(undefined, {
+            dateStyle: "medium",
+            timeStyle: "short",
+          })}. Stored in this browser only.`}
+        />
+      </div>
     </main>
   );
 }

@@ -1,22 +1,12 @@
 "use client";
 
-/**
- * /analyze — upload or paste a CV and a job description, get an
- * explainable compatibility report via POST /api/matches (raw-text mode).
- *
- * Privacy model (no accounts, by design): the analysis runs statelessly,
- * and the report is saved to THIS browser's localStorage only. The server
- * never persists the documents or the result. File uploads are extracted
- * server-side and immediately discarded — no copy is kept.
- */
-
 import { useCallback, useRef, useState } from "react";
 import Link from "next/link";
 import { Upload, FileText, X, Check, ArrowRight } from "lucide-react";
 import { createMatch, extractResume, apiErrorMessage } from "@/lib/api";
 import { saveAnalysis } from "@/lib/history";
 import type { MatchReport } from "@/lib/types";
-import { Card, ErrorNote, MatchReportSkeleton } from "@/components/ui";
+import { ErrorNote, MatchReportSkeleton } from "@/components/ui";
 import { MatchReportView } from "@/components/MatchReportView";
 
 const EXAMPLE_CV = `Jane Okafor
@@ -38,7 +28,7 @@ Django monolith to microservices, PostgreSQL schema design, Redis caching.
 EDUCATION
 BSc Computer Science, University of Leeds, 2017`;
 
-const EXAMPLE_JOB = `Senior Platform Engineer — Helios Cloud
+const EXAMPLE_JOB = `Senior Platform Engineer at Helios Cloud
 
 We need a platform engineer with 4+ years of experience.
 
@@ -131,219 +121,218 @@ export default function AnalyzePage() {
   }
 
   return (
-    <main className="mx-auto max-w-6xl px-6 py-10">
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="font-heading text-2xl font-bold tracking-tight text-gray-900">
-            Analyze a CV against a job
+    <main className="bg-canvas min-h-screen">
+      {/* Nav */}
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center py-6">
+        <div className="flex items-center gap-8 rounded-pill bg-paper px-8 py-3">
+          <Link href="/" className="font-display text-xl uppercase tracking-tight text-carbon">
+            CV Match
+          </Link>
+          <div className="flex items-center gap-6">
+            <Link href="/analyze" className="text-body font-medium text-carbon">
+              Analyze
+            </Link>
+            <Link href="/history" className="text-body font-medium text-slate hover:text-carbon transition-colors">
+              History
+            </Link>
+          </div>
+        </div>
+      </nav>
+
+      <div className="max-w-page mx-auto px-8 pt-32 pb-section">
+        {/* Header */}
+        <div className="mb-12">
+          <span className="tag mb-4 inline-block">ANALYSIS</span>
+          <h1 className="heading-display text-display text-carbon mb-2">
+            Match Your CV
           </h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Both documents are parsed, extracted, and matched — every score
-            comes with its evidence.
+          <p className="text-body text-slate max-w-lg">
+            Paste your CV and the job description. Every score comes with
+            evidence so you know exactly what to fix.
           </p>
         </div>
-        <Link
-          href="/history"
-          className="text-sm font-medium text-gray-500 transition-colors hover:text-primary-600"
-        >
-          History →
-        </Link>
-      </div>
 
-      <form onSubmit={onSubmit} className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {/* ----- CV column: upload or paste ----- */}
-        <div>
-          <div className="mb-1.5 flex items-center justify-between">
-            <label
-              htmlFor="cv"
-              className="block text-sm font-semibold text-gray-700"
-            >
-              CV / resume
-            </label>
-            <span className="rounded-md bg-gray-100 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-gray-500">
-              PDF · DOCX · TXT
-            </span>
-          </div>
+        <form onSubmit={onSubmit} className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+          {/* CV Column */}
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <label htmlFor="cv" className="font-body text-sub font-medium uppercase text-carbon">
+                Your CV
+              </label>
+              <span className="label-mono">PDF / DOCX / TXT</span>
+            </div>
 
-          {/* Dropzone — hidden once a document has been extracted */}
-          {upload.kind !== "done" ? (
-            <div
-              onDragOver={(e) => {
-                e.preventDefault();
-                setDragOver(true);
-              }}
-              onDragLeave={() => setDragOver(false)}
-              onDrop={onDrop}
-              onClick={() => fileInput.current?.click()}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  fileInput.current?.click();
-                }
-              }}
-              className={`mb-3 flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed px-4 py-8 text-center transition-all duration-200 ${
-                dragOver
-                  ? "border-primary-500 bg-primary-50/50 shadow-glow-blue"
-                  : "border-gray-200 hover:border-primary-300 hover:bg-primary-50/30 hover:shadow-glow-blue"
-              }`}
-            >
+            {upload.kind !== "done" ? (
               <div
-                className={`mb-3 flex h-12 w-12 items-center justify-center rounded-xl transition-colors duration-200 ${
+                onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                onDragLeave={() => setDragOver(false)}
+                onDrop={onDrop}
+                onClick={() => fileInput.current?.click()}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    fileInput.current?.click();
+                  }
+                }}
+                className={`mb-4 flex cursor-pointer flex-col items-center justify-center rounded-card border-2 border-dashed px-4 py-10 text-center transition-all ${
                   dragOver
-                    ? "bg-primary-100 text-primary-600"
-                    : "bg-gray-100 text-gray-400"
+                    ? "border-carbon bg-mist"
+                    : "border-ash hover:border-carbon"
                 }`}
               >
-                <Upload className="h-5 w-5" />
+                <div className="mb-3 h-12 w-12 rounded-lg bg-carbon text-paper flex items-center justify-center">
+                  <Upload className="h-5 w-5" />
+                </div>
+                <p className="text-body font-medium text-carbon">
+                  {upload.kind === "uploading"
+                    ? `Reading ${upload.filename}...`
+                    : "Drop a CV here or click to browse"}
+                </p>
+                <p className="label-mono mt-1">
+                  The file is read once and never stored.
+                </p>
+                <input
+                  ref={fileInput}
+                  type="file"
+                  accept=".pdf,.docx,.txt"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) void handleFile(file);
+                  }}
+                />
               </div>
-              <p className="text-sm font-medium text-gray-700">
-                {upload.kind === "uploading"
-                  ? `Extracting ${upload.filename}…`
-                  : "Drop a CV here, or click to browse"}
-              </p>
-              <p className="mt-1 text-xs text-gray-400">
-                The file is read once and never stored.
-              </p>
-              <input
-                ref={fileInput}
-                type="file"
-                accept=".pdf,.docx,.txt"
-                className="hidden"
-                onChange={(e) => {
-                  const file = e.target.files?.[0];
-                  if (file) void handleFile(file);
-                }}
-              />
-            </div>
-          ) : (
-            <div className="mb-3 flex items-center justify-between rounded-xl border border-accent-200/60 bg-gradient-to-r from-accent-50/80 to-emerald-50/60 px-4 py-3 shadow-sm">
-              <span className="flex items-center gap-2.5 text-sm text-gray-700">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-100">
-                  <FileText className="h-4 w-4 text-accent-600" />
-                </div>
-                <div>
-                  <span className="font-medium">{upload.filename}</span>
-                  <span className="ml-2 text-xs text-gray-400">
-                    {upload.chars.toLocaleString()} chars
-                  </span>
-                </div>
-                <Check className="h-4 w-4 text-accent-500" />
-              </span>
-              <button
-                type="button"
-                onClick={clearUpload}
-                className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
-              >
-                <X className="h-3.5 w-3.5" /> clear
-              </button>
-            </div>
-          )}
-
-          {upload.kind === "error" ? (
-            <p className="mb-3 text-xs font-medium text-red-600">
-              {upload.message}
-            </p>
-          ) : null}
-
-          <textarea
-            id="cv"
-            value={cvText}
-            onChange={(e) => {
-              setCvText(e.target.value);
-              if (upload.kind === "done") setUpload({ kind: "idle" });
-            }}
-            rows={14}
-            placeholder="…or paste the full CV text here…"
-            className="input-premium"
-          />
-          <button
-            type="button"
-            onClick={() => setCvText(EXAMPLE_CV)}
-            className="mt-2 text-xs font-medium text-gray-400 underline decoration-gray-300 underline-offset-2 transition-colors hover:text-primary-600 hover:decoration-primary-300"
-          >
-            Use example CV
-          </button>
-        </div>
-
-        {/* ----- Job column: paste only ----- */}
-        <div>
-          <label
-            htmlFor="job"
-            className="mb-1.5 block text-sm font-semibold text-gray-700"
-          >
-            Job description
-          </label>
-          <textarea
-            id="job"
-            value={jobText}
-            onChange={(e) => setJobText(e.target.value)}
-            rows={18}
-            placeholder="Paste the job description here…"
-            className="input-premium"
-          />
-          <button
-            type="button"
-            onClick={() => setJobText(EXAMPLE_JOB)}
-            className="mt-2 text-xs font-medium text-gray-400 underline decoration-gray-300 underline-offset-2 transition-colors hover:text-primary-600 hover:decoration-primary-300"
-          >
-            Use example job
-          </button>
-        </div>
-
-        <div className="lg:col-span-2">
-          <button
-            type="submit"
-            disabled={!canSubmit}
-            className="btn-primary"
-          >
-            {loading ? (
-              <span className="flex items-center gap-2">
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
-                Analyzing…
-              </span>
             ) : (
-              <span className="flex items-center gap-2">
-                Analyze match
-                <ArrowRight className="h-4 w-4" />
-              </span>
+              <div className="mb-4 flex items-center justify-between rounded-card border border-mint bg-mint/30 px-4 py-3">
+                <span className="flex items-center gap-3 text-body text-carbon">
+                  <div className="h-8 w-8 rounded-lg bg-carbon text-paper flex items-center justify-center">
+                    <FileText className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <span className="font-medium">{upload.filename}</span>
+                    <span className="label-mono ml-2">{upload.chars.toLocaleString()} chars</span>
+                  </div>
+                  <Check className="h-4 w-4 text-carbon" />
+                </span>
+                <button
+                  type="button"
+                  onClick={clearUpload}
+                  className="flex items-center gap-1 rounded-lg px-2 py-1 text-caption text-smoke hover:bg-ash/30 transition-colors"
+                >
+                  <X className="h-3.5 w-3.5" /> clear
+                </button>
+              </div>
             )}
-          </button>
-          {!loading && !report && cvText.trim().length <= 40 ? (
-            <p className="mt-2 text-xs text-gray-400">
-              Upload or paste a CV (at least a few lines) to begin.
-            </p>
+
+            {upload.kind === "error" ? (
+              <p className="mb-3 text-body-sm font-medium text-carbon bg-voltage px-3 py-2 rounded-lg">
+                {upload.message}
+              </p>
+            ) : null}
+
+            <textarea
+              id="cv"
+              value={cvText}
+              onChange={(e) => {
+                setCvText(e.target.value);
+                if (upload.kind === "done") setUpload({ kind: "idle" });
+              }}
+              rows={14}
+              placeholder="Or paste your CV text here..."
+              className="input"
+            />
+            <button
+              type="button"
+              onClick={() => setCvText(EXAMPLE_CV)}
+              className="mt-3 label-mono text-smoke hover:text-carbon transition-colors underline underline-offset-2"
+            >
+              Use example CV
+            </button>
+          </div>
+
+          {/* Job Column */}
+          <div>
+            <label htmlFor="job" className="font-body text-sub font-medium uppercase text-carbon block mb-3">
+              Job Description
+            </label>
+            <textarea
+              id="job"
+              value={jobText}
+              onChange={(e) => setJobText(e.target.value)}
+              rows={18}
+              placeholder="Paste the job description here..."
+              className="input"
+            />
+            <button
+              type="button"
+              onClick={() => setJobText(EXAMPLE_JOB)}
+              className="mt-3 label-mono text-smoke hover:text-carbon transition-colors underline underline-offset-2"
+            >
+              Use example job
+            </button>
+          </div>
+
+          {/* Submit */}
+          <div className="lg:col-span-2">
+            <button
+              type="submit"
+              disabled={!canSubmit}
+              className="btn-primary"
+            >
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-ash border-t-carbon" />
+                  Analyzing...
+                </span>
+              ) : (
+                <span className="flex items-center gap-2">
+                  Analyze Match
+                  <ArrowRight className="h-4 w-4" />
+                </span>
+              )}
+            </button>
+            {!loading && !report && cvText.trim().length <= 40 ? (
+              <p className="mt-3 label-mono text-smoke">
+                Paste a CV (at least a few lines) to get started.
+              </p>
+            ) : null}
+            {saved ? (
+              <p className="ml-4 inline label-mono text-carbon font-medium">
+                Saved to browser history.
+              </p>
+            ) : null}
+          </div>
+        </form>
+
+        {/* Results */}
+        <div className="mt-16">
+          {error ? (
+            <div className="card bg-voltage/20 border border-voltage">
+              <ErrorNote message={error} />
+            </div>
           ) : null}
-          {saved ? (
-            <p className="ml-3 inline text-xs text-accent-600 font-medium">
-              Saved to this browser&apos;s history.
-            </p>
+          {loading ? <MatchReportSkeleton /> : null}
+          {report ? (
+            <MatchReportView
+              report={report}
+              lists={{
+                matched: (report.skill_evidence ?? [])
+                  .filter((e) => e.status === "matched")
+                  .map((e) => e.skill),
+                partial: (report.skill_evidence ?? [])
+                  .filter((e) => e.status === "partial")
+                  .map((e) => e.skill),
+                missing: (report.skill_evidence ?? [])
+                  .filter((e) => e.status === "missing")
+                  .map((e) => e.skill),
+              }}
+              title="Match Report"
+              subtitle="Stored only in this browser"
+            />
           ) : null}
         </div>
-      </form>
-
-      <div className="mt-12">
-        {error ? <ErrorNote message={error} /> : null}
-        {loading ? <MatchReportSkeleton /> : null}
-        {report ? (
-          <MatchReportView
-            report={report}
-            lists={{
-              matched: (report.skill_evidence ?? [])
-                .filter((e) => e.status === "matched")
-                .map((e) => e.skill),
-              partial: (report.skill_evidence ?? [])
-                .filter((e) => e.status === "partial")
-                .map((e) => e.skill),
-              missing: (report.skill_evidence ?? [])
-                .filter((e) => e.status === "missing")
-                .map((e) => e.skill),
-            }}
-            title="Match report"
-            subtitle="Live analysis — stored only in this browser"
-          />
-        ) : null}
       </div>
     </main>
   );

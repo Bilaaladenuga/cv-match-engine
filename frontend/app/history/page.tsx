@@ -1,17 +1,10 @@
 "use client";
 
-/**
- * /history — analyses saved in THIS browser (localStorage; no accounts
- * by design, the server never stores analyses). Rows link to the full
- * saved report at /history/[id].
- */
-
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Trash2, Clock, ArrowRight, CheckCircle2, XCircle } from "lucide-react";
 import { listAnalyses, deleteAnalysis, clearHistory } from "@/lib/history";
 import type { StoredAnalysis } from "@/lib/history";
-import { BandBadge, Card } from "@/components/ui";
 
 function fmtDate(iso: string): string {
   const d = new Date(iso);
@@ -41,150 +34,161 @@ export default function HistoryPage() {
   }
 
   return (
-    <main className="mx-auto max-w-5xl px-6 py-10">
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="font-heading text-2xl font-bold tracking-tight text-gray-900">
-            Analysis history
-          </h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Saved in this browser only — clearing your browser data removes
-            them. The server keeps nothing.
-          </p>
-        </div>
-        <Link
-          href="/analyze"
-          className="flex items-center gap-1.5 text-sm font-medium text-gray-500 transition-colors hover:text-primary-600"
-        >
-          New analysis <ArrowRight className="h-3.5 w-3.5" />
-        </Link>
-      </div>
-
-      {entries === null ? null : entries.length === 0 ? (
-        <Card className="px-8 py-14 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-600/8">
-            <Clock className="h-6 w-6 text-primary-600" />
-          </div>
-          <p className="font-heading text-base font-semibold text-gray-900">
-            No saved analyses yet
-          </p>
-          <p className="mt-1 text-sm text-gray-500">
-            Every analysis you run on this device is saved here automatically.
-          </p>
-          <Link
-            href="/analyze"
-            className="btn-primary mt-6 inline-flex"
-          >
-            Run an analysis
+    <main className="bg-canvas min-h-screen">
+      {/* Nav */}
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center py-6">
+        <div className="flex items-center gap-8 rounded-pill bg-paper px-8 py-3">
+          <Link href="/" className="font-display text-xl uppercase tracking-tight text-carbon">
+            CV Match
           </Link>
-        </Card>
-      ) : (
-        <>
-          <div className="mb-3 flex justify-end">
-            {confirmingClear ? (
-              <span className="flex items-center gap-3 text-xs text-gray-500">
-                Delete all {entries.length} saved analyses?
-                <button
-                  onClick={() => {
-                    clearHistory();
-                    setEntries([]);
-                    setConfirmingClear(false);
-                  }}
-                  className="font-medium text-red-600 transition-colors hover:text-red-700"
-                >
-                  Yes, delete
-                </button>
-                <button
-                  onClick={() => setConfirmingClear(false)}
-                  className="transition-colors hover:text-gray-700"
-                >
-                  Cancel
-                </button>
-              </span>
-            ) : (
-              <button
-                onClick={() => setConfirmingClear(true)}
-                className="flex items-center gap-1.5 text-xs font-medium text-gray-400 transition-colors hover:text-red-500"
-              >
-                <Trash2 className="h-3 w-3" />
-                Clear history
-              </button>
-            )}
+          <div className="flex items-center gap-6">
+            <Link href="/analyze" className="text-body font-medium text-slate hover:text-carbon transition-colors">
+              Analyze
+            </Link>
+            <Link href="/history" className="text-body font-medium text-carbon">
+              History
+            </Link>
           </div>
-          <Card className="divide-y divide-gray-100/60 overflow-hidden">
-            {entries.map((e) => (
-              <div
-                key={e.id}
-                className="group flex items-center justify-between px-5 py-4 transition-colors hover:bg-gray-50/50"
-              >
-                <Link href={`/history/${e.id}`} className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div className="min-w-0">
-                      <p className="truncate font-medium text-gray-900 group-hover:text-primary-700 transition-colors">
-                        {e.title}
-                      </p>
-                      <p className="mt-0.5 text-xs text-gray-400">
-                        {fmtDate(e.created_at)}
-                      </p>
-                      {/* Quick skill preview */}
-                      {e.report.skill_evidence && e.report.skill_evidence.length > 0 ? (
-                        <div className="mt-1.5 flex flex-wrap gap-1.5">
-                          {e.report.skill_evidence
-                            .filter((s) => s.status === "matched")
-                            .slice(0, 3)
-                            .map((s) => (
-                              <span
-                                key={s.skill}
-                                className="inline-flex items-center gap-0.5 rounded-full bg-accent-50 px-2 py-0.5 text-[10px] font-medium text-accent-700"
-                              >
-                                <CheckCircle2 className="h-2.5 w-2.5" />
-                                {s.skill}
-                              </span>
-                            ))}
-                          {e.report.skill_evidence
-                            .filter((s) => s.status === "missing")
-                            .slice(0, 2)
-                            .map((s) => (
-                              <span
-                                key={s.skill}
-                                className="inline-flex items-center gap-0.5 rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-medium text-red-600"
-                              >
-                                <XCircle className="h-2.5 w-2.5" />
-                                {s.skill}
-                              </span>
-                            ))}
-                          {e.report.skill_evidence.filter((s) => s.status === "matched").length >
-                            3 ? (
-                            <span className="text-[10px] text-gray-400">
-                              +{e.report.skill_evidence.filter((s) => s.status === "matched").length - 3} more
-                            </span>
-                          ) : null}
-                        </div>
-                      ) : null}
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <BandBadge band={e.report.band} />
-                      <span className="text-sm font-bold tabular-nums text-gray-900">
-                        {e.report.overall_percent ?? pct(e.report.overall_score)}
-                        <span className="text-xs font-normal text-gray-400">
-                          /100
-                        </span>
-                      </span>
-                    </div>
-                  </div>
-                </Link>
+        </div>
+      </nav>
+
+      <div className="max-w-page mx-auto px-8 pt-32 pb-section">
+        {/* Header */}
+        <div className="mb-12 flex items-end justify-between">
+          <div>
+            <span className="tag mb-4 inline-block">HISTORY</span>
+            <h1 className="heading-display text-display text-carbon">
+              Past Analyses
+            </h1>
+            <p className="text-body text-slate mt-2">
+              Saved in this browser only. Clear your browser data and they're gone.
+            </p>
+          </div>
+          <Link href="/analyze" className="btn-primary">
+            New Analysis
+            <ArrowRight className="ml-2 h-4 w-4" />
+          </Link>
+        </div>
+
+        {entries === null ? null : entries.length === 0 ? (
+          <div className="card p-16 text-center">
+            <div className="mx-auto mb-4 h-14 w-14 rounded-card bg-ash/30 flex items-center justify-center">
+              <Clock className="h-6 w-6 text-smoke" />
+            </div>
+            <p className="font-body text-sub font-medium uppercase text-carbon">
+              No analyses yet
+            </p>
+            <p className="text-body text-slate mt-2 mb-6">
+              Every analysis you run on this device shows up here.
+            </p>
+            <Link href="/analyze" className="btn-primary inline-flex">
+              Run Your First Analysis
+            </Link>
+          </div>
+        ) : (
+          <>
+            <div className="mb-4 flex justify-end">
+              {confirmingClear ? (
+                <span className="flex items-center gap-3 label-mono text-smoke">
+                  Delete all {entries.length} analyses?
+                  <button
+                    onClick={() => {
+                      clearHistory();
+                      setEntries([]);
+                      setConfirmingClear(false);
+                    }}
+                    className="font-medium text-carbon hover:underline"
+                  >
+                    Yes, delete all
+                  </button>
+                  <button
+                    onClick={() => setConfirmingClear(false)}
+                    className="hover:text-carbon"
+                  >
+                    Cancel
+                  </button>
+                </span>
+              ) : (
                 <button
-                  onClick={() => remove(e.id)}
-                  aria-label={`Delete analysis: ${e.title}`}
-                  className="ml-3 flex-shrink-0 rounded-md p-1.5 text-gray-300 opacity-0 transition-all group-hover:opacity-100 hover:bg-red-50 hover:text-red-500"
+                  onClick={() => setConfirmingClear(true)}
+                  className="flex items-center gap-1.5 label-mono text-smoke hover:text-carbon transition-colors"
                 >
-                  <Trash2 className="h-3.5 w-3.5" />
+                  <Trash2 className="h-3 w-3" />
+                  Clear history
                 </button>
-              </div>
-            ))}
-          </Card>
-        </>
-      )}
+              )}
+            </div>
+
+            <div className="card overflow-hidden divide-y divide-ash/30">
+              {entries.map((e) => (
+                <div
+                  key={e.id}
+                  className="group flex items-center justify-between px-6 py-5 transition-colors hover:bg-mist"
+                >
+                  <Link href={`/history/${e.id}`} className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="truncate font-medium text-carbon group-hover:underline">
+                          {e.title}
+                        </p>
+                        <p className="label-mono mt-1">{fmtDate(e.created_at)}</p>
+                        {e.report.skill_evidence && e.report.skill_evidence.length > 0 ? (
+                          <div className="mt-2 flex flex-wrap gap-1.5">
+                            {e.report.skill_evidence
+                              .filter((s) => s.status === "matched")
+                              .slice(0, 3)
+                              .map((s) => (
+                                <span
+                                  key={s.skill}
+                                  className="inline-flex items-center gap-1 rounded-tag bg-mint px-3 py-0.5 text-caption font-mono text-carbon"
+                                >
+                                  <CheckCircle2 className="h-2.5 w-2.5" />
+                                  {s.skill}
+                                </span>
+                              ))}
+                            {e.report.skill_evidence
+                              .filter((s) => s.status === "missing")
+                              .slice(0, 2)
+                              .map((s) => (
+                                <span
+                                  key={s.skill}
+                                  className="inline-flex items-center gap-1 rounded-tag bg-carbon px-3 py-0.5 text-caption font-mono text-paper"
+                                >
+                                  <XCircle className="h-2.5 w-2.5" />
+                                  {s.skill}
+                                </span>
+                              ))}
+                            {e.report.skill_evidence.filter((s) => s.status === "matched").length >
+                              3 ? (
+                              <span className="label-mono">
+                                +{e.report.skill_evidence.filter((s) => s.status === "matched").length - 3} more
+                              </span>
+                            ) : null}
+                          </div>
+                        ) : null}
+                      </div>
+                      <div className="flex items-center gap-4">
+                        <span className="tag">{e.report.band}</span>
+                        <span className="font-display text-heading text-carbon">
+                          {e.report.overall_percent ?? pct(e.report.overall_score)}
+                          <span className="label-mono text-smoke">/100</span>
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                  <button
+                    onClick={() => remove(e.id)}
+                    aria-label={`Delete: ${e.title}`}
+                    className="ml-4 flex-shrink-0 rounded-lg p-2 text-ash opacity-0 transition-all group-hover:opacity-100 hover:bg-carbon hover:text-paper"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
     </main>
   );
 }
