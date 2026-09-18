@@ -16,3 +16,5 @@ services:
         value: Career Match API
       - key: APP_VERSION
         value: "1.0.0"
+      - key: CORS_ORIGINS
+        value: '["https://cv-match-engine.vercel.app", "https://*.onrender.com"]'
