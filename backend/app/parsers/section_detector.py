@@ -110,9 +110,7 @@ def _is_heading_line(line: str) -> bool:
     # Mixed case with common heading words
     heading_words = {"experience", "skills", "education", "summary", "projects", "certifications", "contact", "profile", "background", "history", "employment", "qualifications", "expertise", "competencies", "languages", "objectives", "about"}
     words = set(stripped.lower().replace("&", "").replace(":", "").split())
-    if words & heading_words and len(stripped.split()) <= 7:
-        return True
-    return False
+    return bool(words & heading_words) and len(stripped.split()) <= 7
 
 
 def _classify_heading(heading: str) -> str | None:

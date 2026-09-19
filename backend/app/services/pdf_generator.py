@@ -11,7 +11,6 @@ Uses fpdf2 to create a branded PDF with:
 
 from __future__ import annotations
 
-import io
 from datetime import datetime
 
 from fpdf import FPDF
@@ -161,7 +160,7 @@ class MatchReportPDF(FPDF):
         """Add prioritized improvement actions."""
         self.section_title("How to Improve Your CV")
 
-        for i, imp in enumerate(improvements[:7]):
+        for imp in improvements[:7]:
             priority = imp.get("priority", "medium")
             action = imp.get("action", "")
             impact = imp.get("impact", 0)
@@ -222,7 +221,6 @@ class MatchReportPDF(FPDF):
         self.section_title("ATS Friendliness")
 
         score = ats_details.get("overall_score", 0)
-        pass_est = ats_details.get("pass_estimate", "unknown")
 
         # Score box
         self.set_fill_color(*LIGHT_GRAY)

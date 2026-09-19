@@ -178,7 +178,7 @@ def score_features(features: dict[str, float]) -> MLScorerResult | None:
         except Exception:  # noqa: BLE001
             pass
     try:
-        from app.ml.calibration import CALIBRATION_METHOD, prior_correct, platt_scale
+        from app.ml.calibration import CALIBRATION_METHOD, platt_scale, prior_correct
 
         # Apply prior correction first
         corrected = prior_correct(proba, classes, natural_prior, training_prior)

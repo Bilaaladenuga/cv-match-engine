@@ -91,20 +91,18 @@ def platt_scale(
 
     for i, name in enumerate(class_names):
         if name in platt_params:
-            A, B = platt_params[name]
+            # Platt scaling parameters (A, B) for this class
+            a, b = platt_params[name]
             # Avoid log(0) and log(1) by clipping
             p_clipped = np.clip(p[i], 1e-7, 1 - 1e-7)
             log_odds = np.log(p_clipped / (1 - p_clipped))
-            calibrated[i] = 1.0 / (1.0 + np.exp(-(A * log_odds + B)))
+            calibrated[i] = 1.0 / (1.0 + np.exp(-(a * log_odds + b)))
         else:
             calibrated[i] = p[i]
 
     # Normalize to sum to 1
     z = calibrated.sum()
-    if z > 0:
-        calibrated = calibrated / z
-    else:
-        calibrated = p
+    calibrated = calibrated / z if z > 0 else p
 
     return calibrated
 

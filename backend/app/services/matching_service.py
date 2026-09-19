@@ -13,6 +13,7 @@ from dataclasses import dataclass, field
 
 from sqlalchemy.orm import Session
 
+from app.ml.ats_checker import check_ats_friendliness
 from app.ml.feature_extraction import build_feature_vector
 from app.ml.model_scorer import score_features
 from app.ml.semantic_matcher import compute_semantic_match
@@ -26,9 +27,8 @@ from app.nlp.job_parser import parse_job_description
 from app.nlp.skill_matcher import match_skills
 from app.scoring.certification_matcher import match_certifications
 from app.scoring.education_matcher import match_education
-from app.scoring.improvement_engine import build_skill_evidence, build_prioritized_improvements
+from app.scoring.improvement_engine import build_prioritized_improvements, build_skill_evidence
 from app.scoring.matching_model import MatcherInputs, MatchResult, compute_match_score
-from app.ml.ats_checker import check_ats_friendliness
 
 logger = logging.getLogger(__name__)
 

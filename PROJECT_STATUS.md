@@ -498,6 +498,28 @@ numpy==1.26.4
 - 21 new tests in `tests/test_cors.py` (parsing, wildcard matching,
   disallowed-origin rejection, credentials rules, and CORS-on-500)
 
+## Backend Lint Cleanup (ruff clean across app/)
+- `ruff check app/` is now clean (was 13 errors across 7 files):
+  import sorting, unused imports (`field`, `io`), `datetime.UTC` alias,
+  lowercase Platt parameters, ternary/simplified returns, and two dead
+  locals in the PDF generator
+- All fixes are behaviour-preserving; verified against the modules they
+  touch (parsers, extraction, calibration, model scorer, matching model,
+  API routes) — no test count change
+
+## Known Issues — pre-existing test failures (NOT from the lint cleanup)
+These fail on `HEAD~` as well; confirmed by stashing the cleanup and
+re-running:
+- `tests/test_calibration.py::TestScorerIntegration` (3 tests) and
+  `tests/test_model_scorer.py::test_stub_model_scoring_via_monkeypatch`:
+  the scorer falls back to `ml/models/v0.5_platt_params.json` whenever the
+  artifact carries no Platt params, so a v0.4 baseline is scored with v0.5
+  calibration and the method string gains `+platt_scaling`. Needs a
+  decision: pin the JSON to the matching model version, or check the
+  artifact's version before applying it.
+- `tests/test_improvement_engine.py::TestEvidenceGrading::test_strong_from_sustained_use`:
+  expectation vs. current evidence-grading threshold — unverified further.
+
 ## Test Summary
 ```
 Total: 502 tests passing
