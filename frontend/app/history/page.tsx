@@ -36,16 +36,16 @@ export default function HistoryPage() {
   return (
     <main className="bg-canvas min-h-screen">
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center py-6">
-        <div className="flex items-center gap-8 rounded-pill bg-paper px-4 py-3 sm:px-8">
-          <Link href="/" className="font-display text-xl uppercase tracking-tight text-carbon">
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center px-3 py-4 sm:py-6">
+        <div className="flex items-center gap-4 rounded-pill bg-paper px-4 py-3 sm:gap-8 sm:px-8">
+          <Link href="/" className="font-display text-lg uppercase tracking-tight text-carbon sm:text-xl">
             CV Match
           </Link>
-          <div className="flex items-center gap-6">
-            <Link href="/analyze" className="text-body font-medium text-slate hover:text-carbon transition-colors">
+          <div className="flex items-center gap-4 sm:gap-6">
+            <Link href="/analyze" className="text-body-sm font-medium text-slate hover:text-carbon transition-colors sm:text-body">
               Analyze
             </Link>
-            <Link href="/history" className="text-body font-medium text-carbon">
+            <Link href="/history" className="text-body-sm font-medium text-carbon sm:text-body">
               History
             </Link>
           </div>
@@ -54,7 +54,7 @@ export default function HistoryPage() {
 
       <div className="max-w-page mx-auto px-4 sm:px-8 pt-32 pb-section">
         {/* Header */}
-        <div className="mb-12 flex items-end justify-between">
+        <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <span className="tag mb-4 inline-block">HISTORY</span>
             <h1 className="heading-display text-display text-carbon">
@@ -64,14 +64,14 @@ export default function HistoryPage() {
               Saved in this browser only. Clear your browser data and they are gone.
             </p>
           </div>
-          <Link href="/analyze" className="btn-primary">
+          <Link href="/analyze" className="btn-primary shrink-0 self-start sm:self-auto">
             New Analysis
             <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
         </div>
 
         {entries === null ? null : entries.length === 0 ? (
-          <div className="card p-16 text-center">
+          <div className="card p-8 sm:p-16 text-center">
             <div className="mx-auto mb-4 h-14 w-14 rounded-card bg-ash/30 flex items-center justify-center">
               <Clock className="h-6 w-6 text-smoke" />
             </div>
@@ -123,7 +123,7 @@ export default function HistoryPage() {
               {entries.map((e) => (
                 <div
                   key={e.id}
-                  className="group flex items-center justify-between px-6 py-5 transition-colors hover:bg-mist"
+                  className="group flex items-center justify-between gap-2 px-4 py-4 transition-colors hover:bg-mist sm:px-6 sm:py-5"
                 >
                   <Link href={`/history/${e.id}`} className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center justify-between gap-3">
@@ -167,9 +167,9 @@ export default function HistoryPage() {
                           </div>
                         ) : null}
                       </div>
-                      <div className="flex items-center gap-4">
-                        <span className="tag">{e.report.band}</span>
-                        <span className="font-display text-heading text-carbon">
+                      <div className="flex items-center gap-3 sm:gap-4">
+                        <span className="tag hidden sm:inline-flex">{e.report.band}</span>
+                        <span className="font-display text-heading-sm text-carbon sm:text-heading">
                           {e.report.overall_percent ?? pct(e.report.overall_score)}
                           <span className="label-mono text-smoke">/100</span>
                         </span>
@@ -179,7 +179,7 @@ export default function HistoryPage() {
                   <button
                     onClick={() => remove(e.id)}
                     aria-label={`Delete: ${e.title}`}
-                    className="ml-4 flex-shrink-0 rounded-lg p-2 text-ash opacity-0 transition-all group-hover:opacity-100 hover:bg-carbon hover:text-paper"
+                    className="flex-shrink-0 rounded-lg p-2 text-ash transition-all hover:bg-carbon hover:text-paper sm:ml-4 sm:opacity-0 sm:group-hover:opacity-100"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>

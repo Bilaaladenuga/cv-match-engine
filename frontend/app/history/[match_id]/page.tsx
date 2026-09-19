@@ -33,15 +33,15 @@ export default function SavedMatchPage({
   if (missing) {
     return (
       <main className="bg-canvas min-h-screen">
-        <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center py-6">
-          <div className="flex items-center gap-8 rounded-pill bg-paper px-4 py-3 sm:px-8">
-            <Link href="/" className="font-display text-xl uppercase tracking-tight text-carbon">
+        <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center px-3 py-4 sm:py-6">
+          <div className="flex items-center gap-4 rounded-pill bg-paper px-4 py-3 sm:gap-8 sm:px-8">
+            <Link href="/" className="font-display text-lg uppercase tracking-tight text-carbon sm:text-xl">
               CV Match
             </Link>
           </div>
         </nav>
         <div className="max-w-page mx-auto px-4 sm:px-8 pt-32 pb-section">
-          <div className="card p-16 text-center">
+          <div className="card p-8 sm:p-16 text-center">
             <p className="font-body text-sub font-medium uppercase text-carbon">
               Analysis not found
             </p>
@@ -61,9 +61,9 @@ export default function SavedMatchPage({
   if (!entry) {
     return (
       <main className="bg-canvas min-h-screen">
-        <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center py-6">
-          <div className="flex items-center gap-8 rounded-pill bg-paper px-4 py-3 sm:px-8">
-            <Link href="/" className="font-display text-xl uppercase tracking-tight text-carbon">
+        <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center px-3 py-4 sm:py-6">
+          <div className="flex items-center gap-4 rounded-pill bg-paper px-4 py-3 sm:gap-8 sm:px-8">
+            <Link href="/" className="font-display text-lg uppercase tracking-tight text-carbon sm:text-xl">
               CV Match
             </Link>
           </div>
@@ -81,16 +81,16 @@ export default function SavedMatchPage({
 
   return (
     <main className="bg-canvas min-h-screen">
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center py-6">
-        <div className="flex items-center gap-8 rounded-pill bg-paper px-4 py-3 sm:px-8">
-          <Link href="/" className="font-display text-xl uppercase tracking-tight text-carbon">
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center px-3 py-4 sm:py-6">
+        <div className="flex items-center gap-4 rounded-pill bg-paper px-4 py-3 sm:gap-8 sm:px-8">
+          <Link href="/" className="font-display text-lg uppercase tracking-tight text-carbon sm:text-xl">
             CV Match
           </Link>
-          <div className="flex items-center gap-6">
-            <Link href="/analyze" className="text-body font-medium text-slate hover:text-carbon transition-colors">
+          <div className="flex items-center gap-4 sm:gap-6">
+            <Link href="/analyze" className="text-body-sm font-medium text-slate hover:text-carbon transition-colors sm:text-body">
               Analyze
             </Link>
-            <Link href="/history" className="text-body font-medium text-slate hover:text-carbon transition-colors">
+            <Link href="/history" className="text-body-sm font-medium text-slate hover:text-carbon transition-colors sm:text-body">
               History
             </Link>
           </div>

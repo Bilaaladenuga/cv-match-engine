@@ -532,7 +532,7 @@ export function MatchReportView({
 
       {/* Overall Score */}
       <Card className="overflow-hidden">
-        <div className="flex flex-col items-center gap-8 px-8 py-8 sm:flex-row">
+        <div className="flex flex-col items-center gap-6 px-4 py-6 sm:flex-row sm:gap-8 sm:px-8 sm:py-8">
           <ScoreDial percent={report.overall_percent} />
           <div className="flex-1 text-center sm:text-left">
             <div className="flex items-center justify-center gap-3 sm:justify-start">
@@ -555,7 +555,7 @@ export function MatchReportView({
           title="Score breakdown"
           subtitle="Each component's raw score and its weight"
         />
-        <div className="space-y-5 px-6 py-5">
+        <div className="space-y-5 px-4 py-5 sm:px-6">
           {report.components.map((c, i) => (
             <div key={c.name}>
               <div className="flex items-center justify-between mb-1">
@@ -576,7 +576,7 @@ export function MatchReportView({
             </div>
           ))}
         </div>
-        <div className="border-t border-ash/30 px-4 py-5">
+        <div className="border-t border-ash/30 px-4 py-5 sm:px-6">
           <ScoreContributionChart
             components={report.components}
             overallPercent={report.overall_percent}
@@ -687,7 +687,7 @@ export function MatchReportView({
       {ml && ml.label !== undefined ? (
         <ScrollReveal>
           <Card className="overflow-hidden">
-          <div className="bg-carbon px-6 py-4">
+          <div className="bg-carbon px-4 py-4 sm:px-6">
             <h3 className="font-body text-sub font-medium uppercase text-paper">
               AI Fit Prediction
             </h3>
@@ -695,8 +695,8 @@ export function MatchReportView({
               Trained on thousands of CV-job pairs
             </p>
           </div>
-          <div className="px-6 py-5">
-            <div className="mb-5 flex items-center gap-4 rounded-card bg-mist px-5 py-4">
+          <div className="px-4 py-5 sm:px-6">
+            <div className="mb-5 flex flex-col gap-3 rounded-card bg-mist px-4 py-4 sm:flex-row sm:items-center sm:gap-4 sm:px-5">
               <div
                 className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-card text-lg font-bold text-paper ${
                   ml.label === "Good Fit"
@@ -785,10 +785,10 @@ export function MatchReportView({
             title="What affected your score"
             subtitle="Top factors that helped or hurt your match"
           />
-          <div className="px-6 py-5">
+          <div className="px-4 py-5 sm:px-6">
             <FeatureImportanceChart factors={ml.explanation.factors as Factor[]} />
           </div>
-          <div className="border-t border-ash/30 px-5 py-4">
+          <div className="border-t border-ash/30 px-4 py-4 sm:px-5">
             <p className="mb-3 label-mono text-smoke">Detailed breakdown</p>
             <ul className="space-y-2">
               {(ml.explanation.factors as Factor[])

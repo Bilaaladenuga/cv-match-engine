@@ -123,16 +123,16 @@ export default function AnalyzePage() {
   return (
     <main className="bg-canvas min-h-screen">
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center py-6">
-        <div className="flex items-center gap-8 rounded-pill bg-paper px-4 py-3 sm:px-8">
-          <Link href="/" className="font-display text-xl uppercase tracking-tight text-carbon">
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center px-3 py-4 sm:py-6">
+        <div className="flex items-center gap-4 rounded-pill bg-paper px-4 py-3 sm:gap-8 sm:px-8">
+          <Link href="/" className="font-display text-lg uppercase tracking-tight text-carbon sm:text-xl">
             CV Match
           </Link>
-          <div className="flex items-center gap-6">
-            <Link href="/analyze" className="text-body font-medium text-carbon">
+          <div className="flex items-center gap-4 sm:gap-6">
+            <Link href="/analyze" className="text-body-sm font-medium text-carbon sm:text-body">
               Analyze
             </Link>
-            <Link href="/history" className="text-body font-medium text-slate hover:text-carbon transition-colors">
+            <Link href="/history" className="text-body-sm font-medium text-slate hover:text-carbon transition-colors sm:text-body">
               History
             </Link>
           </div>
@@ -141,7 +141,7 @@ export default function AnalyzePage() {
 
       <div className="max-w-page mx-auto px-4 sm:px-8 pt-32 pb-section">
         {/* Header */}
-        <div className="mb-12">
+        <div className="mb-10 sm:mb-12">
           <span className="tag mb-4 inline-block">ANALYSIS</span>
           <h1 className="heading-display text-display text-carbon mb-2">
             Match Your CV
@@ -152,7 +152,7 @@ export default function AnalyzePage() {
           </p>
         </div>
 
-        <form onSubmit={onSubmit} className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+        <form onSubmit={onSubmit} className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-8">
           {/* CV Column */}
           <div>
             <div className="flex items-center justify-between mb-3">

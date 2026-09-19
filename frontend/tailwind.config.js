@@ -41,11 +41,17 @@ module.exports = {
         'body': ['16px', { lineHeight: '1.25' }],
         'sub': ['18px', { lineHeight: '1.33' }],
         'sub-lg': ['20px', { lineHeight: '1.2' }],
-        'heading-sm': ['28px', { lineHeight: '1.3', letterSpacing: '-0.03em' }],
-        'heading': ['40px', { lineHeight: '1.1', letterSpacing: '-0.02em' }],
-        'heading-lg': ['48px', { lineHeight: '0.9', letterSpacing: '-0.03em' }],
-        'display': ['80px', { lineHeight: '0.9', letterSpacing: '-0.03em' }],
-        'display-xl': ['130px', { lineHeight: '0.9', letterSpacing: '-0.03em' }],
+        // Display sizes scale fluidly with the viewport (clamp) so the
+        // brutalist headlines never overflow phones or tablets.
+        'heading-sm': ['clamp(24px, 5.5vw, 28px)', { lineHeight: '1.3', letterSpacing: '-0.03em' }],
+        'heading': ['clamp(30px, 6.5vw, 40px)', { lineHeight: '1.1', letterSpacing: '-0.02em' }],
+        'heading-lg': ['clamp(34px, 8vw, 48px)', { lineHeight: '0.9', letterSpacing: '-0.03em' }],
+        'display': ['clamp(42px, 10.5vw, 80px)', { lineHeight: '0.9', letterSpacing: '-0.03em' }],
+        'display-xl': ['clamp(52px, 13vw, 130px)', { lineHeight: '0.9', letterSpacing: '-0.03em' }],
+      },
+      maxWidth: {
+        // Container used by every page (max-w-page). 72rem = 1152px.
+        'page': '72rem',
       },
     },
   },

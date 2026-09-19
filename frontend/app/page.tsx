@@ -23,25 +23,25 @@ export default function HomePage() {
   return (
     <main className="bg-canvas min-h-screen">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center py-6">
-        <div className="flex items-center gap-8 rounded-pill bg-paper px-4 py-3 sm:px-8">
-          <span className="font-display text-xl uppercase tracking-tight text-carbon">
+      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center py-4 px-3 sm:py-6">
+        <div className="flex items-center gap-4 rounded-pill bg-paper px-4 py-3 sm:gap-8 sm:px-8">
+          <span className="font-display text-lg uppercase tracking-tight text-carbon sm:text-xl">
             CV Match
           </span>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 sm:gap-6">
             <Link
               href="/analyze"
-              className="text-body font-medium text-slate hover:text-carbon transition-colors"
+              className="text-body-sm font-medium text-slate hover:text-carbon transition-colors sm:text-body"
             >
               Analyze
             </Link>
             <Link
               href="/history"
-              className="text-body font-medium text-slate hover:text-carbon transition-colors"
+              className="text-body-sm font-medium text-slate hover:text-carbon transition-colors sm:text-body"
             >
               History
             </Link>
-            <Link href="/analyze" className="btn-primary text-sm">
+            <Link href="/analyze" className="btn-primary hidden text-sm sm:inline-flex">
               Get Started
             </Link>
           </div>
@@ -49,8 +49,8 @@ export default function HomePage() {
       </nav>
 
       {/* Hero Section */}
-      <section className="px-8 pt-40 pb-section max-w-page mx-auto">
-        <div className="grid grid-cols-2 gap-16 items-center">
+      <section className="px-4 sm:px-8 pt-32 sm:pt-40 pb-section max-w-page mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           <div>
             <FadeIn delay={0.1}>
               <div className="tag mb-6">AI-Powered Analysis</div>
@@ -85,7 +85,7 @@ export default function HomePage() {
             </FadeIn>
           </div>
           <FadeIn delay={0.3} className="relative">
-            <div className="card-inverted p-12">
+            <div className="card-inverted p-6 sm:p-12">
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <span className="label-mono">COMPATIBILITY</span>
@@ -116,7 +116,7 @@ export default function HomePage() {
 
       {/* Stats Bar */}
       <section className="bg-carbon py-12">
-        <div className="max-w-page mx-auto px-8 grid grid-cols-4 gap-8">
+        <div className="max-w-page mx-auto px-4 sm:px-8 grid grid-cols-2 sm:grid-cols-4 gap-8">
           <ScrollReveal>
             <div>
               <span className="font-display text-display text-paper">
@@ -153,7 +153,7 @@ export default function HomePage() {
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="py-section max-w-page mx-auto px-8">
+      <section id="how-it-works" className="py-section max-w-page mx-auto px-4 sm:px-8">
         <ScrollReveal>
           <div className="mb-12">
             <span className="label-mono block mb-2">PROCESS</span>
@@ -162,7 +162,7 @@ export default function HomePage() {
             </h2>
           </div>
         </ScrollReveal>
-        <StaggerContainer className="grid grid-cols-3 gap-8">
+        <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           <StaggerItem>
             <StepCard
               number="01"
@@ -192,7 +192,7 @@ export default function HomePage() {
 
       {/* Features Section */}
       <section className="bg-carbon py-section">
-        <div className="max-w-page mx-auto px-8">
+        <div className="max-w-page mx-auto px-4 sm:px-8">
           <ScrollReveal>
             <div className="mb-12">
               <span className="label-mono block mb-2 text-smoke">FEATURES</span>
@@ -201,7 +201,7 @@ export default function HomePage() {
               </h2>
             </div>
           </ScrollReveal>
-          <StaggerContainer className="grid grid-cols-2 gap-8">
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             <StaggerItem>
               <FeatureCard
                 icon={<BarChart3 className="h-6 w-6" />}
@@ -235,9 +235,9 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-section max-w-page mx-auto px-8">
+      <section className="py-section max-w-page mx-auto px-4 sm:px-8">
         <ScrollReveal>
-          <div className="card-inverted p-16 text-center">
+          <div className="card-inverted p-8 sm:p-16 text-center">
             <h2 className="heading-display text-heading-lg text-paper mb-4">
               Stop Guessing.<br />Start Matching.
             </h2>
@@ -255,7 +255,7 @@ export default function HomePage() {
 
       {/* Footer */}
       <footer className="bg-carbon py-12">
-        <div className="max-w-page mx-auto px-8 flex items-center justify-between">
+        <div className="max-w-page mx-auto px-4 sm:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
           <span className="font-display text-lg uppercase text-paper">
             CV Match Engine
           </span>
