@@ -72,6 +72,7 @@ class MatchResponse(BaseModel):
     certifications: dict | None = None
     skill_evidence: list[dict] | None = None  # Phase 16 per-skill evidence grades
     ml_details: dict | None = None  # trained-model probabilities when available
+    ml_failure: str | None = None  # why ML scoring was skipped, when it was
 
 
 class ErrorResponse(BaseModel):

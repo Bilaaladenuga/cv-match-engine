@@ -53,6 +53,7 @@ def _build_response(match_row, output) -> MatchResponse:
         certifications=output.certifications,
         skill_evidence=output.skill_evidence,
         ml_details=output.ml_details,
+        ml_failure=output.ml_failure,
     )
 
 

@@ -315,3 +315,49 @@ def test_custom_weights_change_score(client):
     scale = 1 - 0.25 if custom["ml_details"] else 1
     assert custom["weights"]["semantic"] == pytest.approx(0.7 * scale)
     assert custom["overall_score"] != default["overall_score"]
+
+
+def test_ml_failure_is_reported_when_scorer_raises(client, monkeypatch):
+    """When ML scoring raises, the report still ships — and now says WHY.
+
+    Regression guard for the production issue where ml_details came back
+    null with no observable cause.
+    """
+    def _boom(features):
+        raise RuntimeError("boom for test")
+
+    monkeypatch.setattr(
+        "app.services.matching_service.score_features", _boom
+    )
+
+    http, _ = client
+    resp = http.post(
+        "/api/matches",
+        json={"cv_text": SAMPLE_CV, "job_text": SAMPLE_JD},
+    )
+    assert resp.status_code == 201
+    body = resp.json()
+    assert body["ml_details"] is None
+    assert body["ml_failure"] is not None
+    assert "boom for test" in body["ml_failure"]
+    # Hybrid-only weights: no ml_model component, no re-normalisation surprise
+    assert "ml_model" not in {c["name"] for c in body["components"]}
+
+
+def test_ml_failure_distinguishes_missing_artifact(client, monkeypatch):
+    """A missing/unloadable artifact is reported differently from a scoring error."""
+    monkeypatch.setattr(
+        "app.services.matching_service.score_features", lambda features: None
+    )
+
+    http, _ = client
+    resp = http.post(
+        "/api/matches",
+        json={"cv_text": SAMPLE_CV, "job_text": SAMPLE_JD},
+    )
+    body = resp.json()
+    assert resp.status_code == 201
+    assert body["ml_details"] is None
+    # On this machine the artifact exists, so the reason must say loadable
+    assert body["ml_failure"] is not None
+    assert "artifact" in body["ml_failure"]

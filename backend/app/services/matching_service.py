@@ -70,6 +70,10 @@ class PipelineOutput:
     ml_details: dict | None = None
     prioritized_improvements: list[dict] = field(default_factory=list)
     ats_details: dict | None = None
+    # Why ML scoring was skipped (model missing, feature-schema drift, ...).
+    # Surfaced in the API response so degraded ML behaviour is observable
+    # instead of a silent hybrid-only fallback.
+    ml_failure: str | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -124,10 +128,21 @@ def run_pipeline(
         cv_text=cv_text,
     )
     ml_result = None
+    ml_failure: str | None = None
     try:
         ml_result = score_features(features)
-    except Exception:  # noqa: BLE001 - ML is supplementary, never fatal
+    except Exception as exc:  # noqa: BLE001 - ML is supplementary, never fatal
         logger.exception("ML scorer failed; falling back to hybrid-only")
+        ml_failure = f"{type(exc).__name__}: {exc}"
+    if ml_result is None and ml_failure is None:
+        # score_features returns None (rather than raising) when the artifact
+        # is absent or unloadable — distinguish that from a scoring error.
+        from app.ml.model_scorer import MODEL_PATH
+
+        if not MODEL_PATH.exists():
+            ml_failure = f"model artifact missing at {MODEL_PATH}"
+        else:
+            ml_failure = f"model artifact failed to load from {MODEL_PATH}"
 
     # Phase 16 — evidence-graded assessment of each required skill.
     skill_evidence = build_skill_evidence(candidate, skill_match, experience_match)
@@ -184,6 +199,7 @@ def run_pipeline(
         certifications=certification_match.to_dict(),
         skill_evidence=[ev.to_dict() for ev in skill_evidence],
         ml_details=result.ml_details,
+        ml_failure=ml_failure,
         prioritized_improvements=prioritized_improvements,
         ats_details=ats_result.to_dict(),
     )
