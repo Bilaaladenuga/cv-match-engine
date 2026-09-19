@@ -17,7 +17,11 @@ PyMuPDF==1.24.10
 python-docx==1.1.2
 
 # Machine Learning / NLP
-scikit-learn==1.5.2
+# NOTE: sklearn version is a SERVING CONTRACT for ml/models/*.joblib —
+# the v0.5 ensemble was trained under 1.9.0; loading it under older
+# sklearn crashes predict_proba (missing attributes like multi_class).
+# Re-pin here AND retrain whenever the artifact is regenerated.
+scikit-learn==1.9.0
 pandas==2.2.2
 numpy==1.26.4
 # Embeddings run on ONNX Runtime (via fastembed) instead of PyTorch. This
