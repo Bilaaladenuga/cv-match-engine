@@ -34,13 +34,13 @@ export default function SavedMatchPage({
     return (
       <main className="bg-canvas min-h-screen">
         <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center py-6">
-          <div className="flex items-center gap-8 rounded-pill bg-paper px-8 py-3">
+          <div className="flex items-center gap-8 rounded-pill bg-paper px-4 py-3 sm:px-8">
             <Link href="/" className="font-display text-xl uppercase tracking-tight text-carbon">
               CV Match
             </Link>
           </div>
         </nav>
-        <div className="max-w-page mx-auto px-8 pt-32 pb-section">
+        <div className="max-w-page mx-auto px-4 sm:px-8 pt-32 pb-section">
           <div className="card p-16 text-center">
             <p className="font-body text-sub font-medium uppercase text-carbon">
               Analysis not found
@@ -62,13 +62,13 @@ export default function SavedMatchPage({
     return (
       <main className="bg-canvas min-h-screen">
         <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center py-6">
-          <div className="flex items-center gap-8 rounded-pill bg-paper px-8 py-3">
+          <div className="flex items-center gap-8 rounded-pill bg-paper px-4 py-3 sm:px-8">
             <Link href="/" className="font-display text-xl uppercase tracking-tight text-carbon">
               CV Match
             </Link>
           </div>
         </nav>
-        <div className="max-w-page mx-auto px-8 pt-32 pb-section">
+        <div className="max-w-page mx-auto px-4 sm:px-8 pt-32 pb-section">
           <div className="card p-8">
             <Loading label="Loading saved report..." />
           </div>
@@ -82,7 +82,7 @@ export default function SavedMatchPage({
   return (
     <main className="bg-canvas min-h-screen">
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center py-6">
-        <div className="flex items-center gap-8 rounded-pill bg-paper px-8 py-3">
+        <div className="flex items-center gap-8 rounded-pill bg-paper px-4 py-3 sm:px-8">
           <Link href="/" className="font-display text-xl uppercase tracking-tight text-carbon">
             CV Match
           </Link>
@@ -97,7 +97,7 @@ export default function SavedMatchPage({
         </div>
       </nav>
 
-      <div className="max-w-page mx-auto px-8 pt-32 pb-section">
+      <div className="max-w-page mx-auto px-4 sm:px-8 pt-32 pb-section">
         <Link
           href="/history"
           className="mb-8 inline-flex items-center gap-2 label-mono text-smoke hover:text-carbon transition-colors"
@@ -184,6 +184,11 @@ export default function SavedMatchPage({
             dateStyle: "medium",
             timeStyle: "short",
           })}. Stored in this browser only.`}
+          exportTexts={
+            entry.cv_text && entry.job_text
+              ? { cvText: entry.cv_text, jobText: entry.job_text }
+              : undefined
+          }
         />
       </div>
     </main>

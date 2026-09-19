@@ -124,7 +124,7 @@ export default function AnalyzePage() {
     <main className="bg-canvas min-h-screen">
       {/* Nav */}
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center py-6">
-        <div className="flex items-center gap-8 rounded-pill bg-paper px-8 py-3">
+        <div className="flex items-center gap-8 rounded-pill bg-paper px-4 py-3 sm:px-8">
           <Link href="/" className="font-display text-xl uppercase tracking-tight text-carbon">
             CV Match
           </Link>
@@ -139,7 +139,7 @@ export default function AnalyzePage() {
         </div>
       </nav>
 
-      <div className="max-w-page mx-auto px-8 pt-32 pb-section">
+      <div className="max-w-page mx-auto px-4 sm:px-8 pt-32 pb-section">
         {/* Header */}
         <div className="mb-12">
           <span className="tag mb-4 inline-block">ANALYSIS</span>
@@ -330,6 +330,7 @@ export default function AnalyzePage() {
               }}
               title="Match Report"
               subtitle="Stored only in this browser"
+              exportTexts={{ cvText, jobText }}
             />
           ) : null}
         </div>

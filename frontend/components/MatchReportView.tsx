@@ -7,6 +7,8 @@ import {
   TrendingDown,
   Shield,
   Lightbulb,
+  Download,
+  Loader2,
 } from "lucide-react";
 import {
   Bar,
@@ -19,13 +21,13 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { useEffect, useState } from "react";
 import type { MatchReport, SkillEvidence } from "@/lib/types";
+import { apiErrorMessage, exportMatchPdf } from "@/lib/api";
 import { BandBadge, Card, CardHeader } from "./ui";
 import {
   AnimatedScore,
   AnimatedBar,
-  StaggerContainer,
-  StaggerItem,
   ScrollReveal,
 } from "./motion";
 
@@ -47,16 +49,58 @@ function capitalize(s: string): string {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-function SkillEvidenceRow({ ev }: { ev: SkillEvidence }) {
+/** Match-media helper so recharts can adapt axis sizing to the viewport. */
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${breakpoint - 1}px)`);
+    setIsMobile(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, [breakpoint]);
+  return isMobile;
+}
+
+const statusChipStyle: Record<string, string> = {
+  matched: "bg-mint text-carbon",
+  partial: "bg-ash/40 text-carbon",
+  missing: "bg-voltage text-carbon",
+  unknown: "bg-ash/30 text-smoke",
+};
+
+function StatusIcon({ status }: { status: SkillEvidence["status"] }) {
+  return <>{statusIcon[status] ?? statusIcon.unknown}</>;
+}
+
+function StrengthBadge({ ev }: { ev: SkillEvidence }) {
   const months =
     ev.estimated_months !== null && ev.estimated_months !== undefined
       ? `${ev.estimated_months} mo${ev.estimated_months === 1 ? "" : "s"}`
       : null;
   return (
+    <span className="inline-flex flex-col">
+      <span className="inline-flex items-center rounded-tag bg-mint/30 px-3 py-0.5 text-caption font-mono text-carbon">
+        {strengthLabel[ev.strength] ?? capitalize(ev.strength)}
+      </span>
+      {months ? (
+        <span className="mt-0.5 text-caption text-smoke">{months}</span>
+      ) : null}
+    </span>
+  );
+}
+
+function sourcesText(ev: SkillEvidence): string {
+  return ev.sources && ev.sources.length > 0 ? ev.sources.join("; ") : "-";
+}
+
+/** Desktop row (md+). Valid <tr> inside a real <tbody>. */
+function SkillEvidenceRow({ ev }: { ev: SkillEvidence }) {
+  return (
     <tr className="border-b border-ash/30 transition-colors hover:bg-mist">
       <td className="py-3 pr-4 align-middle">
         <div className="flex items-center gap-2.5">
-          {statusIcon[ev.status] ?? statusIcon.unknown}
+          <StatusIcon status={ev.status} />
           <span className="font-medium text-carbon">{ev.skill}</span>
         </div>
       </td>
@@ -64,17 +108,35 @@ function SkillEvidenceRow({ ev }: { ev: SkillEvidence }) {
         <span className="text-body-sm text-slate">{capitalize(ev.status)}</span>
       </td>
       <td className="py-3 pr-4">
-        <span className="inline-flex items-center rounded-tag bg-mint/30 px-3 py-0.5 text-caption font-mono text-carbon">
-          {strengthLabel[ev.strength] ?? capitalize(ev.strength)}
-        </span>
-        {months ? (
-          <span className="mt-0.5 block text-caption text-smoke">{months}</span>
-        ) : null}
+        <StrengthBadge ev={ev} />
       </td>
-      <td className="py-3 text-caption text-smoke">
-        {ev.sources && ev.sources.length > 0 ? ev.sources.join("; ") : "-"}
-      </td>
+      <td className="py-3 text-caption text-smoke">{sourcesText(ev)}</td>
     </tr>
+  );
+}
+
+/** Mobile card (below md) — stacked layout instead of a cramped table. */
+function SkillEvidenceCard({ ev }: { ev: SkillEvidence }) {
+  return (
+    <li className="rounded-card border border-ash/40 bg-paper px-4 py-3">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-2.5">
+          <StatusIcon status={ev.status} />
+          <span className="truncate font-medium text-carbon">{ev.skill}</span>
+        </div>
+        <span
+          className={`shrink-0 rounded-tag px-2.5 py-0.5 text-caption font-mono ${
+            statusChipStyle[ev.status] ?? statusChipStyle.unknown
+          }`}
+        >
+          {capitalize(ev.status)}
+        </span>
+      </div>
+      <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1.5">
+        <StrengthBadge ev={ev} />
+        <span className="text-caption text-smoke">Sources: {sourcesText(ev)}</span>
+      </div>
+    </li>
   );
 }
 
@@ -150,6 +212,7 @@ interface Factor {
 }
 
 function FeatureImportanceChart({ factors }: { factors: Factor[] }) {
+  const isMobile = useIsMobile();
   if (!factors || factors.length === 0) return null;
 
   const sorted = [...factors]
@@ -181,7 +244,7 @@ function FeatureImportanceChart({ factors }: { factors: Factor[] }) {
             <YAxis
               type="category"
               dataKey="name"
-              width={180}
+              width={isMobile ? 110 : 180}
               tick={{ fontSize: 11, fill: "#444444", fontFamily: "Inter" }}
               axisLine={false}
               tickLine={false}
@@ -199,7 +262,7 @@ function FeatureImportanceChart({ factors }: { factors: Factor[] }) {
                 "contribution",
               ]}
             />
-            <Bar dataKey="contribution" radius={[0, 4, 4, 0]} barSize={16}>
+            <Bar dataKey="contribution" radius={[0, 4, 4, 0]} barSize={isMobile ? 12 : 16}>
               {data.map((entry, i) => (
                 <Cell key={i} fill={entry.fill} />
               ))}
@@ -228,6 +291,7 @@ function ScoreContributionChart({
   components: MatchReport["components"];
   overallPercent: number;
 }) {
+  const isMobile = useIsMobile();
   const data = components
     .map((c) => ({
       name: capitalize(c.name),
@@ -251,7 +315,7 @@ function ScoreContributionChart({
             <YAxis
               type="category"
               dataKey="name"
-              width={100}
+              width={isMobile ? 78 : 100}
               tick={{ fontSize: 12, fill: "#444444", fontFamily: "Inter", fontWeight: 500 }}
               axisLine={false}
               tickLine={false}
@@ -266,7 +330,7 @@ function ScoreContributionChart({
               }}
               formatter={(value: number) => [`${value} pts`, "contribution"]}
             />
-            <Bar dataKey="contribution" radius={[0, 4, 4, 0]} barSize={20}>
+            <Bar dataKey="contribution" radius={[0, 4, 4, 0]} barSize={isMobile ? 14 : 20}>
               {data.map((entry, i) => (
                 <Cell key={i} fill={entry.fill} />
               ))}
@@ -282,6 +346,7 @@ function ScoreContributionChart({
 }
 
 function SkillCoverageDonut({ evidence }: { evidence: SkillEvidence[] }) {
+  const isMobile = useIsMobile();
   const counts = {
     matched: evidence.filter((e) => e.status === "matched").length,
     partial: evidence.filter((e) => e.status === "partial").length,
@@ -300,16 +365,16 @@ function SkillCoverageDonut({ evidence }: { evidence: SkillEvidence[] }) {
   const total = evidence.length;
 
   return (
-    <div className="flex items-center gap-6 px-6 py-5">
-      <div className="relative h-40 w-40 shrink-0">
+    <div className="flex flex-col items-center gap-6 px-4 py-5 sm:flex-row sm:px-6">
+      <div className={`relative shrink-0 ${isMobile ? "h-32 w-32" : "h-40 w-40"}`}>
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
               data={data}
               dataKey="value"
               nameKey="name"
-              innerRadius={48}
-              outerRadius={70}
+              innerRadius={isMobile ? 38 : 48}
+              outerRadius={isMobile ? 56 : 70}
               paddingAngle={3}
               strokeWidth={0}
             >
@@ -376,6 +441,7 @@ export function MatchReportView({
   lists,
   title,
   subtitle,
+  exportTexts,
 }: {
   report: Pick<
     MatchReport,
@@ -395,6 +461,8 @@ export function MatchReportView({
   lists: ReportLists;
   title?: string;
   subtitle?: string;
+  /** Original texts; when provided, the report gains a PDF export button. */
+  exportTexts?: { cvText: string; jobText: string };
 }) {
   const evidence =
     report.skill_evidence && report.skill_evidence.length > 0
@@ -402,16 +470,64 @@ export function MatchReportView({
       : fallbackEvidence(lists.matched, lists.partial, lists.missing);
 
   const ml = report.ml_details;
+  const [exporting, setExporting] = useState(false);
+  const [exportError, setExportError] = useState<string | null>(null);
+
+  async function handleExportPdf() {
+    if (!exportTexts || exporting) return;
+    setExporting(true);
+    setExportError(null);
+    try {
+      const blob = await exportMatchPdf({
+        cv_text: exportTexts.cvText,
+        job_text: exportTexts.jobText,
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "cv-match-report.pdf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      setExportError(apiErrorMessage(err));
+    } finally {
+      setExporting(false);
+    }
+  }
 
   return (
     <div className="space-y-6">
       {title ? (
-        <div>
-          <h2 className="heading-display text-heading text-carbon">{title}</h2>
-          {subtitle ? (
-            <p className="mt-1 label-mono text-smoke">{subtitle}</p>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h2 className="heading-display text-heading text-carbon">{title}</h2>
+            {subtitle ? (
+              <p className="mt-1 label-mono text-smoke">{subtitle}</p>
+            ) : null}
+          </div>
+          {exportTexts ? (
+            <button
+              type="button"
+              onClick={() => void handleExportPdf()}
+              disabled={exporting}
+              className="btn-ghost inline-flex shrink-0 items-center gap-2 disabled:opacity-50"
+            >
+              {exporting ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
+              {exporting ? "Preparing PDF..." : "Export PDF"}
+            </button>
           ) : null}
         </div>
+      ) : null}
+      {exportError ? (
+        <p className="rounded-card border border-voltage bg-voltage/20 px-4 py-2.5 text-body-sm text-carbon">
+          PDF export failed: {exportError}
+        </p>
       ) : null}
 
       {/* Overall Score */}
@@ -477,7 +593,13 @@ export function MatchReportView({
         <div className="border-b border-ash/30">
           <SkillCoverageDonut evidence={evidence} />
         </div>
-        <div className="overflow-x-auto px-5 py-2">
+        {/* Mobile (below md): stacked cards. Desktop (md+): real table. */}
+        <ul className="space-y-2.5 px-4 py-4 md:hidden">
+          {evidence.map((ev, i) => (
+            <SkillEvidenceCard key={`${ev.skill}-${i}`} ev={ev} />
+          ))}
+        </ul>
+        <div className="hidden overflow-x-auto px-5 py-2 md:block">
           <table className="w-full text-left text-body-sm">
             <thead>
               <tr className="border-b border-ash/30 label-mono text-smoke">
@@ -487,13 +609,11 @@ export function MatchReportView({
                 <th className="py-2.5">Sources</th>
               </tr>
             </thead>
-            <StaggerContainer>
+            <tbody>
               {evidence.map((ev, i) => (
-                <StaggerItem key={`${ev.skill}-${i}`}>
-                  <SkillEvidenceRow ev={ev} />
-                </StaggerItem>
+                <SkillEvidenceRow key={`${ev.skill}-${i}`} ev={ev} />
               ))}
-            </StaggerContainer>
+            </tbody>
           </table>
         </div>
       </Card>

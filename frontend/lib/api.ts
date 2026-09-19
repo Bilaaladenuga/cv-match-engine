@@ -61,6 +61,21 @@ export async function createMatch(body: MatchRequestBody): Promise<MatchReport> 
   return data;
 }
 
+/**
+ * Download the match report as a PDF (POST /api/matches/export-pdf).
+ * Requires the original CV and job texts — the endpoint re-runs the
+ * pipeline server-side to render the document.
+ */
+export async function exportMatchPdf(body: {
+  cv_text: string;
+  job_text: string;
+}): Promise<Blob> {
+  const { data } = await api.post("/matches/export-pdf", body, {
+    responseType: "blob",
+  });
+  return data;
+}
+
 // --- Resume upload (stateless extraction) -----------------------------------
 
 export interface ExtractResult {

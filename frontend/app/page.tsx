@@ -24,7 +24,7 @@ export default function HomePage() {
     <main className="bg-canvas min-h-screen">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center py-6">
-        <div className="flex items-center gap-8 rounded-pill bg-paper px-8 py-3">
+        <div className="flex items-center gap-8 rounded-pill bg-paper px-4 py-3 sm:px-8">
           <span className="font-display text-xl uppercase tracking-tight text-carbon">
             CV Match
           </span>

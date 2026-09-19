@@ -10,7 +10,7 @@ export function Card({
   className?: string;
 }) {
   return (
-    <div className={clsx("rounded-card bg-paper p-6", className)}>
+    <div className={clsx("rounded-card bg-paper p-4 sm:p-6", className)}>
       {children}
     </div>
   );
@@ -24,7 +24,7 @@ export function CardHeader({
   subtitle?: string;
 }) {
   return (
-    <div className="border-b border-ash/30 px-6 py-4">
+    <div className="border-b border-ash/30 px-4 py-4 sm:px-6">
       <h3 className="font-body text-sub font-medium uppercase text-carbon">
         {title}
       </h3>
