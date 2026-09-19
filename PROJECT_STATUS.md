@@ -4,8 +4,10 @@
 **Phases 1–17 complete + privacy-first product decision: NO user
 accounts.** History lives in the browser (localStorage); raw-text
 /api/matches is fully stateless. File upload (PDF/DOCX/TXT) is live on
-/analyze. Next: recruiter ranking UI, Recharts visualizations,
-22 (observability), 24 (deployment), model roadmap
+/analyze. Deployed: frontend on Vercel, backend on Render (ONNX
+embeddings fit the free tier). Recent: production CORS fix, OOM fix,
+ml_failure observability, skill-table alignment fix + responsive
+layout + PDF export button. Next: recruiter ranking UI, model roadmap
 
 ## Completed Phases
 
@@ -510,6 +512,18 @@ numpy==1.26.4
 ## Known Issues — pre-existing test failures (NOT from the lint cleanup)
 These fail on `HEAD~` as well; confirmed by stashing the cleanup and
 re-running:
+- **OPEN — production ml_details: null.** The hosted API returns match
+  reports with `ml_details: null` while the identical request returns a
+  populated report locally (model loads, schema matches, API layer
+  verified with TestClient). 2026-09-19: added `ml_failure` to the match
+  response (commit 6e90e0a) so the next production probe reports the
+  exact cause (scoring exception vs missing/unloadable artifact).
+  Render logs at failure time should also show "ML scorer failed" with a
+  traceback. Prime suspects: container-specific joblib/sklearn load
+  failure, or something in the scoring path specific to prod.
+- **ONNX cache PermissionError under the container's non-root user** —
+  fixed in c5aaef4 (pre-create cache dir in Dockerfile + temp-dir
+  fallback in code); listed here until confirmed on the live deploy.
 - `tests/test_calibration.py::TestScorerIntegration` (3 tests) and
   `tests/test_model_scorer.py::test_stub_model_scoring_via_monkeypatch`:
   the scorer falls back to `ml/models/v0.5_platt_params.json` whenever the
