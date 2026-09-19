@@ -512,15 +512,14 @@ numpy==1.26.4
 ## Known Issues — pre-existing test failures (NOT from the lint cleanup)
 These fail on `HEAD~` as well; confirmed by stashing the cleanup and
 re-running:
-- **OPEN — production ml_details: null.** The hosted API returns match
-  reports with `ml_details: null` while the identical request returns a
-  populated report locally (model loads, schema matches, API layer
-  verified with TestClient). 2026-09-19: added `ml_failure` to the match
-  response (commit 6e90e0a) so the next production probe reports the
-  exact cause (scoring exception vs missing/unloadable artifact).
-  Render logs at failure time should also show "ML scorer failed" with a
-  traceback. Prime suspects: container-specific joblib/sklearn load
-  failure, or something in the scoring path specific to prod.
+- **ROOT-CAUSED 2026-09-19 — production ml_details: null.** The
+  ml_failure field surfaced it on the first probe after deploy:
+  `AttributeError: 'LogisticRegression' object has no attribute
+  'multi_class'` — the v0.5 ensemble was pickled under sklearn 1.9.0
+  (the local venv) while requirements pinned 1.5.2, whose predict_proba
+  still expects that attribute. Fixed in 9c09f7d by pinning
+  scikit-learn==1.9.0 (the serving environment must match the training
+  environment). Pending: confirm on the live deploy.
 - **ONNX cache PermissionError under the container's non-root user** —
   fixed in c5aaef4 (pre-create cache dir in Dockerfile + temp-dir
   fallback in code); listed here until confirmed on the live deploy.
