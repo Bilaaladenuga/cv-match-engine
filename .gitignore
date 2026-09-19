@@ -58,3 +58,10 @@ data/processed/*
 # Logs / transient artifacts
 *.log
 *.tsbuildinfo
+
+# ONNX embedding model + fastembed cache
+# Fetched by scripts/fetch_embedding_model.sh (and at Docker build time);
+# never committed — it is an 88 MB derived artifact.
+backend/models/
+backend/.fastembed_cache/
+*.onnx

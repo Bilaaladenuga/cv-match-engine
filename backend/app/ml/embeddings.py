@@ -5,9 +5,10 @@ Provides semantic embedding generation and similarity computation for the
 CV–Job matching pipeline.
 
 Model: all-MiniLM-L6-v2 (384-dim, fast, accurate)
-- Sentence-transformer from HuggingFace
-- Optimized for semantic similarity tasks
-- Runs on CPU (no GPU required)
+- Served through ONNX Runtime via `fastembed` — no PyTorch in the serving path
+- Same weights as the sentence-transformers release, int8-quantized
+- Runs on CPU (no GPU required); ~250 MB peak vs ~620 MB for the torch stack,
+  which lets the API fit a 512 MB instance
 
 Embedding strategies:
     A. Full document embeddings (CV ↔ Job)
@@ -22,10 +23,10 @@ from __future__ import annotations
 
 import logging
 import os
+from pathlib import Path
 
 import numpy as np
-import torch
-from sentence_transformers import SentenceTransformer
+from fastembed import TextEmbedding
 
 logger = logging.getLogger(__name__)
 
@@ -33,42 +34,110 @@ logger = logging.getLogger(__name__)
 # Global model singleton (loaded once, reused across requests)
 # ---------------------------------------------------------------------------
 
-_model: SentenceTransformer | None = None
-_MODEL_NAME = "all-MiniLM-L6-v2"
+_model: TextEmbedding | None = None
+_load_error: str | None = None
+_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 _EMBEDDING_DIM = 384
 
-# Dynamic int8 quantization of the transformer's Linear layers. Measured on
-# the CPU-only target box: ~4x faster encode, cosine retention >= 0.95 vs
-# fp32. Batch feature extraction and API inference share this module, so
-# both sides of the train/serve boundary see identical vectors. Set
-# EMBEDDINGS_INT8=0 to revert to fp32.
-_QUANTIZED = os.environ.get("EMBEDDINGS_INT8", "1") == "1"
-_QUANT_APPLIED = False
+
+class EmbeddingUnavailableError(RuntimeError):
+    """The embedding model could not be loaded (missing files, OOM, ...).
+
+    Callers should degrade rather than fail the request: semantic similarity
+    is one component of the match score, not the whole product.
+    """
 
 
-def get_model() -> SentenceTransformer:
-    """Return the global SentenceTransformer model (lazy-loaded singleton)."""
-    global _model, _QUANT_APPLIED  # noqa: PLW0603
-    if _model is None:
-        logger.info("Loading embedding model: %s", _MODEL_NAME)
-        _model = SentenceTransformer(_MODEL_NAME)
-        if _QUANTIZED and not _QUANT_APPLIED:
-            torch.set_num_threads(
-                int(os.environ.get("TORCH_THREADS", str(min(4, os.cpu_count() or 1))))
-            )
-            _model = torch.quantization.quantize_dynamic(
-                _model, {torch.nn.Linear}, dtype=torch.qint8
-            )
-            _QUANT_APPLIED = True
-            logger.info("Embedding model int8-quantized for CPU inference")
-        logger.info("Embedding model loaded (dim=%d)", _EMBEDDING_DIM)
+def _model_cache_dir() -> str:
+    """Directory fastembed caches the ONNX model in.
+
+    Defaults to `<backend>/.fastembed_cache` (gitignored) so the location is
+    deterministic across dev and Docker, rather than depending on a temp dir
+    that can be left half-written by a failed download. Override with
+    FASTEMBED_CACHE_DIR. The Dockerfile pre-downloads the model into this
+    location at build time, so production never fetches from HuggingFace
+    during a request.
+    """
+    override = os.environ.get("FASTEMBED_CACHE_DIR")
+    if override:
+        return override
+    backend_root = Path(__file__).resolve().parents[2]
+    return str(backend_root / ".fastembed_cache")
+
+
+def _model_threads() -> int | None:
+    """CPU threads for ONNX inference. Unset uses the onnxruntime default."""
+    raw = os.environ.get("EMBEDDING_THREADS")
+    if not raw:
+        return None
+    try:
+        return max(1, int(raw))
+    except ValueError:
+        logger.warning("Invalid EMBEDDING_THREADS=%r; using ONNX default", raw)
+        return None
+
+
+_LOCAL_MODEL_SUBDIR = Path("models") / "all-MiniLM-L6-v2-onnx"
+
+
+def _local_model_dir() -> Path | None:
+    """Locally extracted ONNX model directory, if present.
+
+    Preferred over the Hub download because it is deterministic and offline.
+    The tarball from fastembed's mirror includes `special_tokens_map.json`,
+    which the model's HuggingFace repo omits — loading from the Hub cache can
+    leave a snapshot that fastembed then refuses to load. Populated by
+    `scripts/fetch_embedding_model.sh` locally and at Docker build time.
+    """
+    override = os.environ.get("EMBEDDING_MODEL_PATH")
+    base = Path(__file__).resolve().parents[2]
+    path = Path(override) if override else base / _LOCAL_MODEL_SUBDIR
+    if path.is_dir() and (path / "model.onnx").exists():
+        return path
+    return None
+
+
+def get_model() -> TextEmbedding:
+    """Return the global ONNX embedding model (lazy-loaded singleton).
+
+    Raises:
+        EmbeddingUnavailableError: if the model cannot be loaded. The failure
+            is memoized so a broken deployment does not retry a costly load
+            on every request.
+    """
+    global _model, _load_error  # noqa: PLW0603
+    if _model is not None:
+        return _model
+    if _load_error is not None:
+        raise EmbeddingUnavailableError(_load_error)
+
+    local_dir = _local_model_dir()
+    extra: dict[str, object] = {}
+    if local_dir is not None:
+        extra["specific_model_path"] = str(local_dir)
+        logger.info("Loading embedding model (ONNX, local): %s", local_dir)
+    else:
+        logger.info("Loading embedding model (ONNX, Hub cache): %s", _MODEL_NAME)
+    try:
+        _model = TextEmbedding(
+            model_name=_MODEL_NAME,
+            cache_dir=_model_cache_dir(),
+            threads=_model_threads(),
+            **extra,
+        )
+    except Exception as exc:
+        _load_error = str(exc)
+        logger.exception("Embedding model failed to load; semantic matching disabled")
+        raise EmbeddingUnavailableError(_load_error) from exc
+    logger.info("Embedding model loaded (dim=%d)", _EMBEDDING_DIM)
     return _model
 
 
 def reset_model() -> None:
     """Unload the model to free memory (useful in tests)."""
-    global _model  # noqa: PLW0603
+    global _model, _load_error  # noqa: PLW0603
     _model = None
+    _load_error = None
 
 
 # ---------------------------------------------------------------------------
@@ -90,13 +159,15 @@ def embed_texts(texts: list[str], batch_size: int = 32) -> np.ndarray:
     if not texts:
         return np.zeros((0, _EMBEDDING_DIM), dtype=np.float32)
     model = get_model()
-    embeddings = model.encode(
-        texts,
-        batch_size=batch_size,
-        show_progress_bar=False,
-        normalize_embeddings=True,  # L2-normalize for cosine via dot product
+    vectors = np.asarray(
+        list(model.embed(texts, batch_size=batch_size)),
+        dtype=np.float32,
     )
-    return embeddings.astype(np.float32)
+    # fastembed already L2-normalizes, but normalize defensively so cosine
+    # via dot product stays exact regardless of backend defaults.
+    norms = np.linalg.norm(vectors, axis=1, keepdims=True)
+    norms[norms < 1e-9] = 1.0
+    return (vectors / norms).astype(np.float32)
 
 
 def embed_text(text: str) -> np.ndarray:

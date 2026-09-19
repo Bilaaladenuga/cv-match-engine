@@ -309,9 +309,23 @@ def compute_match_score(
         engine_weights = dict(w)
         ml_weight = 0.0
 
-    component_names = (
+    component_names_all = (
         "skills", "semantic", "experience", "education", "certifications"
     )
+    # If semantic matching could not run (embedding model unavailable), drop
+    # that component rather than scoring it as zero — a zero would penalise
+    # the candidate for an infrastructure failure — and re-normalise the
+    # remaining engine weights to the share the engine still holds.
+    if bool(getattr(inputs.semantic_match, "available", True)):
+        component_names = component_names_all
+    else:
+        component_names = tuple(n for n in component_names_all if n != "semantic")
+        remaining = sum(engine_weights[n] for n in component_names)
+        target = sum(engine_weights.values())
+        if remaining > 0:
+            factor = target / remaining
+            engine_weights = {n: engine_weights[n] * factor for n in component_names}
+
     components: list[ComponentScore] = []
     for name in component_names:
         raw, evidence = _raw(name, inputs)

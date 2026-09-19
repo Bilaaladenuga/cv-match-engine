@@ -1,0 +1,27 @@
+# Keep the build context small. The ONNX embedding model is fetched inside
+# the build, so the local copy must not be uploaded as context.
+backend/models/
+backend/.fastembed_cache/
+backend/venv/
+.venv/
+
+# Python caches
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+
+# Frontend (the backend image does not need it)
+frontend/node_modules/
+frontend/.next/
+
+# VCS / editors / logs
+.git/
+.gitignore
+.vscode/
+.idea/
+*.log
+
+# Local env files
+.env
+.env.*
+!.env.example

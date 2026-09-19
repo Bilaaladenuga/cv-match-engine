@@ -244,12 +244,14 @@ Audited limitations (documented, not hidden):
   detector (0/40 parsed experience). Fixed via full-text fallback + stated-
   claims parsing; `experience_data_available` flags residual missingness so
   the model can learn it rather than treat it as a negative gap.
-- **Embedding precision**: features are computed with int8-quantized MiniLM
-  (cosine retention ≥ 0.95 vs fp32, ~2.4× faster on the CPU-only target).
-  The quantization switch is shared by training and serving so vectors stay
-  consistent (`EMBEDDINGS_INT8=0` reverts to fp32). Because the test table
-  was re-extracted under int8, the 600→2,100 metric comparison is
-  directional, not a controlled ablation.
+- **Embedding precision**: features are computed with int8-quantized MiniLM.
+  Originally via PyTorch dynamic quantization; now served through ONNX
+  Runtime (`fastembed`), which removes ~380 MB of inference overhead so the
+  API fits a 512 MB instance (peak ~620 MB → ~261 MB). Per-text cosine
+  against the previous torch vectors is 0.92–0.96 and pairwise ranking
+  behaviour is unchanged, so the feature semantics hold. The feature tables
+  were extracted under the torch backend, so this backend swap is not a
+  controlled ablation — the 600→2,100 metric comparison remains directional.
 
 ---
 
@@ -347,8 +349,10 @@ the baseline to beat.
   combined stamp is `match-model-v0.1+<classifier version>` (currently
   `match-model-v0.1+v0.3.0-baseline`). Format: minor bumps for tuning,
   major for redesign or a feature-schema change.
-- Embedding model fixed at `sentence-transformers/all-MiniLM-L6-v2` (384-d);
-  changing it is a major bump.
+- Embedding model fixed at `sentence-transformers/all-MiniLM-L6-v2` (384-d),
+  served through ONNX Runtime (`fastembed`). Changing the model is a major
+  bump; changing only the serving backend (torch ↔ ONNX) is not, since the
+  weights are identical.
 - Taxonomy has `schema_version`; skill changes are additive and seeded
   idempotently.
 - See `docs/model-card.md` (Phase 23) for the full model card.

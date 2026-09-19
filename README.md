@@ -33,7 +33,7 @@ Next.js Frontend → FastAPI Backend → ML/NLP Pipeline → PostgreSQL
 |-------|-----------|
 | Frontend | Next.js, TypeScript, Tailwind CSS, Recharts |
 | Backend | Python, FastAPI, Pydantic |
-| ML/NLP | sentence-transformers, scikit-learn, pandas, NumPy |
+| ML/NLP | ONNX Runtime (fastembed), scikit-learn, pandas, NumPy |
 | Database | PostgreSQL, SQLAlchemy |
 | Document Processing | PyMuPDF, python-docx |
 

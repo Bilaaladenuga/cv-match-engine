@@ -54,10 +54,12 @@ count no longer acts as a hidden length proxy.
 All features are computed by the same code path at training and serving
 time (single source of truth: `backend/app/ml/feature_extraction.py`).
 
-Embedding model: `sentence-transformers/all-MiniLM-L6-v2` (384-d),
-dynamic int8 quantization + 4 torch threads (~2.4× CPU speedup, cosine
-retention ≥ 0.95 vs fp32). Changing the embedding model is a major version
-bump.
+Embedding model: `sentence-transformers/all-MiniLM-L6-v2` (384-d), int8
+quantized, served through ONNX Runtime (`fastembed`) — no PyTorch in the
+serving path. Per-text cosine against the previous torch vectors is
+0.92–0.96 with pairwise ranking behaviour unchanged; peak process memory
+falls from ~620 MB to ~261 MB. Changing the embedding model itself is a
+major version bump; changing only the serving runtime is not.
 
 ## 4. Evaluation (full 1,759-row held-out set)
 

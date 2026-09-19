@@ -25,15 +25,19 @@ the sample CV/JD pairs to balance global relevance with skill specificity.
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 
 from app.ml.embeddings import (
+    EmbeddingUnavailableError,
     cosine_similarity,
     embed_texts,
     strategy_full_document,
     strategy_section_level,
     strategy_skill_level,
 )
+
+logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Weights & thresholds
@@ -70,6 +74,7 @@ class SemanticResult:
     component_scores: dict    # Per-strategy breakdown
     weights: dict             # Weights used
     explanation: str          # One-paragraph interpretation
+    available: bool = True    # False when the embedding model could not load
 
     def to_dict(self) -> dict:
         return {
@@ -81,6 +86,7 @@ class SemanticResult:
             },
             "weights": self.weights,
             "explanation": self.explanation,
+            "available": self.available,
         }
 
 
@@ -129,24 +135,47 @@ def compute_semantic_match(
         )
 
     # Strategy A: full document
-    full_doc = strategy_full_document(cv_text, job_text)
-    score_a = full_doc["semantic_score"]
+    # The three strategies all need the embedding model, so a load failure is
+    # caught once here and reported as "unavailable" rather than crashing the
+    # whole match. The scoring engine then drops this component and
+    # re-normalises the remaining weights (see scoring/matching_model.py).
+    try:
+        full_doc = strategy_full_document(cv_text, job_text)
+        score_a = full_doc["semantic_score"]
 
-    # Strategy B: section-level
-    score_b = 0.0
-    if cv_sections and job_sections:
-        section = strategy_section_level(cv_sections, job_sections)
-        score_b = section["semantic_score"]
+        # Strategy B: section-level
+        score_b = 0.0
+        if cv_sections and job_sections:
+            section = strategy_section_level(cv_sections, job_sections)
+            score_b = section["semantic_score"]
 
-    # Strategy C: skill-level
-    score_c = 0.0
-    if candidate_skills and job_required_skills:
-        skill = strategy_skill_level(
-            candidate_skills,
-            job_required_skills,
-            job_preferred_skills,
+        # Strategy C: skill-level
+        score_c = 0.0
+        if candidate_skills and job_required_skills:
+            skill = strategy_skill_level(
+                candidate_skills,
+                job_required_skills,
+                job_preferred_skills,
+            )
+            score_c = skill["semantic_score"]
+    except EmbeddingUnavailableError as exc:
+        logger.warning("Semantic matching unavailable: %s", exc)
+        return SemanticResult(
+            raw_score=0.0,
+            normalised_score=0,
+            label="Unavailable",
+            component_scores={
+                "full_document": 0.0,
+                "section_level": 0.0,
+                "skill_level": 0.0,
+            },
+            weights={},
+            explanation=(
+                "Semantic similarity could not be computed: the embedding "
+                "model is unavailable in this environment."
+            ),
+            available=False,
         )
-        score_c = skill["semantic_score"]
 
     # Weighted combination — only include strategies where data was provided
     has_section = cv_sections is not None and job_sections is not None

@@ -47,10 +47,10 @@ accounts.** History lives in the browser (localStorage); raw-text
 
 ## Key Dependencies
 ```
-torch==2.4.1+cpu
-sentence-transformers==3.1.1
-transformers==4.44.2
-scikit-learn==1.9.0
+fastembed==0.8.0        # ONNX Runtime text embeddings (no PyTorch)
+onnxruntime==1.30.0
+scikit-learn==1.5.2
+pandas==2.2.2
 numpy==1.26.4
 ```
 
@@ -520,9 +520,34 @@ re-running:
 - `tests/test_improvement_engine.py::TestEvidenceGrading::test_strong_from_sustained_use`:
   expectation vs. current evidence-grading threshold — unverified further.
 
+## Embedding Backend Migration — ONNX Runtime (fixing the 512 MB OOM)
+- Root cause of the hosted crash-loop, measured locally: the API needed
+  ~624 MB peak (import app.main 380 MB + load MiniLM 233 MB) on Render's
+  512 MB free tier, so the first match request was OOM-killed and the
+  instance restarted — surfacing in the browser as an opaque CORS error
+- Fix: embeddings now run on ONNX Runtime via `fastembed` instead of
+  torch/sentence-transformers. `app/ml/embeddings.py` keeps its public
+  interface, so the semantic matcher, strategies and feature extraction are
+  untouched. Measured: import 380 MB → 116 MB, peak 624 MB → **261 MB**
+- Model files come from fastembed's mirror tarball fetched at build time by
+  `scripts/fetch_embedding_model.sh` and baked into the Docker image (the
+  Hub repo omits `special_tokens_map.json`, which fastembed requires).
+  `app/ml/embeddings.py` prefers a local `backend/models/all-MiniLM-L6-v2-onnx`
+  directory via `specific_model_path`, so loading is offline/deterministic
+- Parity: per-text cosine vs the previous torch vectors 0.92–0.96; pairwise
+  ranking behaviour unchanged (similar 0.80→0.81, dissimilar 0.11→0.09)
+- Graceful degradation: `get_model()` raises `EmbeddingUnavailableError`
+  (memoised), `compute_semantic_match` reports `available=False` instead of
+  raising, and `compute_match_score` drops the semantic component and
+  re-normalises the remaining weights — an infra failure no longer zeroes a
+  candidate's score or crashes the request
+- Dependencies: `torch`, `sentence-transformers` removed; `fastembed` +
+  `onnxruntime` added. Dockerfile pre-fetches the model; `.dockerignore`
+  added. 10 new degradation tests + 36 embedding tests pass
+
 ## Test Summary
 ```
-Total: 502 tests passing
+Total: 512 tests passing
 - 11 resume-upload tests (validation ladder + privacy contract)
 - 11 matches endpoint tests (stateless contract + DB-outage regressions)
 - 15 improvement-engine tests (Phase 16)
@@ -542,6 +567,7 @@ Total: 502 tests passing
 - 10 experience-extractor fallback tests
 - 3 misc
 - 21 CORS tests (origin parsing, wildcards, credentials, error-path CORS)
+- 10 semantic-degradation tests (unavailable embedding model path)
 ```
 
 ## Next Up
