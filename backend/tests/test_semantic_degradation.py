@@ -12,6 +12,7 @@ contract:
     - get_model raises a typed error and memoises the failure
 """
 
+from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
@@ -167,3 +168,28 @@ class TestGetModelRaisesTypedError:
 
         with pytest.raises(EmbeddingUnavailableError):
             embeddings.get_model()
+
+
+class TestCacheDirResolution:
+    def test_explicit_override_is_respected(self, monkeypatch, tmp_path):
+        monkeypatch.setenv("FASTEMBED_CACHE_DIR", str(tmp_path / "custom"))
+        assert embeddings._model_cache_dir() == str(tmp_path / "custom")
+
+    def test_default_location_is_created_and_returned(self, monkeypatch, tmp_path):
+        monkeypatch.delenv("FASTEMBED_CACHE_DIR", raising=False)
+        monkeypatch.setattr(embeddings, "_backend_root", lambda: tmp_path)
+        result = embeddings._model_cache_dir()
+        assert Path(result) == tmp_path / ".fastembed_cache"
+        assert Path(result).is_dir(), "the default cache dir should be created"
+
+    def test_unwritable_location_falls_back_to_temp(self, monkeypatch, tmp_path):
+        # Simulate the container failure (root-owned backend dir) portably:
+        # a *file* where the cache dir must be created makes mkdir raise even
+        # with exist_ok=True, exercising the same fallback path.
+        blocker = tmp_path / ".fastembed_cache"
+        blocker.write_text("not a directory")
+        monkeypatch.delenv("FASTEMBED_CACHE_DIR", raising=False)
+        monkeypatch.setattr(embeddings, "_backend_root", lambda: tmp_path)
+        result = embeddings._model_cache_dir()
+        assert "fastembed_cache" in result
+        assert Path(result) != blocker

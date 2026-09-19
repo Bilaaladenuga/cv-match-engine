@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import logging
 import os
+import tempfile
 from pathlib import Path
 
 import numpy as np
@@ -54,15 +55,32 @@ def _model_cache_dir() -> str:
     Defaults to `<backend>/.fastembed_cache` (gitignored) so the location is
     deterministic across dev and Docker, rather than depending on a temp dir
     that can be left half-written by a failed download. Override with
-    FASTEMBED_CACHE_DIR. The Dockerfile pre-downloads the model into this
-    location at build time, so production never fetches from HuggingFace
-    during a request.
+    FASTEMBED_CACHE_DIR.
+
+    In Docker the model itself is pre-downloaded into
+    backend/models/all-MiniLM-L6-v2-onnx (root-owned, read-only to the app
+    user) and passed via specific_model_path, so the cache is never written
+    to — but fastembed still calls mkdir on it unconditionally, and
+    `<backend>` is root-owned in the container. If the default location is
+    not writable we therefore fall back to the system temp dir rather than
+    failing model load.
     """
     override = os.environ.get("FASTEMBED_CACHE_DIR")
     if override:
         return override
-    backend_root = Path(__file__).resolve().parents[2]
-    return str(backend_root / ".fastembed_cache")
+    default = _backend_root() / ".fastembed_cache"
+    try:
+        default.mkdir(parents=True, exist_ok=True)
+        return str(default)
+    except (PermissionError, OSError) as exc:
+        fallback = Path(tempfile.gettempdir()) / "fastembed_cache"
+        logger.warning(
+            "Embedding cache dir %s not writable (%s); using %s",
+            default,
+            exc,
+            fallback,
+        )
+        return str(fallback)
 
 
 def _model_threads() -> int | None:
@@ -80,6 +98,11 @@ def _model_threads() -> int | None:
 _LOCAL_MODEL_SUBDIR = Path("models") / "all-MiniLM-L6-v2-onnx"
 
 
+def _backend_root() -> Path:
+    """The `backend/` package root (injectable seam for tests)."""
+    return Path(__file__).resolve().parents[2]
+
+
 def _local_model_dir() -> Path | None:
     """Locally extracted ONNX model directory, if present.
 
@@ -90,7 +113,7 @@ def _local_model_dir() -> Path | None:
     `scripts/fetch_embedding_model.sh` locally and at Docker build time.
     """
     override = os.environ.get("EMBEDDING_MODEL_PATH")
-    base = Path(__file__).resolve().parents[2]
+    base = _backend_root()
     path = Path(override) if override else base / _LOCAL_MODEL_SUBDIR
     if path.is_dir() and (path / "model.onnx").exists():
         return path

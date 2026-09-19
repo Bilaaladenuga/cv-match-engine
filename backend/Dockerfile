@@ -48,6 +48,14 @@ COPY --from=builder /model ./backend/models/all-MiniLM-L6-v2-onnx
 
 # Create non-root user
 RUN useradd --create-home --shell /bin/bash appuser
+
+# Pre-create the fastembed cache directory owned by the app user. The model
+# is loaded read-only from backend/models via specific_model_path, but
+# fastembed mkdirs its cache dir unconditionally at load time — without this,
+# model load fails with PermissionError under the non-root user (code also
+# falls back to the system temp dir as a safety net).
+RUN mkdir -p /app/backend/.fastembed_cache && chown appuser:appuser /app/backend/.fastembed_cache
+
 USER appuser
 
 # Expose port
