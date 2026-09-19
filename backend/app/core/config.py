@@ -3,6 +3,8 @@ Application configuration using Pydantic Settings.
 Loads from environment variables and .env file.
 """
 
+import json
+import re
 from functools import lru_cache
 
 from pydantic_settings import BaseSettings
@@ -46,3 +48,43 @@ class Settings(BaseSettings):
 def get_settings() -> Settings:
     """Get cached application settings."""
     return Settings()
+
+
+def split_cors_origins(raw: str | None) -> list[str]:
+    """Parse a CORS_ORIGINS environment value into a list of origins.
+
+    Deployment platforms (Render, Railway) store this as a JSON array, local
+    `.env` files usually use a comma-separated list, and a single origin has
+    no separator at all. All three are accepted:
+
+        '["https://a.com", "https://b.com"]'  -> ["https://a.com", ...]
+        'https://a.com,https://b.com'          -> ["https://a.com", ...]
+        'https://a.com'                        -> ["https://a.com"]
+        '*', '', None                          -> ['*'] / [] / []
+    """
+    raw = (raw or "").strip()
+    if not raw:
+        return []
+    if raw.startswith("["):
+        try:
+            parsed = json.loads(raw)
+        except json.JSONDecodeError:
+            parsed = None
+        if isinstance(parsed, list):
+            return [str(item).strip() for item in parsed if str(item).strip()]
+    return [part.strip() for part in raw.split(",") if part.strip()]
+
+
+def build_cors_origin_regex(origins: list[str]) -> str | None:
+    """Compile wildcard origins into a regex Starlette can match.
+
+    Starlette's `allow_origins` compares literal strings, so a pattern like
+    `https://*.vercel.app` (common for preview deploys) never matches. This
+    converts each `*` into `.*` and anchors the result. Returns None when no
+    wildcard pattern is present.
+    """
+    patterns = [origin for origin in origins if "*" in origin and origin != "*"]
+    if not patterns:
+        return None
+    compiled = [re.escape(pattern).replace(r"\*", ".*") for pattern in patterns]
+    return "^(" + "|".join(compiled) + ")$"

@@ -46,11 +46,53 @@ curl https://career-match-api.onrender.com/health
 
 ## Step 3: Update CORS (if needed)
 
-After deployment, update the backend CORS to allow the Vercel domain:
+After deployment, point the backend at the frontend's real origin:
 
 1. Go to Render Dashboard → `career-match-api` → Environment
-2. Update `CORS_ORIGINS` to: `["https://cv-match-engine.vercel.app"]`
-3. Service will auto-redeploy
+2. Update `CORS_ORIGINS` with the deployed frontend URL(s)
+3. Save — the service auto-redeploys
+
+### CORS_ORIGINS format
+
+The value accepts any of these shapes:
+
+```
+["https://cv-match-engine.vercel.app"]      # JSON array (Render/Railway)
+https://a.example.com,https://b.example.com  # comma-separated
+https://cv-match-engine.vercel.app           # single origin
+```
+
+Wildcard subdomains are supported and are compiled into a regex, so
+Vercel preview deployments work without listing each one:
+
+```
+["https://cv-match-engine.vercel.app", "https://*.vercel.app"]
+```
+
+Notes:
+
+- A bare `*` is accepted, but it forces `allow_credentials` **off** — the
+  CORS spec forbids a wildcard origin on credentialed requests. Prefer an
+  explicit allowlist.
+- Trailing slashes are not part of an origin. Use `https://app.vercel.app`,
+  not `https://app.vercel.app/`.
+- Changes only take effect after the backend restarts (the value is read at
+  startup).
+
+### If the browser still reports a CORS error
+
+A missing `Access-Control-Allow-Origin` header is the symptom, but the
+cause is often upstream:
+
+1. **Render free tier cold start** — the first request after idle can return
+   a 502/504 from the proxy with no CORS headers. Retry once; it usually
+   succeeds on the warm instance.
+2. **Wrong `NEXT_PUBLIC_API_URL`** — it must include the `/api` suffix
+   (`https://career-match-api.onrender.com/api`). A 404 is not a CORS bug,
+   but browsers can surface it as one.
+3. **Origin mismatch** — open DevTools → Network, inspect the failing
+   request's `Origin:` header, and make sure that exact string is in
+   `CORS_ORIGINS`.
 
 ---
 

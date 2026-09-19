@@ -9,16 +9,47 @@ Provides:
 
 from __future__ import annotations
 
+import logging
 import time
+
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
-from starlette.responses import Response
+from starlette.responses import JSONResponse, Response
 
 from app.core.logging import (
     generate_request_id,
     log_request,
     request_id_var,
 )
+
+logger = logging.getLogger("errors")
+
+
+class ErrorHandlingMiddleware(BaseHTTPMiddleware):
+    """Turn unhandled exceptions into a JSON 500 that still passes through CORS.
+
+    This middleware MUST be registered INSIDE CORSMiddleware (see the
+    registration order in app/main.py). Starlette's ServerErrorMiddleware is
+    always the outermost layer, so an unhandled exception bubbles straight
+    past CORS and the browser receives a 500 with no Access-Control-* headers.
+    Browsers report that as a CORS failure, which hides the real status and
+    makes a backend outage look like a misconfiguration.
+
+    Catching the exception here produces an ordinary response, which travels
+    back out through CORSMiddleware and picks up the headers.
+    """
+
+    async def dispatch(self, request: Request, call_next) -> Response:
+        try:
+            return await call_next(request)
+        except Exception:
+            logger.exception(
+                "Unhandled exception on %s %s", request.method, request.url.path
+            )
+            return JSONResponse(
+                status_code=500,
+                content={"detail": "Internal server error"},
+            )
 
 
 class RequestTrackingMiddleware(BaseHTTPMiddleware):

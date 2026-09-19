@@ -476,9 +476,31 @@ numpy==1.26.4
   field NDCG@5 gap ≤ 0.15), shadow-mode rollout, explicit out-of-scope
   list (no LLM scoring, no per-field serving models)
 
+## Production CORS Fix (hosted deployment)
+- Root cause reproduced before changing anything: `main.py` **hardcoded**
+  `allow_origins=["*"]`, so the deployed `CORS_ORIGINS` env var was never
+  read; glob entries such as `https://*.vercel.app` could never match
+  (Starlette's `allow_origins` compares literal strings); and an unhandled
+  exception bypassed CORS entirely — Starlette's `ServerErrorMiddleware`
+  is always the outermost layer — so a 500 (or a Render cold-start 502)
+  reached the browser with no `Access-Control-*` headers and was reported
+  as a CORS error, hiding the real status
+- `app/core/config.py`: `split_cors_origins()` accepts a JSON array
+  (Render/Railway) or a comma-separated list; `build_cors_origin_regex()`
+  compiles wildcard hosts (`https://*.vercel.app`) into a regex
+- `app/main.py`: `configure_cors()` now honors `CORS_ORIGINS`; a bare `*`
+  disables credentials (the CORS spec forbids wildcard + credentials);
+  CORS is registered LAST so it is the outermost user middleware
+- `app/core/middleware.py`: new `ErrorHandlingMiddleware`, registered
+  INSIDE CORS, converts unhandled exceptions into a generic JSON 500 that
+  travels back out through CORS — errors now reach the browser with their
+  true status code instead of masquerading as CORS failures
+- 21 new tests in `tests/test_cors.py` (parsing, wildcard matching,
+  disallowed-origin rejection, credentials rules, and CORS-on-500)
+
 ## Test Summary
 ```
-Total: 481 tests passing
+Total: 502 tests passing
 - 11 resume-upload tests (validation ladder + privacy contract)
 - 11 matches endpoint tests (stateless contract + DB-outage regressions)
 - 15 improvement-engine tests (Phase 16)
@@ -497,6 +519,7 @@ Total: 481 tests passing
 - 11 weights / 22 education+cert / 23 matching model / 12 API (SQLite)
 - 10 experience-extractor fallback tests
 - 3 misc
+- 21 CORS tests (origin parsing, wildcards, credentials, error-path CORS)
 ```
 
 ## Next Up
