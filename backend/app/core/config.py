@@ -37,6 +37,14 @@ class Settings(BaseSettings):
     # CORS
     CORS_ORIGINS: str = "http://localhost:3000"
 
+    # Rate limiting (security: the API is public and the ML endpoints are
+    # expensive — one abusive client must not be able to starve everyone).
+    # Rules are '<limit>/<period>' with period in sec|min|hour.
+    RATE_LIMIT_ENABLED: bool = True
+    RATE_LIMIT_DEFAULT: str = "60/min"
+    RATE_LIMIT_MATCHES: str = "5/min"
+    RATE_LIMIT_RANKING: str = "5/min"
+
     model_config = {
         "env_file": ".env",
         "env_file_encoding": "utf-8",

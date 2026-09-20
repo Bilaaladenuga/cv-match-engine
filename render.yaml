@@ -18,3 +18,11 @@ services:
         value: "1.0.0"
       - key: CORS_ORIGINS
         value: '["https://cv-match-engine-rho.vercel.app"]'
+      - key: RATE_LIMIT_ENABLED
+        value: "true"
+      - key: RATE_LIMIT_DEFAULT
+        value: "60/min"
+      - key: RATE_LIMIT_MATCHES
+        value: "5/min"
+      - key: RATE_LIMIT_RANKING
+        value: "5/min"

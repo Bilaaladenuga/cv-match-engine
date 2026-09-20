@@ -20,6 +20,7 @@ from app.core.config import (
 )
 from app.core.logging import log_ml_event, setup_logging
 from app.core.middleware import ErrorHandlingMiddleware, RequestTrackingMiddleware
+from app.core.rate_limit import RateLimitMiddleware
 from app.ml.model_scorer import ml_model_available
 
 settings = get_settings()
@@ -70,14 +71,17 @@ def configure_cors(application: FastAPI, origins: str | None) -> None:
 # Middleware runs outermost-first in reverse registration order: the LAST one
 # added runs FIRST. The registration below produces, outside-in:
 #
-#     CORS -> RequestTracking -> ErrorHandling -> routes
+#     CORS -> RequestTracking -> ErrorHandling -> RateLimit -> routes
 #
-# CORS must be outermost so every response — including error responses —
-# carries the Access-Control-* headers. ErrorHandling sits just inside it so
-# an unhandled exception becomes a normal JSON 500 that travels back out
-# through CORS, rather than bypassing it via ServerErrorMiddleware.
+# CORS must be outermost so every response — including error and 429
+# responses — carries the Access-Control-* headers. ErrorHandling sits just
+# inside it so an unhandled exception becomes a normal JSON 500 that travels
+# back out through CORS, rather than bypassing it via ServerErrorMiddleware.
+# RateLimit is innermost: it only sees requests that passed CORS, and its
+# rejections still acquire tracking + CORS headers on the way out.
 app.add_middleware(ErrorHandlingMiddleware)
 app.add_middleware(RequestTrackingMiddleware)
+app.add_middleware(RateLimitMiddleware, settings=settings)
 configure_cors(app, settings.CORS_ORIGINS)
 
 # Routers
