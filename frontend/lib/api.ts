@@ -31,8 +31,13 @@ export function apiErrorMessage(err: unknown): string {
       ?.detail;
     if (typeof detail === "string") return detail;
     if (detail !== undefined) return JSON.stringify(detail);
-    if (err.code === "ECONNREFUSED")
-      return "Cannot reach the analysis service. Is the backend running on port 8000?";
+    if (err.response === undefined) {
+      // No response at all: backend unreachable, DNS failure, or the
+      // browser blocking the request (offline / connection refused).
+      // (Node's ECONNREFUSED never reaches the browser, so check the
+      // response itself rather than any single error code.)
+      return "Cannot reach the analysis service. Check your connection and try again.";
+    }
     return err.message;
   }
   return "An unexpected error occurred.";
