@@ -8,6 +8,7 @@ import { saveAnalysis } from "@/lib/history";
 import type { MatchReport } from "@/lib/types";
 import { ErrorNote, MatchReportSkeleton } from "@/components/ui";
 import { MatchReportView } from "@/components/MatchReportView";
+import MobileNav from "@/components/MobileNav";
 
 const EXAMPLE_CV = `Jane Okafor
 Senior Backend Engineer
@@ -123,7 +124,8 @@ export default function AnalyzePage() {
   return (
     <main className="bg-canvas min-h-screen">
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center px-3 py-4 sm:py-6">
+      <MobileNav />
+      <nav className="fixed top-0 left-0 right-0 z-50 hidden items-center justify-center px-3 py-6 md:flex">
         <div className="flex items-center gap-4 rounded-pill bg-paper px-4 py-3 sm:gap-8 sm:px-8">
           <Link href="/" className="font-display text-lg uppercase tracking-tight text-carbon sm:text-xl">
             CV Match

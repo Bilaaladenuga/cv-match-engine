@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Trash2, Clock, ArrowRight, CheckCircle2, XCircle } from "lucide-react";
 import { listAnalyses, deleteAnalysis, clearHistory } from "@/lib/history";
 import type { StoredAnalysis } from "@/lib/history";
+import MobileNav from "@/components/MobileNav";
 
 function fmtDate(iso: string): string {
   const d = new Date(iso);
@@ -36,7 +37,8 @@ export default function HistoryPage() {
   return (
     <main className="bg-canvas min-h-screen">
       {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center px-3 py-4 sm:py-6">
+      <MobileNav />
+      <nav className="fixed top-0 left-0 right-0 z-50 hidden items-center justify-center px-3 py-6 md:flex">
         <div className="flex items-center gap-4 rounded-pill bg-paper px-4 py-3 sm:gap-8 sm:px-8">
           <Link href="/" className="font-display text-lg uppercase tracking-tight text-carbon sm:text-xl">
             CV Match

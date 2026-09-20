@@ -18,12 +18,16 @@ import {
   ScrollReveal,
   CountUp,
 } from "@/components/motion";
+import MobileNav from "@/components/MobileNav";
 
 export default function HomePage() {
   return (
     <main className="bg-canvas min-h-screen">
-      {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-center py-4 px-3 sm:py-6">
+      {/* Mobile navigation (hamburger + slide-in, md and below) */}
+      <MobileNav />
+
+      {/* Navigation (desktop pill, md and up) */}
+      <nav className="fixed top-0 left-0 right-0 z-50 hidden items-center justify-center py-6 px-3 md:flex">
         <div className="flex items-center gap-4 rounded-pill bg-paper px-4 py-3 sm:gap-8 sm:px-8">
           <span className="font-display text-lg uppercase tracking-tight text-carbon sm:text-xl">
             CV Match
