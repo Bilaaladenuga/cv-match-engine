@@ -6,8 +6,10 @@ accounts.** History lives in the browser (localStorage); raw-text
 /api/matches is fully stateless. File upload (PDF/DOCX/TXT) is live on
 /analyze. Deployed: frontend on Vercel, backend on Render (ONNX
 embeddings fit the free tier). Recent: production CORS fix, OOM fix,
-ml_failure observability, skill-table alignment fix + responsive
-layout + PDF export button. Next: recruiter ranking UI, model roadmap
+ml_failure observability, sklearn pin fix (ML live in prod), skill-table
+alignment + responsive layout + PDF export, IP rate limiting on expensive
+endpoints, mobile nav, Playwright e2e suite. Next: recruiter ranking UI,
+model roadmap
 
 ## Completed Phases
 
@@ -594,3 +596,24 @@ Total: 512 tests passing
   (multi-domain data → cov_* schema promotion → per-field gates), then
   per-pair interaction features for CV-group ranking (the listwise gap),
   ordinal-aware training objective
+
+## Hardening Session (post-deployment)
+Three production hardening items, all verified:
+
+- **Rate limiting** (backend/app/core/rate_limit.py): IP-keyed fixed-window
+  limiter on the ML-heavy endpoints (matches, ranking, resume extract, PDF
+  export). Env-configurable (RATE_LIMIT_*), disabled by default in dev,
+  enabled in render.yaml. 26 dedicated tests + conftest isolation.
+- **Mobile nav** (frontend/components/MobileNav.tsx): hamburger + slide-in
+  panel below md on all five pages; scroll lock, Escape/backdrop close,
+  primary CTA restored on phones. 5 e2e tests.
+- **Playwright e2e suite** (frontend/e2e/): mocked-API tests of the analyze
+  flow (loading state, full report, history save, backend error, network
+  failure) run against the production build. Found and fixed a real bug:
+  the friendly offline message only triggered on Node's ECONNREFUSED code,
+  which never occurs in a browser — response-less axios errors now surface
+  it (frontend/lib/api.ts).
+
+Verification at session end: 10/10 e2e, 39 backend tests green (rate-limit
++ API areas), tsc clean, next build clean, ruff clean. Commits 9b50414,
+9724053, 9cf461e.
